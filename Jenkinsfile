@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        imagename = "dungzi-apiserver"
+        imagename = "dungzi/backend"
         registryCredential = 'docker-hub-login'
         dockerImage = ''
     }
