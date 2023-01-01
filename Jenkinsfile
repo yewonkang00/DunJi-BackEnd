@@ -82,5 +82,20 @@ pipeline {
             }
           }
         }
+        
+        //docker pull and 배포
+        stage('SSH SERVER EC2') {
+          steps {
+            echo 'SSH'
+            
+            sshagent(['ci-cd']) {
+                sh 'ssh -o StrictHostKeyChecking=no [user name]@[ip address] "whoami"'
+                sh 'ssh -o StrictHostKeyChecking=no [user name]@[ip address] "cd /home/ec2-user/docker-compose/dungzi-backend"'
+                sh "ssh -o StrictHostKeyChecking=no [user name]@[ip address] 'docker-compose down"
+                sh "ssh -o StrictHostKeyChecking=no [user name]@[ip address] 'docker-compose pull"
+                sh "ssh -o StrictHostKeyChecking=no [user name]@[ip address] 'docker-compose up -d"
+            }
+          }
+       }
     }
 }
