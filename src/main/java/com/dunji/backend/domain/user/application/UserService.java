@@ -1,21 +1,30 @@
 package com.dunji.backend.domain.user.application;
 
+import com.dunji.backend.domain.user.domain.User;
+import com.dunji.backend.domain.user.dto.UserDto;
+import com.dunji.backend.domain.user.application.RegisterService;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class UserService {
 
+    private final RegisterService registerService;
+
     //access_token 발급
-    public String getKakaoAccessToken(String code) {
+    public HashMap<String, String> getKakaoAccessToken(String code) {
         String access_Token = "";
         String refresh_Token = "";
         String reqURL = "https://kauth.kakao.com/oauth/token";
@@ -67,13 +76,18 @@ public class UserService {
             e.printStackTrace();
         }
 
-        return access_Token;
+        HashMap<String, String> userInfo = new HashMap<String, String>();
+        userInfo.put("access_token", access_Token);
+        userInfo.put("refresh_token", refresh_Token);
+
+        return userInfo;
     }
 
     // access_token을 이용하여 사용자 정보 조회
-    public void getUserInfo(String token) throws Exception {
+    public User getUserInfo(String token) throws Exception {
 
         String reqURL = "https://kapi.kakao.com/v2/user/me";
+        User user = new User();
 
         try {
             URL url = new URL(reqURL);
@@ -102,7 +116,7 @@ public class UserService {
             JsonObject profile = element.getAsJsonObject().get("properties").getAsJsonObject();
             JsonObject kakao_account = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
 
-            Long id = element.getAsJsonObject().get("id").getAsLong();
+            String id = element.getAsJsonObject().get("id").getAsString();
 
             // email, ci, nickname 필수 값으로 변경시 수정 필요
             boolean hasEmail = kakao_account.getAsJsonObject().get("has_email").getAsBoolean();
@@ -128,10 +142,19 @@ public class UserService {
             log.debug("nickname : {}", nickname);
             log.debug("ci : {}", ci);
 
+            user = User.builder()
+                    .email(email)
+                    .nickname(nickname)
+                    .ci(ci)
+                    .build();
+
+
             br.close();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return user;
     }
 }

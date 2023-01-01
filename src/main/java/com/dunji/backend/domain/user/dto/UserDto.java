@@ -1,5 +1,6 @@
 package com.dunji.backend.domain.user.dto;
 
+import com.dunji.backend.domain.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 
@@ -24,4 +25,22 @@ public class UserDto {
     private Date regDate;
     private Date delDate;
 
+    public User toEntity() {
+        return User.builder()
+                .userId(userId)
+                .ci(ci)
+                .token(token)
+                .userName(userName)
+                .nickname(nickname)
+                .phoneNum(phoneNum)
+                .userType(userType)
+                .gender(gender)
+                .authCheck(false)
+                .email(email)
+                .profileImg(profileImg)
+                .univName(univName)
+                .regDate(regDate)
+                .delDate(delDate)
+                .build();
+    }
 }
