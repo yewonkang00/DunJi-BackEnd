@@ -25,6 +25,7 @@ public class UserService {
 
     //access_token 발급
     public HashMap<String, String> getKakaoAccessToken(String code) {
+
         String access_Token = "";
         String refresh_Token = "";
         String reqURL = "https://kauth.kakao.com/oauth/token";
@@ -68,7 +69,6 @@ public class UserService {
 
             log.debug("access_token : {}", access_Token);
             log.debug("refresh_token : {}", refresh_Token);
-
 
             br.close();
             bw.close();
@@ -148,7 +148,6 @@ public class UserService {
                     .ci(ci)
                     .build();
 
-
             br.close();
 
         } catch (IOException e) {
@@ -156,5 +155,6 @@ public class UserService {
         }
 
         return user;
+
     }
 }

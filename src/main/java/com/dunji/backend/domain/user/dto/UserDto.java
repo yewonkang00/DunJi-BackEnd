@@ -26,6 +26,7 @@ public class UserDto {
     private Date delDate;
 
     public User toEntity() {
+    
         return User.builder()
                 .userId(userId)
                 .ci(ci)
@@ -42,5 +43,6 @@ public class UserDto {
                 .regDate(regDate)
                 .delDate(delDate)
                 .build();
+
     }
 }

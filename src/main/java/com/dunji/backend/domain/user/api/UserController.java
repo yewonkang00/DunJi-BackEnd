@@ -45,5 +45,6 @@ public class UserController {
         response.addCookie(cookie);
 
         return CommonResponse.toResponse(CommonCode.OK, response);
+
     }
 }
