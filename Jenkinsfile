@@ -89,11 +89,11 @@ pipeline {
             echo 'SSH'
             
             sshagent(['ec2-user']) {
-                sh 'ssh -o StrictHostKeyChecking=no [user name]@[ip address] "whoami"'
-                sh 'ssh -o StrictHostKeyChecking=no [user name]@[ip address] "cd /home/ec2-user/docker-compose/dungzi-backend"'
-                sh "ssh -o StrictHostKeyChecking=no [user name]@[ip address] 'docker-compose down"
-                sh "ssh -o StrictHostKeyChecking=no [user name]@[ip address] 'docker-compose pull"
-                sh "ssh -o StrictHostKeyChecking=no [user name]@[ip address] 'docker-compose up -d"
+                sh 'whoami'
+                sh 'cd /home/ec2-user/docker-compose/dungzi-backend'
+                sh "docker-compose down"
+                sh "docker-compose pull"
+                sh 'docker-compose up -d"
             }
           }
        }
