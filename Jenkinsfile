@@ -89,12 +89,12 @@ pipeline {
             echo 'SSH'
             
             sshagent(['ec2-user']) {
-                sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 "whoami"'
-                sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'cd /home/ec2-user/docker-compose/dungzi-backend'"
-                sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'docker-compose down'"
-                sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'docker-compose down'"
-                sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'docker-compose pull'"
-                sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'docker-compose up -d'"
+                sh 'ssh -o StrictHostKeyChecking=no ec2-user@3.39.112.43 "whoami"'
+                sh "ssh -o StrictHostKeyChecking=no ec2-user@3.39.112.43 'cd /home/ec2-user/docker-compose/dungzi-backend'"
+                sh "ssh -o StrictHostKeyChecking=no ec2-user@3.39.112.43 'docker-compose down'"
+                sh "ssh -o StrictHostKeyChecking=no ec2-user@3.39.112.43 'docker-compose down'"
+                sh "ssh -o StrictHostKeyChecking=no ec2-user@3.39.112.43 'docker-compose pull'"
+                sh "ssh -o StrictHostKeyChecking=no ec2-user@3.39.112.43 'docker-compose up -d'"
             }
           }
        }
