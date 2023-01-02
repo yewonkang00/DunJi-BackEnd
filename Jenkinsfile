@@ -88,7 +88,7 @@ pipeline {
           steps {
             echo 'SSH'
             
-            sshagent(['login-ssh']) {
+            sshagent(['ec2-user']) {
                 sh 'ssh -o StrictHostKeyChecking=no [user name]@[ip address] "whoami"'
                 sh 'ssh -o StrictHostKeyChecking=no [user name]@[ip address] "cd /home/ec2-user/docker-compose/dungzi-backend"'
                 sh "ssh -o StrictHostKeyChecking=no [user name]@[ip address] 'docker-compose down"
