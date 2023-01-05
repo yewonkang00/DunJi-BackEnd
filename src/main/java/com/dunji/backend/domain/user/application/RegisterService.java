@@ -1,5 +1,6 @@
 package com.dunji.backend.domain.user.application;
 
+import com.dunji.backend.domain.user.domain.User;
 import com.dunji.backend.domain.user.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +15,10 @@ public class RegisterService {
     private final UserDao userDao;
 
     @Transactional
-    public void userSave(UserDto requestDto) {
-        userDao.save(requestDto.toEntity());
+    public String userSave(UserDto requestDto) {
+        User user = userDao.save(requestDto.toEntity());
+
+        return user.getUserId().toString();
     }
 
 }

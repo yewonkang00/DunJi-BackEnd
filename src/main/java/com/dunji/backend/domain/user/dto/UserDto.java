@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -12,13 +13,13 @@ public class UserDto {
 
     private String userId;
     private String ci;
-    private String token;
-    private String userName;
+//    private String token;
+//    private String userName;
     private String nickname;
     private String phoneNum;
     private String userType;
     private String gender;
-    private boolean authCheck;
+    private Boolean authCheck;
     private String email;
     private String profileImg;
     private String univName;
@@ -26,12 +27,16 @@ public class UserDto {
     private Date delDate;
 
     public User toEntity() {
+        UUID uuid = null;
+        if(userId != null){
+            uuid = UUID.fromString(userId);
+        }
     
         return User.builder()
-                .userId(userId)
+                .userId(uuid)
                 .ci(ci)
-                .token(token)
-                .userName(userName)
+//                .token(token)
+//                .userName(userName)
                 .nickname(nickname)
                 .phoneNum(phoneNum)
                 .userType(userType)

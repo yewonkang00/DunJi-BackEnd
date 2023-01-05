@@ -23,27 +23,30 @@ public class UserService {
 
     private final RegisterService registerService;
 
+    private final String REQUEST_URL = "https://kauth.kakao.com/oauth/token";
+
     //access_token 발급
     public HashMap<String, String> getKakaoAccessToken(String code) {
 
         String access_Token = "";
         String refresh_Token = "";
-        String reqURL = "https://kauth.kakao.com/oauth/token";
 
         try {
-            URL url = new URL(reqURL);
+            URL url = new URL(REQUEST_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             //  URL연결은 입출력에 사용 될 수 있고, POST 혹은 PUT 요청을 하려면 setDoOutput을 true로 설정해야함.
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
 
+            //TODO : url 문자열 코드 부분 가독성을 위해 StringBuilder 보다는 MultiValueMap 등 다른 객체 사용 고려해보기
             //POST 요청에 필요로 요구하는 파라미터 스트림을 통해 전송
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=00c48270395b6a27deb3c5a044c1407f"); // REST_API_KEY 입력
-            sb.append("&redirect_uri=http://3.39.129.136:8090/DungziProject/login/kakao"); // To-Do 인가코드 받은 redirect_uri 입력
+            sb.append("&client_id=b99bba6a1951beda24353d74dfa952d3"); // REST_API_KEY 입력
+//            sb.append("&redirect_uri=http://3.39.129.136:8090/DungziProject/login/kakao"); // To-Do 인가코드 받은 redirect_uri 입력
+            sb.append("&redirect_uri=http://localhost:8080/api/v1/login/kakao"); // To-Do 인가코드 받은 redirect_uri 입력
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();
@@ -113,8 +116,11 @@ public class UserService {
             JsonParser parser = new JsonParser();
             JsonElement element = parser.parse(result);
 
-            JsonObject profile = element.getAsJsonObject().get("properties").getAsJsonObject();
+            log.info("jh kakao json element : "+element);
+
+//            JsonObject properties = element.getAsJsonObject().get("properties").getAsJsonObject();
             JsonObject kakao_account = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
+            JsonObject profile = kakao_account.getAsJsonObject().get("profile").getAsJsonObject();
 
             String id = element.getAsJsonObject().get("id").getAsString();
 
@@ -125,15 +131,25 @@ public class UserService {
                 email = kakao_account.getAsJsonObject().get("email").getAsString();
             }
 
-            boolean hasNickname = profile.getAsJsonObject().get("has_nickname").getAsBoolean();
+//            boolean hasNickname = properties.getAsJsonObject().get("has_nickname").getAsBoolean();
+//            String nickname = "";
+//            if (hasNickname) {
+//                nickname = profile.getAsJsonObject().get("nickname").getAsString();
+//            }
+//
+//            boolean hasCi = kakao_account.getAsJsonObject().get("has_ci").getAsBoolean();
+//            String ci = "";
+//            if (hasCi) {
+//                ci = kakao_account.getAsJsonObject().get("ci").getAsString();
+//            }
+
             String nickname = "";
-            if (hasNickname) {
+            if (profile.getAsJsonObject().get("nickname") != null) {
                 nickname = profile.getAsJsonObject().get("nickname").getAsString();
             }
 
-            boolean hasCi = kakao_account.getAsJsonObject().get("has_ci").getAsBoolean();
             String ci = "";
-            if (hasCi) {
+            if (kakao_account.getAsJsonObject().get("ci") != null) {
                 ci = kakao_account.getAsJsonObject().get("ci").getAsString();
             }
 
