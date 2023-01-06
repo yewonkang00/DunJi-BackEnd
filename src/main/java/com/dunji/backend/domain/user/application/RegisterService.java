@@ -15,10 +15,8 @@ public class RegisterService {
     private final UserDao userDao;
 
     @Transactional
-    public String userSave(UserDto requestDto) {
-        User user = userDao.save(requestDto.toEntity());
-
-        return user.getUserId().toString();
+    public User userSave(UserDto requestDto) {
+        return userDao.save(requestDto.toEntity());
     }
 
 }

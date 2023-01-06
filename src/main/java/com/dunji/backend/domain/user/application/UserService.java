@@ -1,8 +1,9 @@
 package com.dunji.backend.domain.user.application;
 
+import com.dunji.backend.domain.user.dao.UserDao;
 import com.dunji.backend.domain.user.domain.User;
-import com.dunji.backend.domain.user.dto.UserDto;
-import com.dunji.backend.domain.user.application.RegisterService;
+import com.dunji.backend.global.common.error.AuthException;
+import com.dunji.backend.global.common.error.CommonErrorCode;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -14,7 +15,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,14 @@ public class UserService {
 
     private final RegisterService registerService;
 
+    private final UserDao userDao;
+
     private final String REQUEST_URL = "https://kauth.kakao.com/oauth/token";
+
+    public User getUserByUuid(String uuid) {
+        return userDao.findByUserId(UUID.fromString(uuid))
+                .orElseThrow(() -> new AuthException(CommonErrorCode.NOT_EXIST_USER));
+    }
 
     //access_token 발급
     public HashMap<String, String> getKakaoAccessToken(String code) {
@@ -87,7 +95,7 @@ public class UserService {
     }
 
     // access_token을 이용하여 사용자 정보 조회
-    public User getUserInfo(String token) throws Exception {
+    public User getKakaoUserInfo(String token) throws Exception {
 
         String reqURL = "https://kapi.kakao.com/v2/user/me";
         User user = new User();
