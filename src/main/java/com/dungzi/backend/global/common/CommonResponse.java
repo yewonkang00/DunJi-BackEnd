@@ -1,7 +1,7 @@
-package com.dunji.backend.global.common;
+package com.dungzi.backend.global.common;
 
 
-import com.dunji.backend.global.common.error.CommonErrorCode;
+import com.dungzi.backend.global.common.error.CommonErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

@@ -1,6 +1,6 @@
-package com.dunji.backend.domain.user.api;
+package com.dungzi.backend.domain.user.api;
 
-import com.dunji.backend.domain.user.application.UserService;
+import com.dungzi.backend.domain.user.application.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

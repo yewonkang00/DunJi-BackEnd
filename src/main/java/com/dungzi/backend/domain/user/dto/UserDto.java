@@ -1,4 +1,4 @@
-package com.dunji.backend.domain.user.dto;
+package com.dungzi.backend.domain.user.dto;
 
 import lombok.Getter;
 

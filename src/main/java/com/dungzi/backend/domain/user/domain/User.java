@@ -1,4 +1,4 @@
-package com.dunji.backend.domain.user.domain;
+package com.dungzi.backend.domain.user.domain;
 
 import lombok.Builder;
 import lombok.Getter;

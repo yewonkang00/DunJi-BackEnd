@@ -1,4 +1,4 @@
-package com.dunji.backend.domain.user.application;
+package com.dungzi.backend.domain.user.application;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

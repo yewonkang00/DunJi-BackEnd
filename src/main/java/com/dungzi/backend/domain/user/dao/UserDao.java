@@ -1,6 +1,6 @@
-package com.dunji.backend.domain.user.dao;
+package com.dungzi.backend.domain.user.dao;
 
-import com.dunji.backend.domain.user.domain.User;
+import com.dungzi.backend.domain.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
