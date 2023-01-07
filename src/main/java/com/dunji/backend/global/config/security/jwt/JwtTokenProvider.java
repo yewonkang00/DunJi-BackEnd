@@ -26,8 +26,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class JwtTokenProvider { //TODO : 리팩토링 : 쿠키를 쓰니까 HttpServeletRequest 를 전체 다 받아오는 것보다는 @CookieValue로 바로 원하는 쿠키값만 가져와서 사용하는 게 나을 듯
-
+public class JwtTokenProvider {
     @Value("${JWT_TOKEN_SECRET_KEY}") //yml 파일에 설정한 변수명
     private String secretKey;
 
@@ -49,6 +48,8 @@ public class JwtTokenProvider { //TODO : 리팩토링 : 쿠키를 쓰니까 Http
     }
 
     public String createToken(String userPK, List<String> roles, String tokenType) {
+        log.info("[jwtTokenProvider] createToken");
+
         long validTime = 0;
         switch (tokenType) {
             case REFRESH_TOKEN_HEADER_NAME:
@@ -96,7 +97,7 @@ public class JwtTokenProvider { //TODO : 리팩토링 : 쿠키를 쓰니까 Http
             // TODO : 만료된 토큰을 주면 왜 여기서 에러를 던질까
             userPK = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject(); //setSubject했던 값 가져오기
         } catch (Exception e) {
-            log.info(e.getMessage());
+            log.info("jwtTokenProvider getUserPKByToken"+e.getMessage());
             e.printStackTrace();
             throw new AuthException(CommonErrorCode.INVALID_TOKEN); //토큰에서 회원 정보를 확인할 수 없을 때 throw
         }

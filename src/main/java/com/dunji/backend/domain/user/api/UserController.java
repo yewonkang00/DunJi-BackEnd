@@ -8,12 +8,14 @@ import com.dunji.backend.global.common.CommonCode;
 import com.dunji.backend.global.common.CommonResponse;
 import com.dunji.backend.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/login")
@@ -23,28 +25,26 @@ public class UserController {
     private final RegisterService registerService;
 
     private final String ACCESS_TOKEN = "access_token";
-//    private final String REFRESH_TOKEN =  //TODO : 카카오 refresh token은 저장해둘 필요 없을까? 탈퇴나 로그아웃 시
+//    private final String REFRESH_TOKEN = "refresh_token"; //TODO : 카카오 refresh token은 저장해둘 필요 없을까? 탈퇴나 로그아웃 시
 
     //카카오 로그인
     @GetMapping("/kakao")
     public CommonResponse kakaoCallback(@RequestParam String code, HttpServletResponse response) throws Exception {
+        log.info("[API] login/kakao");
         HashMap<String, String> token = userService.getKakaoAccessToken(code);
-        String access_token = token.get(ACCESS_TOKEN);
+        String kakao_access_token = token.get(ACCESS_TOKEN);
 //        String refresh_token = token.get(REFRESH_TOKEN);
 
-        User userInfo = userService.getKakaoUserInfo(access_token);
-        //TODO : toDto() 도메인 메서드화
-        UserDto userDto = UserDto.builder()
-                .email(userInfo.getEmail())
-                .nickname(userInfo.getNickname())
-                .ci(userInfo.getCi())
-                .build();
+        User kakaoUser = userService.getKakaoUserInfo(kakao_access_token);
 
-        User newUser = registerService.userSave(userDto);
+        User loginUser = registerService.userLoginWithSignUp(kakaoUser);
 
+        // TODO : 토큰 로직 분리하기
         //jwt 토큰 발급
-        String jwtAccessToken = jwtTokenProvider.createToken(newUser.getUserId().toString(), userInfo.getRoles(), jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
-        String jwtRefreshToken = jwtTokenProvider.createToken(newUser.getUserId().toString(), userInfo.getRoles(), jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
+        String jwtAccessToken = jwtTokenProvider.createToken(loginUser.getUserId().toString(), kakaoUser.getRoles(), jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
+        String jwtRefreshToken = jwtTokenProvider.createToken(loginUser.getUserId().toString(), kakaoUser.getRoles(), jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
+//        log.info("[API] login/kakao accessToken : "+jwtAccessToken);
+//        log.info("[API] login/kakao refreshToken : "+jwtRefreshToken);
 
         // TODO : 쿠키 로직 분리하기 - Filter와 중복로직
         Cookie accessCookie = new Cookie(jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME, jwtAccessToken);
@@ -59,17 +59,11 @@ public class UserController {
         refreshCookie.setPath("/");
 //        cookie.setSecure(true); //https 상에서만 동작
 
+//        log.info("[API] login/kakao accessCookie getMaxAge : "+accessCookie.getMaxAge());
+//        log.info("[API] login/kakao refreshCookie getMaxAge : "+refreshCookie.getMaxAge());
         response.addCookie(accessCookie);
         response.addCookie(refreshCookie);
 
-//        ResponseCookie cookie = ResponseCookie.from("access_token", access_token)
-//                .httpOnly(true) //쿠키 httpOnly 설정
-//                .secure(true) // 쿠키 Secure 설정. https에서만 true 사용 가능
-//                .maxAge(MAX_AGE) // 쿠키 유효시간
-//                .sameSite("None") // 서로다른 도메인 간 쿠키전송 제한. None이면 Secure설정이 true여야만 쿠키 전송 가능
-//                .path("/") //쿠키를 열어볼 수 있는 위치 설정. 해당url의 하위 url에서만 이 쿠키를 전달함. 기본값은 쿠키를 생성한 장소
-//                .build();
-
-        return CommonResponse.toResponse(CommonCode.OK, "uuid : "+newUser.getUserId());
+        return CommonResponse.toResponse(CommonCode.OK, "uuid : "+loginUser.getUserId());
     }
 }

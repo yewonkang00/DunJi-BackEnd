@@ -1,9 +1,8 @@
 package com.dunji.backend.domain.user.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.dunji.backend.domain.user.dto.UserDto;
+import com.dunji.backend.global.common.BaseTimeEntity;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,12 +12,13 @@ import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-public class User implements UserDetails {
+public class User extends BaseTimeEntity implements UserDetails {
 
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -42,18 +42,33 @@ public class User implements UserDetails {
     private Boolean authCheck;
     private String univName;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date regDate;
-
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     private Date delDate;
-
 
 //    @Column(nullable = false)
 //    private String token;
 
 //    @Column(nullable = false)
 //    private String userName;
+
+
+    ///-- toDto method --///
+    public UserDto toUserDto() {
+        //TODO : 추후 modelmapper 사용 고려
+        return UserDto.builder()
+                .nickname(this.getNickname())
+                .email(this.getEmail())
+                .ci(this.getCi())
+                .profileImg(this.getProfileImg())
+                .phoneNum(this.getPhoneNum())
+                .userType(this.getUserType())
+                .gender(this.getGender())
+                .authCheck(this.getAuthCheck())
+                .univName(this.getUnivName())
+                .regDate(this.getRegDate())
+                .delDate(this.getDelDate())
+                .build();
+    }
 
 
 

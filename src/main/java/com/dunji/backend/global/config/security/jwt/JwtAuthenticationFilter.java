@@ -1,11 +1,7 @@
 package com.dunji.backend.global.config.security.jwt;
 
-import com.dunji.backend.domain.user.application.UserService;
-import com.dunji.backend.domain.user.domain.User;
-import com.dunji.backend.global.common.CommonCode;
+import com.dunji.backend.domain.user.application.RegisterService;
 import com.dunji.backend.global.common.error.AuthException;
-import com.dunji.backend.global.common.error.CommonErrorCode;
-import com.dunji.backend.global.config.security.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -27,7 +23,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilterBean 필터 자동 등록
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserService userService;
+    private final RegisterService registerService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException, AuthException {
@@ -37,9 +33,14 @@ public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilter
         
         //access token 유효
         if(isAccessTokenValid) {
-            log.info("jwtAuthenticationFilter : access token is valid");
-            Authentication authentication = jwtTokenProvider.getAuthenticationByServlet(httpServletRequest, jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            try{
+                Authentication authentication = jwtTokenProvider.getAuthenticationByServlet(httpServletRequest, jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("jwtAuthenticationFilter : access token is valid");
+            }catch (AuthException authException){
+                //token은 유효기간이 남았는데 탈퇴 등을 해서 DB에는 이 userPK에 해당하는 user가 없음 -> 모든 토큰이 유효하지 않은 상황과 동일 취급
+                log.info("jwtAuthenticationFilter : access token is same as invalid. No user exist with this userPK");
+            }
         }
         //access token 유효하지 않음
         else {
@@ -54,7 +55,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilter
                 String newRefreshToken = "";
 
                 try {
-                    List<String> roles = userService.getUserByUuid(uuid).getRoles();
+                    List<String> roles = registerService.getUserByUuid(uuid).getRoles();
                     newAccessToken = jwtTokenProvider.createToken(uuid, roles, jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
                     newRefreshToken = jwtTokenProvider.createToken(uuid, roles, jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
 

@@ -4,6 +4,7 @@ import com.dunji.backend.domain.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ public class UserDto {
     private String email;
     private String profileImg;
     private String univName;
-    private Date regDate;
+    private ZonedDateTime regDate;
     private Date delDate;
 
     public User toEntity() {
@@ -41,11 +42,11 @@ public class UserDto {
                 .phoneNum(phoneNum)
                 .userType(userType)
                 .gender(gender)
-                .authCheck(false)
+                .authCheck(authCheck)
                 .email(email)
                 .profileImg(profileImg)
                 .univName(univName)
-                .regDate(regDate)
+//                .regDate(regDate)
                 .delDate(delDate)
                 .build();
 

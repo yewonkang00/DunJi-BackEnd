@@ -22,16 +22,9 @@ import java.util.UUID;
 @Slf4j
 public class UserService {
 
-    private final RegisterService registerService;
-
     private final UserDao userDao;
 
     private final String REQUEST_URL = "https://kauth.kakao.com/oauth/token";
-
-    public User getUserByUuid(String uuid) {
-        return userDao.findByUserId(UUID.fromString(uuid))
-                .orElseThrow(() -> new AuthException(CommonErrorCode.NOT_EXIST_USER));
-    }
 
     //access_token 발급
     public HashMap<String, String> getKakaoAccessToken(String code) {

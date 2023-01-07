@@ -1,6 +1,6 @@
 package com.dunji.backend.domain;
 
-import com.dunji.backend.domain.user.application.UserService;
+import com.dunji.backend.domain.user.application.RegisterService;
 import com.dunji.backend.domain.user.domain.User;
 import com.dunji.backend.global.common.CommonCode;
 import com.dunji.backend.global.common.CommonResponse;
@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 @RestController
@@ -19,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 public class TestController {
     private final JwtTokenProvider jwtTokenProvider;
 
-    private final UserService userService;
+    private final RegisterService registerService;
 
     @GetMapping("/hello")
     public CommonResponse hello() {
@@ -44,7 +43,7 @@ public class TestController {
         //이 요청 시 액세스 토큰이 만료되어서 필터에서 새 액세스 토큰을 저장했어도 이 serveletReqest 에는 구토큰이 저장되어있음
         if(jwtTokenProvider.isTokenValidByServlet(httpServletRequest, headerName)){
             String uuid = jwtTokenProvider.getUserPKByServlet(httpServletRequest, headerName);
-            user = userService.getUserByUuid(uuid);
+            user = registerService.getUserByUuid(uuid);
             message = tokenType+" token 사용자 닉네임 : "+user.getNickname()+", 이메일 : "+user.getEmail();
         }else{
             message = "요청 시 보내신 토큰은 만료되었습니다.";
