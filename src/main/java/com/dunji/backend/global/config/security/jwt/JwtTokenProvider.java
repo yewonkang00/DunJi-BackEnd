@@ -28,15 +28,17 @@ import java.util.List;
 @Component
 public class JwtTokenProvider { //TODO : 리팩토링 : 쿠키를 쓰니까 HttpServeletRequest 를 전체 다 받아오는 것보다는 @CookieValue로 바로 원하는 쿠키값만 가져와서 사용하는 게 나을 듯
 
-    @Value("${jwt.token.secret-key}") //TODO : 수정 예정
+    @Value("${JWT_TOKEN_SECRET_KEY}") //yml 파일에 설정한 변수명
     private String secretKey;
 
     public final String ACCESS_TOKEN_HEADER_NAME = "x-access-token";
     public final String REFRESH_TOKEN_HEADER_NAME = "x-refresh-token";
 
     // access, refresh 토큰 유효기간 : 각 1시간, 30일
-    private final long ACCESS_TOKEN_VALID_TIME = 60 * 60 * 1000L;
-    private final long REFRESH_TOKEN_VALID_TIME = 30 * 24 * 60 * 60 * 1000L;
+    public final int ACCESS_COOKIE_MAX_AGE = 60*60; // 1시간
+    public final int REFRESH_COOKIE_MAX_AGE = 30*24*60*60; // 30일
+    private final long ACCESS_TOKEN_VALID_TIME = ACCESS_COOKIE_MAX_AGE * 1000L; //나노초 long
+    private final long REFRESH_TOKEN_VALID_TIME = REFRESH_COOKIE_MAX_AGE * 1000L;
 
     private final UserDetailsService userDetailsService;
 
@@ -60,7 +62,6 @@ public class JwtTokenProvider { //TODO : 리팩토링 : 쿠키를 쓰니까 Http
         Claims claims = Jwts.claims().setSubject(userPK);
         claims.put("roles", roles);
         Date now = new Date();
-        System.out.println("secretKey : "+secretKey);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now) //토큰 발행 시간 저장
@@ -92,13 +93,15 @@ public class JwtTokenProvider { //TODO : 리팩토링 : 쿠키를 쓰니까 Http
     private String getUserPKByToken(String token) {
         String userPK;
         try {
-            System.out.println("secretKey : "+secretKey);
+            // TODO : 만료된 토큰을 주면 왜 여기서 에러를 던질까
             userPK = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject(); //setSubject했던 값 가져오기
         } catch (Exception e) {
+            log.info(e.getMessage());
+            e.printStackTrace();
             throw new AuthException(CommonErrorCode.INVALID_TOKEN); //토큰에서 회원 정보를 확인할 수 없을 때 throw
         }
 
-        log.info("jwtTokenProvider userPK : "+userPK);
+        log.info("jwtTokenProvider getUserPKByToken userPK : "+userPK);
         return userPK;
     }
 

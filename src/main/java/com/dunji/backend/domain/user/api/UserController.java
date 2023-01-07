@@ -24,9 +24,6 @@ public class UserController {
 
     private final String ACCESS_TOKEN = "access_token";
 //    private final String REFRESH_TOKEN =  //TODO : 카카오 refresh token은 저장해둘 필요 없을까? 탈퇴나 로그아웃 시
-//    private final String X_ACCESS_TOKEN = "x-access-token";
-//    private final String X_REFRESH_TOKEN = "x-refresh-token";
-    private final int COOKIE_MAX_AGE = 30*60*60*24; // 30일
 
     //카카오 로그인
     @GetMapping("/kakao")
@@ -49,15 +46,15 @@ public class UserController {
         String jwtAccessToken = jwtTokenProvider.createToken(newUser.getUserId().toString(), userInfo.getRoles(), jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
         String jwtRefreshToken = jwtTokenProvider.createToken(newUser.getUserId().toString(), userInfo.getRoles(), jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
 
-        // TODO : 쿠키 로직 분리하기
+        // TODO : 쿠키 로직 분리하기 - Filter와 중복로직
         Cookie accessCookie = new Cookie(jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME, jwtAccessToken);
-        accessCookie.setMaxAge(COOKIE_MAX_AGE);
+        accessCookie.setMaxAge(jwtTokenProvider.ACCESS_COOKIE_MAX_AGE);
         accessCookie.setHttpOnly(true);
         accessCookie.setPath("/");
 //        cookie.setSecure(true); //https 상에서만 동작
 
         Cookie refreshCookie = new Cookie(jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME, jwtRefreshToken);
-        refreshCookie.setMaxAge(COOKIE_MAX_AGE);
+        refreshCookie.setMaxAge(jwtTokenProvider.REFRESH_COOKIE_MAX_AGE);
         refreshCookie.setHttpOnly(true);
         refreshCookie.setPath("/");
 //        cookie.setSecure(true); //https 상에서만 동작

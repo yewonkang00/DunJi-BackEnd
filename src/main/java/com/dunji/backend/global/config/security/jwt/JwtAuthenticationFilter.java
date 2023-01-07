@@ -28,24 +28,16 @@ public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilter
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
-//    private final CustomUserDetailsService customUserDetailsService;
-    private final int COOKIE_MAX_AGE = 60*60*24; // 1일
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException, AuthException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        boolean isAccessTokenValid = false;
-        try{
-            isAccessTokenValid = jwtTokenProvider.isTokenValidByServlet(httpServletRequest, jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
-        }catch (AuthException authException) {
-            // 비회원일 경우 토큰 확인 안함
-            if(authException.getCode() == CommonErrorCode.GUEST_USER){
-                return;
-            }
-        }
-
+        
+        boolean isAccessTokenValid = jwtTokenProvider.isTokenValidByServlet(httpServletRequest, jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
+        
         //access token 유효
         if(isAccessTokenValid) {
+            log.info("jwtAuthenticationFilter : access token is valid");
             Authentication authentication = jwtTokenProvider.getAuthenticationByServlet(httpServletRequest, jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
@@ -54,33 +46,44 @@ public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilter
             log.info("jwtAuthenticationFilter : access token is invalid");
 
             //refresh token 유효, access token 재발급
+            //RTR 적용 : refresh token 도 새로 발급
             if(jwtTokenProvider.isTokenValidByServlet(httpServletRequest, jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME)) {
                 log.info("jwtAuthenticationFilter : refresh token is valid. Recreate access token");
                 String uuid = jwtTokenProvider.getUserPKByServlet(httpServletRequest, jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
                 String newAccessToken = "";
+                String newRefreshToken = "";
 
                 try {
                     List<String> roles = userService.getUserByUuid(uuid).getRoles();
                     newAccessToken = jwtTokenProvider.createToken(uuid, roles, jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
+                    newRefreshToken = jwtTokenProvider.createToken(uuid, roles, jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
+
                 }catch (Exception e) {
                     log.info("jwtAuthenticationFilter Exception : "+e.getMessage());
                     //e.getStackTrace();
                 }
 
-                //TODO : 될까...
-                Cookie cookie = new Cookie(jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME, newAccessToken);
-                cookie.setMaxAge(COOKIE_MAX_AGE);
-                cookie.setHttpOnly(true);
-                cookie.setPath("/");
+                log.info("jwtAuthenticationFilter : Set new access token & refresh token in cookie");
+                //TODO : 중복 로직 정리
+                Cookie accessCookie = new Cookie(jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME, newAccessToken);
+                accessCookie.setMaxAge(jwtTokenProvider.ACCESS_COOKIE_MAX_AGE);
+                accessCookie.setHttpOnly(true);
+                accessCookie.setPath("/");
 //        cookie.setSecure(true); //https 상에서만 동작
-                ((HttpServletResponse)response).addCookie(cookie);
+
+                Cookie refreshCookie = new Cookie(jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME, newRefreshToken);
+                refreshCookie.setMaxAge(jwtTokenProvider.REFRESH_COOKIE_MAX_AGE);
+                refreshCookie.setHttpOnly(true);
+                refreshCookie.setPath("/");
+//        cookie.setSecure(true); //https 상에서만 동작
+
+                ((HttpServletResponse)response).addCookie(accessCookie);
+                ((HttpServletResponse)response).addCookie(refreshCookie);
 
             }
             //refresh token 유효하지 않음
             else {
-                log.info("jwtAuthenticationFilter : refresh token is invalid. Need Sign up");
-//                throw new AuthException(CommonCode.UNAUTHORIZED); //TODO : Handling
-
+                log.info("jwtAuthenticationFilter : refresh token is invalid. Guest user");
             }
         }
         chain.doFilter(request, response);
