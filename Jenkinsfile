@@ -82,21 +82,21 @@ pipeline {
             }
           }
         }
-        
+
         //docker pull and 배포
-        stage('SSH SERVER EC2') {
-          steps {
-            echo 'SSH'
-            
-            sshagent(['ec2-user']) {
-                sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 "whoami"'
-                sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'cd /home/ec2-user/docker-compose/dungzi-backend'"
-                sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'docker-compose down'"
-                sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'docker-compose down'"
-                sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'docker-compose pull'"
-                sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'docker-compose up -d'"
-            }
-          }
-       }
+//         stage('SSH SERVER EC2') {
+//           steps {
+//             echo 'SSH'
+//
+//             sshagent(['ec2-user']) {
+//                 sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 "whoami"'
+//                 sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'cd /home/ec2-user/docker-compose/dungzi-backend'"
+//                 sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'docker-compose down'"
+//                 sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'docker-compose down'"
+//                 sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'docker-compose pull'"
+//                 sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.39.4 'docker-compose up -d'"
+//             }
+//           }
+//        }
     }
 }
