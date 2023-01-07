@@ -1,4 +1,4 @@
-package com.example.dunjibackend;
+package com.dungzi.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package com.example.dunjibackend;
+package com.dungzi.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
