@@ -40,33 +40,6 @@ public class UserController {
 
         authService.setCookieTokenByUser(httpServletResponse, loginUser);
 
-
-        // TODO : 토큰 로직 분리하기
-        //jwt 토큰 발급
-/*        String jwtAccessToken = jwtTokenProvider.createToken(loginUser.getUserId().toString(), kakaoUser.getRoles(), jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
-        String jwtRefreshToken = jwtTokenProvider.createToken(loginUser.getUserId().toString(), kakaoUser.getRoles(), jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
-//        log.info("[API] login/kakao accessToken : "+jwtAccessToken);
-//        log.info("[API] login/kakao refreshToken : "+jwtRefreshToken);
-
-
-        // TODO : 쿠키 로직 분리하기 - Filter와 중복로직
-        Cookie accessCookie = new Cookie(jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME, jwtAccessToken);
-        accessCookie.setMaxAge(jwtTokenProvider.ACCESS_COOKIE_MAX_AGE);
-        accessCookie.setHttpOnly(true);
-        accessCookie.setPath("/");
-//        cookie.setSecure(true); //https 상에서만 동작
-
-        Cookie refreshCookie = new Cookie(jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME, jwtRefreshToken);
-        refreshCookie.setMaxAge(jwtTokenProvider.REFRESH_COOKIE_MAX_AGE);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setPath("/");
-//        cookie.setSecure(true); //https 상에서만 동작
-
-//        log.info("[API] login/kakao accessCookie getMaxAge : "+accessCookie.getMaxAge());
-//        log.info("[API] login/kakao refreshCookie getMaxAge : "+refreshCookie.getMaxAge());
-        httpServletResponse.addCookie(accessCookie);
-        httpServletResponse.addCookie(refreshCookie);*/
-
         return CommonResponse.toResponse(CommonCode.OK, "uuid : "+loginUser.getUserId());
     }
 }
