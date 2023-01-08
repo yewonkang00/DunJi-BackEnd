@@ -19,7 +19,6 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/login")
 public class UserController {
-    private final JwtTokenProvider jwtTokenProvider;
     private final KakaoService kakaoService;
     private final AuthService authService;
 
@@ -39,13 +38,15 @@ public class UserController {
 
         User loginUser = authService.userLoginWithSignUp(kakaoUser);
 
+        authService.setCookieTokenByUser(httpServletResponse, loginUser);
+
+
         // TODO : 토큰 로직 분리하기
         //jwt 토큰 발급
-        String jwtAccessToken = jwtTokenProvider.createToken(loginUser.getUserId().toString(), kakaoUser.getRoles(), jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
+/*        String jwtAccessToken = jwtTokenProvider.createToken(loginUser.getUserId().toString(), kakaoUser.getRoles(), jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
         String jwtRefreshToken = jwtTokenProvider.createToken(loginUser.getUserId().toString(), kakaoUser.getRoles(), jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
 //        log.info("[API] login/kakao accessToken : "+jwtAccessToken);
 //        log.info("[API] login/kakao refreshToken : "+jwtRefreshToken);
-
 
 
         // TODO : 쿠키 로직 분리하기 - Filter와 중복로직
@@ -64,7 +65,7 @@ public class UserController {
 //        log.info("[API] login/kakao accessCookie getMaxAge : "+accessCookie.getMaxAge());
 //        log.info("[API] login/kakao refreshCookie getMaxAge : "+refreshCookie.getMaxAge());
         httpServletResponse.addCookie(accessCookie);
-        httpServletResponse.addCookie(refreshCookie);
+        httpServletResponse.addCookie(refreshCookie);*/
 
         return CommonResponse.toResponse(CommonCode.OK, "uuid : "+loginUser.getUserId());
     }

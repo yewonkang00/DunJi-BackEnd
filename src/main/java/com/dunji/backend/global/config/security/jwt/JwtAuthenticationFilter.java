@@ -1,7 +1,9 @@
 package com.dunji.backend.global.config.security.jwt;
 
 import com.dunji.backend.domain.user.application.AuthService;
+import com.dunji.backend.domain.user.domain.User;
 import com.dunji.backend.global.common.error.AuthException;
+import com.dunji.backend.global.common.error.CommonErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -49,37 +51,23 @@ public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilter
             //refresh token 유효, access token 재발급
             //RTR 적용 : refresh token 도 새로 발급
             if(jwtTokenProvider.isTokenValidByServlet(httpServletRequest, jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME)) {
-                log.info("jwtAuthenticationFilter : refresh token is valid. Recreate access token");
+                log.info("jwtAuthenticationFilter : refresh token is valid. Recreate tokens");
                 String uuid = jwtTokenProvider.getUserPKByServlet(httpServletRequest, jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
-                String newAccessToken = "";
-                String newRefreshToken = "";
 
                 try {
-                    List<String> roles = authService.getUserByUuid(uuid).getRoles();
-                    newAccessToken = jwtTokenProvider.createToken(uuid, roles, jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
-                    newRefreshToken = jwtTokenProvider.createToken(uuid, roles, jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
+                    User user = authService.getUserByUuid(uuid);
 
-                }catch (Exception e) {
+                    log.info("jwtAuthenticationFilter : Set new access token & refresh token in cookie");
+                    authService.setCookieTokenByUser((HttpServletResponse)response, user);
+                }catch (AuthException authException) {
+                    if(authException.getCode() == CommonErrorCode.NOT_EXIST_USER){
+                        log.info("jwtAuthenticationFilter AuthException : "+authException.getMessage());
+                    }
+                }
+                catch (Exception e) {
                     log.info("jwtAuthenticationFilter Exception : "+e.getMessage());
                     //e.getStackTrace();
                 }
-
-                log.info("jwtAuthenticationFilter : Set new access token & refresh token in cookie");
-                //TODO : 중복 로직 정리
-                Cookie accessCookie = new Cookie(jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME, newAccessToken);
-                accessCookie.setMaxAge(jwtTokenProvider.ACCESS_COOKIE_MAX_AGE);
-                accessCookie.setHttpOnly(true);
-                accessCookie.setPath("/");
-//        cookie.setSecure(true); //https 상에서만 동작
-
-                Cookie refreshCookie = new Cookie(jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME, newRefreshToken);
-                refreshCookie.setMaxAge(jwtTokenProvider.REFRESH_COOKIE_MAX_AGE);
-                refreshCookie.setHttpOnly(true);
-                refreshCookie.setPath("/");
-//        cookie.setSecure(true); //https 상에서만 동작
-
-                ((HttpServletResponse)response).addCookie(accessCookie);
-                ((HttpServletResponse)response).addCookie(refreshCookie);
 
             }
             //refresh token 유효하지 않음
