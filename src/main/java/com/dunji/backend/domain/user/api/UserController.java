@@ -3,10 +3,13 @@ package com.dunji.backend.domain.user.api;
 import com.dunji.backend.domain.user.application.AuthService;
 import com.dunji.backend.domain.user.application.KakaoService;
 import com.dunji.backend.domain.user.domain.User;
+import com.dunji.backend.domain.user.dto.UserRequestDto;
+import com.dunji.backend.domain.user.dto.UserResponseDto;
 import com.dunji.backend.global.common.CommonCode;
 import com.dunji.backend.global.common.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,15 +26,24 @@ public class UserController {
     private final String ACCESS_TOKEN = "access_token";
 //    private final String REFRESH_TOKEN = "refresh_token"; //TODO : 카카오 refresh token은 저장해둘 필요 없을까? 탈퇴나 로그아웃 시
 
-//    @PostMapping("/email-auth")
-//    public CommonResponse updateUserEmailAuth(HttpServletRequest httpServletRequest) {
-//
-//    }
+    @PostMapping("/email-auth/send")
+    public CommonResponse sendAuthEmail(@RequestBody UserRequestDto.SendEmailAuth body) {
+        log.info("[API] users/email-auth/send");
+        // ...
+        return CommonResponse.toResponse(CommonCode.OK, );
+    }
+
+    @PostMapping("/email-auth")
+    public CommonResponse updateUserEmailAuth(@RequestBody UserRequestDto.UpdateEmailAuth body) {
+        log.info("[API] users/email-auth");
+        User user = authService.updateUserEmailAuth(body.getUnivName(), body.getIsEmailChecked());
+        return CommonResponse.toResponse(CommonCode.OK, user.toUpdateEmailAuthResponseDto());
+    }
 
     //카카오 로그인
     @GetMapping("/login/kakao")
     public CommonResponse kakaoCallback(@RequestParam String code, HttpServletResponse httpServletResponse) throws Exception {
-        log.info("[API] login/kakao");
+        log.info("[API] users/login/kakao");
 
         HashMap<String, String> token = kakaoService.getKakaoAccessToken(code);
         String kakao_access_token = token.get(ACCESS_TOKEN);
@@ -45,4 +57,5 @@ public class UserController {
 
         return CommonResponse.toResponse(CommonCode.OK, "uuid : "+loginUser.getUserId());
     }
+
 }

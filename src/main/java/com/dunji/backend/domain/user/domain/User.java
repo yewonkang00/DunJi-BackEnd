@@ -1,6 +1,7 @@
 package com.dunji.backend.domain.user.domain;
 
 import com.dunji.backend.domain.user.dto.UserDto;
+import com.dunji.backend.domain.user.dto.UserResponseDto;
 import com.dunji.backend.global.common.BaseTimeEntity;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -70,6 +71,13 @@ public class User extends BaseTimeEntity implements UserDetails {
                 .build();
     }
 
+    public UserResponseDto.UpdateEmailAuth toUpdateEmailAuthResponseDto() {
+        return  UserResponseDto.UpdateEmailAuth.builder()
+                .uuid(this.getUserId().toString())
+                .univName(this.getUnivName())
+                .emailAuthCheck(this.getAuthCheck())
+                .build();
+    }
 
 
     //////////-- set user roles(Authentication) : implements UserDetails --//////////

@@ -33,6 +33,13 @@ public class AuthService {
                 .orElseThrow(() -> new AuthException(CommonErrorCode.NOT_EXIST_USER));
     }
 
+    public User updateUserEmailAuth(String univName, Boolean isEmailChecked) {
+        User user = getUserFromSecurity();
+        user.setUnivName(univName);
+        user.setAuthCheck(isEmailChecked);
+        return userDao.save(user);
+    }
+
     public void setTokenCookieAndSecurityByUser(HttpServletResponse httpServletResponse, User user) {
         log.info("[SERVICE] setCookieTokenByUser");
 
@@ -97,6 +104,10 @@ public class AuthService {
     @Transactional
     public User userSave(User user) {
         return userDao.save(user);
+    }
+
+    private User getUserFromSecurity() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 }
