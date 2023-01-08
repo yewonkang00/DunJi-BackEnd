@@ -25,7 +25,7 @@ public class AuthService {
     private final UserDao userDao;
     private final JwtTokenProvider jwtTokenProvider;
     
-    private final String ROLE_USER = "ROLE_USER"; //TODO : 추후 다른 권한 이름들 정리해서 추가
+    private final String ROLE_USER = "ROLE_USER"; //TODO : 추후 다른 권한 이름들 정리해서 추가 (공인중개사 계정 등)
 
 
     public User getUserByUuid(String uuid) throws AuthException {
@@ -48,11 +48,6 @@ public class AuthService {
 
         Authentication authentication = jwtTokenProvider.getAuthenticationByToken(cookieMap.get("access").getValue());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-//        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        log.info("AuthService SecurityContextHolder getPrincipal userDetails uuid :"+ userDetails.getUsername());
-//        User checkUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        log.info("AuthService SecurityContextHolder getUserId checkUser uuid :"+ checkUser.getUserId());
 
     }
 
