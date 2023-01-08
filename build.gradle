@@ -31,7 +31,7 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     //spring boot send mail
-    implementation 'org.springframework.boot:spring-boot-starter-mail:3.0.1'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     //jwt
     implementation 'io.jsonwebtoken:jjwt:0.9.1'

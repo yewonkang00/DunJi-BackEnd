@@ -1,6 +1,7 @@
 package com.dunji.backend.domain.user.api;
 
 import com.dunji.backend.domain.user.application.AuthService;
+import com.dunji.backend.domain.user.application.EmailService;
 import com.dunji.backend.domain.user.application.KakaoService;
 import com.dunji.backend.domain.user.domain.User;
 import com.dunji.backend.domain.user.dto.UserRequestDto;
@@ -22,15 +23,23 @@ import java.util.HashMap;
 public class UserController {
     private final KakaoService kakaoService;
     private final AuthService authService;
+    private final EmailService emailService;
 
     private final String ACCESS_TOKEN = "access_token";
 //    private final String REFRESH_TOKEN = "refresh_token"; //TODO : 카카오 refresh token은 저장해둘 필요 없을까? 탈퇴나 로그아웃 시
 
     @PostMapping("/email-auth/send")
-    public CommonResponse sendAuthEmail(@RequestBody UserRequestDto.SendEmailAuth body) {
+    public CommonResponse sendAuthEmail(@RequestBody UserRequestDto.SendEmailAuth body) throws Exception {
         log.info("[API] users/email-auth/send");
-        // ...
-        return CommonResponse.toResponse(CommonCode.OK, );
+        String code = emailService.sendSimpleMessage(body.getEmail());
+//        User user = authService.getUserFromSecurity();
+        log.info("인증코드 : " + code);
+        UserResponseDto.SendEmailAuth response = UserResponseDto.SendEmailAuth.builder()
+//                .uuid(user.getUserId().toString())
+                .email(body.getEmail())
+                .authCode(code)
+                .build();
+        return CommonResponse.toResponse(CommonCode.OK, response);
     }
 
     @PostMapping("/email-auth")

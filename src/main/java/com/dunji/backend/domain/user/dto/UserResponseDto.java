@@ -16,7 +16,7 @@ public class UserResponseDto {
     @Builder
     @Data
     public static class SendEmailAuth {
-        private String uuid;
+//        private String uuid;
         private String email;
         private String authCode;
     }

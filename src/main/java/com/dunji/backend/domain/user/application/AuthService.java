@@ -106,7 +106,7 @@ public class AuthService {
         return userDao.save(user);
     }
 
-    private User getUserFromSecurity() {
+    public User getUserFromSecurity() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
