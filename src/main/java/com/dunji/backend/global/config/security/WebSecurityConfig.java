@@ -1,6 +1,6 @@
 package com.dunji.backend.global.config.security;
 
-import com.dunji.backend.domain.user.application.UserService;
+import com.dunji.backend.domain.user.application.KakaoService;
 import com.dunji.backend.global.config.security.jwt.JwtAuthenticationFilter;
 import com.dunji.backend.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserService userService;
+    private final KakaoService kakaoService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/","/**").permitAll() //그 외 요청들은 누구나 접근 허용
 //                .antMatchers("/api/test/hello").permitAll()
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userService),
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, kakaoService),
                         UsernamePasswordAuthenticationFilter.class);
         //JwtAuthenticationFilter 를 UsernamePasswordAuthenticationFilter 전에 넣음
     }

@@ -1,6 +1,6 @@
 package com.dunji.backend.global.config.security.jwt;
 
-import com.dunji.backend.domain.user.application.RegisterService;
+import com.dunji.backend.domain.user.application.AuthService;
 import com.dunji.backend.global.common.error.AuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilterBean 필터 자동 등록
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final RegisterService registerService;
+    private final AuthService authService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException, AuthException {
@@ -55,7 +55,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilter
                 String newRefreshToken = "";
 
                 try {
-                    List<String> roles = registerService.getUserByUuid(uuid).getRoles();
+                    List<String> roles = authService.getUserByUuid(uuid).getRoles();
                     newAccessToken = jwtTokenProvider.createToken(uuid, roles, jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
                     newRefreshToken = jwtTokenProvider.createToken(uuid, roles, jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
 

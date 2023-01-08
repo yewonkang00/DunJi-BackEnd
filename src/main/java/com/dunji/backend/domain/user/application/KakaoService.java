@@ -2,8 +2,6 @@ package com.dunji.backend.domain.user.application;
 
 import com.dunji.backend.domain.user.dao.UserDao;
 import com.dunji.backend.domain.user.domain.User;
-import com.dunji.backend.global.common.error.AuthException;
-import com.dunji.backend.global.common.error.CommonErrorCode;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -15,12 +13,11 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserService {
+public class KakaoService {
 
     private final UserDao userDao;
 

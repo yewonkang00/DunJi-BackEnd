@@ -17,12 +17,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class RegisterService {
+public class AuthService {
     private final UserDao userDao;
     
     private final String ROLE_USER = "ROLE_USER"; //TODO : 추후 다른 권한 이름들 정리해서 추가
 
-    public User getUserByUuid(String uuid) {
+    public User getUserByUuid(String uuid) throws AuthException {
         return userDao.findByUserId(UUID.fromString(uuid))
                 .orElseThrow(() -> new AuthException(CommonErrorCode.NOT_EXIST_USER));
     }
