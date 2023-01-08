@@ -122,9 +122,13 @@ public class JwtTokenProvider {
         return isTokenValid(token);
     }
 
-    //사용자 인증정보(role) 조회
+    //사용자 인증정보 조회
     public Authentication getAuthenticationByServlet(HttpServletRequest httpServletRequest, String tokenType) {
         String token = getToken(httpServletRequest, tokenType);
+        return getAuthenticationByToken(token);
+    }
+
+    public Authentication getAuthenticationByToken(String token) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPKByToken(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }

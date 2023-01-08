@@ -7,9 +7,14 @@ import com.dunji.backend.global.common.CommonResponse;
 import com.dunji.backend.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 @Slf4j
 @RestController
@@ -46,7 +51,9 @@ public class TestController {
             user = authService.getUserByUuid(uuid);
             message = tokenType+" token 사용자 닉네임 : "+user.getNickname()+", 이메일 : "+user.getEmail();
         }else{
-            message = "요청 시 보내신 토큰은 만료되었습니다.";
+            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            user = (User) userDetails;
+            message = "요청 시 보내신 access 토큰은 만료되었습니다. 새로 발급된 access token 사용자 닉네임 : "+user.getNickname()+", 이메일 : "+user.getEmail();
         }
 
         return CommonResponse.toResponse(CommonCode.OK, message);

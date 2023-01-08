@@ -14,11 +14,9 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,8 +35,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilter
         if(isAccessTokenValid) {
             try{
                 Authentication authentication = jwtTokenProvider.getAuthenticationByServlet(httpServletRequest, jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
                 log.info("jwtAuthenticationFilter : access token is valid");
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }catch (AuthException authException){
                 //token은 유효기간이 남았는데 탈퇴 등을 해서 DB에는 이 userPK에 해당하는 user가 없음 -> 모든 토큰이 유효하지 않은 상황과 동일 취급
                 log.info("jwtAuthenticationFilter : access token is same as invalid. No user exist with this userPK");
@@ -58,15 +57,16 @@ public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilter
                     User user = authService.getUserByUuid(uuid);
 
                     log.info("jwtAuthenticationFilter : Set new access token & refresh token in cookie");
-                    authService.setCookieTokenByUser((HttpServletResponse)response, user);
+                    authService.setTokenCookieAndSecurityByUser((HttpServletResponse)response, user);
+
                 }catch (AuthException authException) {
                     if(authException.getCode() == CommonErrorCode.NOT_EXIST_USER){
                         log.info("jwtAuthenticationFilter AuthException : "+authException.getMessage());
                     }
                 }
                 catch (Exception e) {
-                    log.info("jwtAuthenticationFilter Exception : "+e.getMessage());
-                    //e.getStackTrace();
+                    log.info("jwtAuthenticationFilter Exception : "+e.getStackTrace());
+                    throw e;
                 }
 
             }

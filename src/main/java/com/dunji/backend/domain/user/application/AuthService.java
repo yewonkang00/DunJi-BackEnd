@@ -7,6 +7,9 @@ import com.dunji.backend.global.common.error.CommonErrorCode;
 import com.dunji.backend.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import com.dunji.backend.domain.user.dao.UserDao;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +33,26 @@ public class AuthService {
                 .orElseThrow(() -> new AuthException(CommonErrorCode.NOT_EXIST_USER));
     }
 
-    public Map<String, Cookie> createCookie(String accessToken, String refreshToken) {
+    public void setTokenCookieAndSecurityByUser(HttpServletResponse httpServletResponse, User user) {
+        log.info("[SERVICE] setCookieTokenByUser");
+
+        Map<String, Cookie> cookieMap = createCookieTokenByUser(user);
+        setCookieTokenInResponse(httpServletResponse, cookieMap);
+
+        Authentication authentication = jwtTokenProvider.getAuthenticationByToken(cookieMap.get("access").getValue());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+//        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        log.info("AuthService SecurityContextHolder getPrincipal userDetails uuid :"+ userDetails.getUsername());
+//        User checkUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        log.info("AuthService SecurityContextHolder getUserId checkUser uuid :"+ checkUser.getUserId());
+
+    }
+
+    public Map<String, Cookie> createCookieTokenByUser(User user) {
+        String accessToken = jwtTokenProvider.createToken(user.getUserId().toString(), user.getRoles(), jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
+        String refreshToken = jwtTokenProvider.createToken(user.getUserId().toString(), user.getRoles(), jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
+
         Map<String, Cookie> cookieMap = new HashMap();
         cookieMap.put("access", new Cookie(jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME, accessToken));
         cookieMap.get("access").setMaxAge(jwtTokenProvider.ACCESS_COOKIE_MAX_AGE);
@@ -47,15 +69,10 @@ public class AuthService {
         return cookieMap;
     }
 
-    public void setCookieTokenByUser(HttpServletResponse httpServletResponse, User user){
-        String jwtAccessToken = jwtTokenProvider.createToken(user.getUserId().toString(), user.getRoles(), jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
-        String jwtRefreshToken = jwtTokenProvider.createToken(user.getUserId().toString(), user.getRoles(), jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
-
-        Map<String, Cookie> cookieMap = this.createCookie(jwtAccessToken, jwtRefreshToken);
+    public void setCookieTokenInResponse(HttpServletResponse httpServletResponse, Map<String, Cookie> cookieMap){
         cookieMap.forEach( (key, cookie) -> {
             httpServletResponse.addCookie(cookie);
         });
-
     }
 
     @Transactional
