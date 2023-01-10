@@ -50,15 +50,7 @@ public class JwtTokenProvider {
     public String createToken(String userPK, List<String> roles, String tokenType) {
         log.info("jwtTokenProvider createToken");
 
-        long validTime = 0;
-        switch (tokenType) {
-            case REFRESH_TOKEN_HEADER_NAME:
-                validTime = REFRESH_TOKEN_VALID_TIME;
-                break;
-            case ACCESS_TOKEN_HEADER_NAME:
-                validTime = ACCESS_TOKEN_VALID_TIME;
-                break;
-        }
+        long validTime = getValidTime(tokenType);
 
         Claims claims = Jwts.claims().setSubject(userPK);
         claims.put("roles", roles);
@@ -165,6 +157,17 @@ public class JwtTokenProvider {
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e){
             return false; //유효하지 않음 (setSigningKey 에서 파싱 시 나는 에러 캐치)
+        }
+    }
+
+    private long getValidTime(String tokenType){
+        switch (tokenType) {
+            case REFRESH_TOKEN_HEADER_NAME:
+                return REFRESH_TOKEN_VALID_TIME;
+            case ACCESS_TOKEN_HEADER_NAME:
+                return ACCESS_TOKEN_VALID_TIME;
+            default :
+                return 0;
         }
     }
 
