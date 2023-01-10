@@ -1,64 +1,133 @@
 package com.dungzi.backend.domain.user.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.dungzi.backend.domain.user.dto.UserDto;
+import com.dungzi.backend.domain.user.dto.UserResponseDto;
+import com.dungzi.backend.global.common.BaseTimeEntity;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
-public class User {
+public class User extends BaseTimeEntity implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
-    private String userId;
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "BINARY(16)", nullable = false)
+    private UUID userId;
 
     @Column(nullable = false)
+    private String nickname; //kakao 필수 동의 항목
+
+    @Column(nullable = false)
+    private String email; //kakao 필수 동의 항목
+
+    //    @Column(nullable = false)
     private String ci;
 
-    @Column(nullable = false)
-    private String token;
-
-    @Column(nullable = false)
-    private String userName;
-
-    @Column(nullable = false)
-    private String nickname;
-
+    private String profileImg; //kakao 선택 동의 항목
     private String phoneNum;
     private String userType;
     private String gender;
-    private boolean authCheck;
-    private String email;
-    private String profileImg;
     private String univName;
+    private Boolean authCheck; //TODO : 컬럼명 변경 고려 - isUnivEmailChecked
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date regDate;
-
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     private Date delDate;
 
-    @Builder
-    public User(String userId, String ci, String token, String userName, String nickname, String phoneNum, String userType, String gender,
-                boolean authCheck, String email, String profileImg, String univName, Date regDate, Date delDate) {
-        this.userId = userId;
-        this.ci = ci;
-        this.token = token;
-        this.userName = userName;
-        this.nickname = nickname;
-        this.phoneNum = phoneNum;
-        this.userType = userType;
-        this.gender = gender;
-        this.authCheck = authCheck;
-        this.email = email;
-        this.profileImg = profileImg;
+//    @Column(nullable = false)
+//    private String token;
+
+//    @Column(nullable = false)
+//    private String userName;
+
+    public void updateUnivEmailAuth(String univName, Boolean isChecked) {
         this.univName = univName;
-        this.regDate = regDate;
-        this.delDate = delDate;
+        this.authCheck = isChecked;
     }
+
+    public void updateRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
+
+    ///-- toDto method --///
+    public UserDto toUserDto() {
+        //TODO : 추후 modelmapper 사용 고려
+        return UserDto.builder()
+                .nickname(this.getNickname())
+                .email(this.getEmail())
+                .ci(this.getCi())
+                .profileImg(this.getProfileImg())
+                .phoneNum(this.getPhoneNum())
+                .userType(this.getUserType())
+                .gender(this.getGender())
+                .authCheck(this.getAuthCheck())
+                .univName(this.getUnivName())
+                .regDate(this.getRegDate())
+                .delDate(this.getDelDate())
+                .build();
+    }
+
+    public UserResponseDto.UpdateEmailAuth toUpdateEmailAuthResponseDto() {
+        return  UserResponseDto.UpdateEmailAuth.builder()
+                .uuid(this.getUserId().toString())
+                .univName(this.getUnivName())
+                .emailAuthCheck(this.getAuthCheck())
+                .build();
+    }
+
+
+    //////////-- set user roles(Authentication) : implements UserDetails --//////////
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    private List<String> roles = new ArrayList<>();
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.getUserId().toString();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
 }
