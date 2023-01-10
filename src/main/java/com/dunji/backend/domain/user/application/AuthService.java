@@ -29,11 +29,13 @@ public class AuthService {
 
 
     public User getUserByUuid(String uuid) throws AuthException {
+        log.info("[SERVICE] getUserByUuid");
         return userDao.findByUserId(UUID.fromString(uuid))
                 .orElseThrow(() -> new AuthException(CommonErrorCode.NOT_EXIST_USER));
     }
 
     public User updateUserEmailAuth(String univName, Boolean isEmailChecked) {
+        log.info("[SERVICE] updateUserEmailAuth");
         User user = getUserFromSecurity();
         user.setUnivName(univName);
         user.setAuthCheck(isEmailChecked);
@@ -51,7 +53,7 @@ public class AuthService {
 
     }
 
-    public Map<String, Cookie> createCookieTokenByUser(User user) {
+    private Map<String, Cookie> createCookieTokenByUser(User user) {
         String accessToken = jwtTokenProvider.createToken(user.getUserId().toString(), user.getRoles(), jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
         String refreshToken = jwtTokenProvider.createToken(user.getUserId().toString(), user.getRoles(), jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME);
 
@@ -71,7 +73,7 @@ public class AuthService {
         return cookieMap;
     }
 
-    public void setCookieTokenInResponse(HttpServletResponse httpServletResponse, Map<String, Cookie> cookieMap){
+    private void setCookieTokenInResponse(HttpServletResponse httpServletResponse, Map<String, Cookie> cookieMap){
         cookieMap.forEach( (key, cookie) -> {
             httpServletResponse.addCookie(cookie);
         });
@@ -79,6 +81,8 @@ public class AuthService {
 
     @Transactional
     public User userLoginWithSignUp(User user) {
+        log.info("[SERVICE] userLoginWithSignUp");
+
         Optional<User> userOptional = userDao.findByEmail(user.getEmail());
 
         if(userOptional.isEmpty()){
@@ -98,10 +102,12 @@ public class AuthService {
 
     @Transactional
     public User userSave(User user) {
+        log.info("[SERVICE] userSave");
         return userDao.save(user);
     }
 
     public User getUserFromSecurity() {
+        log.info("[SERVICE] getUserFromSecurity");
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 

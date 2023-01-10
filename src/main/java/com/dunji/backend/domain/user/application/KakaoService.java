@@ -118,6 +118,7 @@ public class KakaoService {
                 result += line;
             }
 
+            //TODO : 카카오에서 가져올 값들 목록 정리, 확정 후 코드 정리
             //Gson 라이브러리로 JSON파싱
             JsonParser parser = new JsonParser();
             JsonElement element = parser.parse(result);
