@@ -28,7 +28,8 @@ public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilter
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException, AuthException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        
+
+        //TODO : servlet 에서 getToken을 두번식 하는 게 됐는데 토큰을 getToken을 public 으로 바꿔서 여기서 꺼낼까..그럼 예외처리는..
         boolean isAccessTokenValid = jwtTokenProvider.isTokenValidByServlet(httpServletRequest, jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME);
         
         //access token 유효

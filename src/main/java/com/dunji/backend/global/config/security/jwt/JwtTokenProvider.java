@@ -75,7 +75,7 @@ public class JwtTokenProvider {
         String token = "";
         try {
             token = getToken(httpServletRequest, tokenType);
-            log.info("jwtTokenProvider getUserPKByServlet token : "+token+", tokenType : "+tokenType);
+//            log.info("jwtTokenProvider getUserPKByServlet token : "+token+", tokenType : "+tokenType);
         }
         catch (AuthException authException){
             if(authException.getCode() == CommonErrorCode.GUEST_USER){
@@ -151,6 +151,9 @@ public class JwtTokenProvider {
             //토큰이 비어있으면 비회원 사용으로 간주함
             log.info("jwtTokenProvider getToken : token is empty");
             throw new AuthException(CommonErrorCode.GUEST_USER);
+        }
+        else{
+            log.info("jwtTokenProvider getToken {} : {}", tokenType, token);
         }
         return token;
     }

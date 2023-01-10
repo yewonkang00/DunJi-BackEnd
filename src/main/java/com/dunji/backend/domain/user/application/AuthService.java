@@ -41,7 +41,7 @@ public class AuthService {
     }
 
     public void setTokenCookieAndSecurityByUser(HttpServletResponse httpServletResponse, User user) {
-        log.info("[SERVICE] setCookieTokenByUser");
+        log.info("[SERVICE] setTokenCookieAndSecurityByUser");
 
         Map<String, Cookie> cookieMap = createCookieTokenByUser(user);
         setCookieTokenInResponse(httpServletResponse, cookieMap);

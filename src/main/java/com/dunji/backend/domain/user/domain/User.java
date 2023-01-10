@@ -36,7 +36,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     //    @Column(nullable = false)
     private String ci;
 
-    private String profileImg; //kakao 필수 동의 항목
+    private String profileImg; //kakao 선택 동의 항목
     private String phoneNum;
     private String userType;
     private String gender;

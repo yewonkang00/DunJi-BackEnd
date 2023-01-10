@@ -21,7 +21,14 @@ public class KakaoService {
 
     private final UserDao userDao;
 
-    private final String REQUEST_URL = "https://kauth.kakao.com/oauth/token";
+    private final String TOKEN_REQUEST_URL = "https://kauth.kakao.com/oauth/token";
+    private final String INFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
+    private final String TOKEN_GRANT_TYPE = "authorization_code";
+
+    private final String TOKEN_REDIRECT_URI = "http://localhost:8080/api/v1/users/login/kakao";
+    private final String API_KEY = "00c48270395b6a27deb3c5a044c1407f";
+    private final String ACCESS_TOKEN = "access_token";
+    private final String REFRESH_TOKEN = "refresh_token";
 
     //access_token 발급
     public HashMap<String, String> getKakaoAccessToken(String code) {
@@ -30,7 +37,7 @@ public class KakaoService {
         String refresh_Token = "";
 
         try {
-            URL url = new URL(REQUEST_URL);
+            URL url = new URL(TOKEN_REQUEST_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             //  URL연결은 입출력에 사용 될 수 있고, POST 혹은 PUT 요청을 하려면 setDoOutput을 true로 설정해야함.
@@ -41,10 +48,10 @@ public class KakaoService {
             //POST 요청에 필요로 요구하는 파라미터 스트림을 통해 전송
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
             StringBuilder sb = new StringBuilder();
-            sb.append("grant_type=authorization_code");
-            sb.append("&client_id=b99bba6a1951beda24353d74dfa952d3"); // REST_API_KEY 입력
+            sb.append("grant_type=" + TOKEN_GRANT_TYPE);
+            sb.append("&client_id=" + API_KEY); // REST_API_KEY 입력
 //            sb.append("&redirect_uri=http://3.39.129.136:8090/DungziProject/login/kakao"); // To-Do 인가코드 받은 redirect_uri 입력
-            sb.append("&redirect_uri=http://localhost:8080/api/v1/login/kakao"); // To-Do 인가코드 받은 redirect_uri 입력
+            sb.append("&redirect_uri=" + TOKEN_REDIRECT_URI); // To-Do 인가코드 받은 redirect_uri 입력
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();
@@ -65,11 +72,11 @@ public class KakaoService {
             JsonParser parser = new JsonParser();
             JsonElement element = parser.parse(result);
 
-            access_Token = element.getAsJsonObject().get("access_token").getAsString();
-            refresh_Token = element.getAsJsonObject().get("refresh_token").getAsString();
+            access_Token = element.getAsJsonObject().get(ACCESS_TOKEN).getAsString();
+            refresh_Token = element.getAsJsonObject().get(REFRESH_TOKEN).getAsString();
 
-            log.debug("access_token : {}", access_Token);
-            log.debug("refresh_token : {}", refresh_Token);
+            log.debug("{} : {}", ACCESS_TOKEN, access_Token);
+            log.debug("{} : {}", REFRESH_TOKEN, refresh_Token);
 
             br.close();
             bw.close();
@@ -78,8 +85,8 @@ public class KakaoService {
         }
 
         HashMap<String, String> userInfo = new HashMap<String, String>();
-        userInfo.put("access_token", access_Token);
-        userInfo.put("refresh_token", refresh_Token);
+        userInfo.put(ACCESS_TOKEN, access_Token);
+        userInfo.put(REFRESH_TOKEN, refresh_Token);
 
         return userInfo;
     }
@@ -87,11 +94,10 @@ public class KakaoService {
     // access_token을 이용하여 사용자 정보 조회
     public User getKakaoUserInfo(String token) throws Exception {
 
-        String reqURL = "https://kapi.kakao.com/v2/user/me";
         User user = new User();
 
         try {
-            URL url = new URL(reqURL);
+            URL url = new URL(INFO_REQUEST_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setRequestMethod("POST");
