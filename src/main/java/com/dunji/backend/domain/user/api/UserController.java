@@ -33,7 +33,7 @@ public class UserController {
         log.info("[API] users/email-auth/send");
         String code = emailService.sendSimpleMessage(body.getEmail());
 //        User user = authService.getUserFromSecurity();
-        log.info("이메일 전송 완료. 인증코드 : " + code);
+        log.info("이메일 전송 완료. 인증코드 : {}", code);
         UserResponseDto.SendEmailAuth response = UserResponseDto.SendEmailAuth.builder()
 //                .uuid(user.getUserId().toString())
                 .email(body.getEmail())

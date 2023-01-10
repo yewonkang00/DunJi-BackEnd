@@ -27,7 +27,7 @@ public class EmailService {
     @Value("${EMAIL_SEND_ADDRESS}")
     private String address;
 
-    public MimeMessage createMessage(String to)throws MessagingException, UnsupportedEncodingException {
+    private MimeMessage createMessage(String to)throws MessagingException, UnsupportedEncodingException {
 //        log.info("보내는 대상 : "+ to);
 //        log.info("인증 번호 : " + ePw);
         MimeMessage  message = javaMailSender.createMimeMessage();
@@ -50,7 +50,7 @@ public class EmailService {
     }
 
     // 인증코드 만들기
-    public static String createKey() {
+    private static String createKey() {
         StringBuffer key = new StringBuffer();
         Random rnd = new Random();
 
@@ -67,6 +67,8 @@ public class EmailService {
         bean으로 등록해둔 javaMailSender 객체를 사용하여 이메일 send
      */
     public String sendSimpleMessage(String to) throws Exception {
+        log.info("[SERVICE] sendSimpleMessage");
+
         MimeMessage message = createMessage(to);
         try{
             javaMailSender.send(message); // 메일 발송

@@ -48,7 +48,7 @@ public class JwtTokenProvider {
     }
 
     public String createToken(String userPK, List<String> roles, String tokenType) {
-        log.info("[jwtTokenProvider] createToken");
+        log.info("jwtTokenProvider createToken");
 
         long validTime = 0;
         switch (tokenType) {
@@ -97,12 +97,12 @@ public class JwtTokenProvider {
             // TODO : 만료된 토큰을 주면 왜 여기서 에러를 던질까
             userPK = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject(); //setSubject했던 값 가져오기
         } catch (Exception e) {
-            log.info("jwtTokenProvider getUserPKByToken"+e.getMessage());
+            log.info("jwtTokenProvider getUserPKByToken : {}", e.getMessage());
             e.printStackTrace();
             throw new AuthException(CommonErrorCode.INVALID_TOKEN); //토큰에서 회원 정보를 확인할 수 없을 때 throw
         }
 
-        log.info("jwtTokenProvider getUserPKByToken userPK : "+userPK);
+        log.info("jwtTokenProvider getUserPKByToken userPK : {}", userPK);
         return userPK;
     }
 

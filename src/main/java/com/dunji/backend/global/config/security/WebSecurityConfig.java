@@ -26,8 +26,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // STATELESS : 세션이 아닌 토큰 기반 인증을 사용하므로 세션을 사용하지 않음
                 .and()
                 .authorizeRequests() //요청에 대한 사용권한 체크
-//                .antMatchers("/admin/**").hasRole("ADMIN")
-//                .antMatchers("api/users/**").hasRole("USER")
+//                .antMatchers("/admin/**").hasRole("ROLE_ADMIN")
+//                .antMatchers("api/users/**").hasRole("ROLE_USER")
 //                .antMatchers("/api/v1/login").permitAll() //그 외 요청들은 누구나 접근 허용
 //                .antMatchers("/api/v1/login/**").hasRole("USER")
                 .antMatchers("/","/**").permitAll() //그 외 요청들은 누구나 접근 허용

@@ -32,6 +32,7 @@ public class KakaoService {
 
     //access_token 발급
     public HashMap<String, String> getKakaoAccessToken(String code) {
+        log.info("[SERVICE] getKakaoAccessToken");
 
         String access_Token = "";
         String refresh_Token = "";
@@ -93,6 +94,7 @@ public class KakaoService {
 
     // access_token을 이용하여 사용자 정보 조회
     public User getKakaoUserInfo(String token) throws Exception {
+        log.info("[SERVICE] getKakaoUserInfo");
 
         User user = new User();
 
@@ -120,7 +122,7 @@ public class KakaoService {
             JsonParser parser = new JsonParser();
             JsonElement element = parser.parse(result);
 
-            log.info("jh kakao json element : "+element);
+            log.info("kakao json element : {}", element);
 
 //            JsonObject properties = element.getAsJsonObject().get("properties").getAsJsonObject();
             JsonObject kakao_account = element.getAsJsonObject().get("kakao_account").getAsJsonObject();

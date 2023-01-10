@@ -66,7 +66,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilter
                     }
                 }
                 catch (Exception e) {
-                    log.info("jwtAuthenticationFilter Exception : "+e.getStackTrace());
+                    log.info("jwtAuthenticationFilter Exception : {}", e.getStackTrace());
                     throw e;
                 }
 
