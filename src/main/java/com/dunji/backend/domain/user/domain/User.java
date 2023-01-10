@@ -13,7 +13,6 @@ import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,8 +39,8 @@ public class User extends BaseTimeEntity implements UserDetails {
     private String phoneNum;
     private String userType;
     private String gender;
-    private Boolean authCheck;
     private String univName;
+    private Boolean authCheck; //TODO : 컬럼명 변경 고려 - isUnivEmailChecked
 
 //    @Temporal(TemporalType.TIMESTAMP)
     private Date delDate;
@@ -51,6 +50,15 @@ public class User extends BaseTimeEntity implements UserDetails {
 
 //    @Column(nullable = false)
 //    private String userName;
+
+    public void updateUnivEmailAuth(String univName, Boolean isChecked) {
+        this.univName = univName;
+        this.authCheck = isChecked;
+    }
+
+    public void updateRoles(List<String> roles) {
+        this.roles = roles;
+    }
 
 
     ///-- toDto method --///

@@ -37,8 +37,7 @@ public class AuthService {
     public User updateUserEmailAuth(String univName, Boolean isEmailChecked) {
         log.info("[SERVICE] updateUserEmailAuth");
         User user = getUserFromSecurity();
-        user.setUnivName(univName);
-        user.setAuthCheck(isEmailChecked);
+        user.updateUnivEmailAuth(univName, isEmailChecked);
         return userDao.save(user);
     }
 
@@ -86,11 +85,11 @@ public class AuthService {
         Optional<User> userOptional = userDao.findByEmail(user.getEmail());
 
         if(userOptional.isEmpty()){
-            log.info("[SERVICE] userLoginWithSignUp : User not exist. Sign up and login");
-            user.setRoles(Collections.singletonList(ROLE_USER));
+            log.info("userLoginWithSignUp : User not exist. Sign up and login");
+            user.updateRoles(Collections.singletonList(ROLE_USER));
             return userSave(user);
         }else{
-            log.info("[SERVICE] userLoginWithSignUp : Existing user. Login");
+            log.info("userLoginWithSignUp : Existing user. Login");
             return userOptional.get();
         }
     }
