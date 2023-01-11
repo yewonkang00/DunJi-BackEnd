@@ -76,8 +76,8 @@ public class KakaoService {
             access_Token = element.getAsJsonObject().get(ACCESS_TOKEN).getAsString();
             refresh_Token = element.getAsJsonObject().get(REFRESH_TOKEN).getAsString();
 
-            log.debug("{} : {}", ACCESS_TOKEN, access_Token);
-            log.debug("{} : {}", REFRESH_TOKEN, refresh_Token);
+            log.info("kakao {} : {}", ACCESS_TOKEN, access_Token);
+            log.info("kakao {} : {}", REFRESH_TOKEN, refresh_Token);
 
             br.close();
             bw.close();
