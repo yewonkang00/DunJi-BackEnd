@@ -25,7 +25,7 @@ public class KakaoService {
     private final String INFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
     private final String TOKEN_GRANT_TYPE = "authorization_code";
 
-    private final String TOKEN_REDIRECT_URI = "http://localhost:8080/api/v1/users/login/kakao";
+    private final String TOKEN_REDIRECT_URI = "http://localhost:8080/api/v1/users/login/kakao"; //받은 인가코드로 요청한 토큰이 리다이렉트되는 url
     private final String API_KEY = "00c48270395b6a27deb3c5a044c1407f";
     private final String ACCESS_TOKEN = "access_token";
     private final String REFRESH_TOKEN = "refresh_token";
