@@ -5,6 +5,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+
+import com.dungzi.backend.domain.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,4 +26,5 @@ public class ChatRoom {
     private UUID chatRoomId;
 
     private ChatRoomType chatRoomType;
+    private User opponentUser;
 }
