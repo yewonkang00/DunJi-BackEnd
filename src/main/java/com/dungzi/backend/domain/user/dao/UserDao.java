@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.stereotype.Repository;
 
-public interface UserDao extends JpaRepository<User, String> {
-    Optional<User> findByUserId(UUID userId);
+@Repository
+public interface UserDao extends JpaRepository<User, UUID> {
 
     Optional<User> findByEmail(String email);
-    Optional<User> findByNickName(String nickName);
+    Optional<User> findByNickname(String nickname);
 }
