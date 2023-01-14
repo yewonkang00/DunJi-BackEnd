@@ -5,6 +5,7 @@ import com.dungzi.backend.domain.user.dto.UserResponseDto;
 import com.dungzi.backend.global.common.BaseTimeEntity;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,7 +24,9 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(16)", nullable = false)
+    @Column( nullable = false, length = 36)
+    @Type(type = "uuid-char")
+//    @Column(columnDefinition = "BINARY(16)", nullable = false)
     private UUID userId;
 
     @Column(nullable = false)
