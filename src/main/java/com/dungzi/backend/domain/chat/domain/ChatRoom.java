@@ -27,5 +27,5 @@ public class ChatRoom {
     @Type(type = "uuid-char")
     private UUID chatRoomId;
 
-    private ChatRoomType chatRoomType;
+
 }
