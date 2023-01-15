@@ -1,4 +1,4 @@
-package com.dungzi.backend.domain.chat.domain.dto;
+package com.dungzi.backend.domain.chat.dto;
 
 import com.dungzi.backend.domain.chat.domain.ChatRoom;
 import com.dungzi.backend.domain.chat.domain.ChatRoomType;

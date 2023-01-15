@@ -1,4 +1,4 @@
-package com.dungzi.backend.domain.chat.domain.dto;
+package com.dungzi.backend.domain.chat.dto;
 
 import com.dungzi.backend.domain.chat.domain.ChatRoomType;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
