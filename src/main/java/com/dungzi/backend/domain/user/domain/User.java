@@ -1,5 +1,6 @@
 package com.dungzi.backend.domain.user.domain;
 
+import com.dungzi.backend.domain.chat.domain.UserChatRoom;
 import com.dungzi.backend.domain.user.dto.UserDto;
 import com.dungzi.backend.domain.user.dto.UserResponseDto;
 import com.dungzi.backend.global.common.BaseTimeEntity;
@@ -44,22 +45,31 @@ public class User extends BaseTimeEntity implements UserDetails {
     private String univName;
     private Boolean authCheck; //TODO : 컬럼명 변경 고려 - isUnivEmailChecked
 
-//    @Temporal(TemporalType.TIMESTAMP)
+    //    @Temporal(TemporalType.TIMESTAMP)
     private Date delDate;
 
 //    @Column(nullable = false)
 //    private String token;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
 //    private String userName;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<UserChatRoom> userChatRooms = new ArrayList<>();
+
 
     public void updateUnivEmailAuth(String univName, Boolean isChecked) {
+
         this.univName = univName;
         this.authCheck = isChecked;
     }
 
     public void updateRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public void addUserChatRoom(UserChatRoom userChatRoom) {
+        this.userChatRooms.add(userChatRoom);
     }
 
 

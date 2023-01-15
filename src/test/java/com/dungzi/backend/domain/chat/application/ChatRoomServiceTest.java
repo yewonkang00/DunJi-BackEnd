@@ -7,6 +7,7 @@ import com.dungzi.backend.domain.chat.domain.ChatRoomType;
 import com.dungzi.backend.domain.chat.domain.UserChatRoom;
 import com.dungzi.backend.domain.chat.dao.ChatRoomDao;
 import com.dungzi.backend.domain.chat.dao.UserChatRoomDao;
+import com.dungzi.backend.domain.user.application.UserService;
 import com.dungzi.backend.domain.user.dao.UserDao;
 import com.dungzi.backend.domain.user.domain.User;
 import java.util.Optional;
@@ -21,7 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@Import(ChatRoomService.class)
+@Import({ChatRoomService.class, UserService.class})
 @DataJpaTest
 class ChatRoomServiceTest {
     @Autowired
@@ -33,18 +34,15 @@ class ChatRoomServiceTest {
     @Autowired
     private UserDao userDao;
 
-    private  User ownUser = User.builder().nickname("test").email("test@naver.com").build();
+    private User ownUser = User.builder().nickname("test").email("test@naver.com").build();
     private User opponentUser = User.builder().nickname("opponent").email("opponent@naver.com").build();
 
     @BeforeEach
-    void saveAndFlushUser() {
-        userDao.saveAndFlush(opponentUser);
-        userDao.saveAndFlush(ownUser);
+    void saveUser() {
+        userDao.save(opponentUser);
+        userDao.save(ownUser);
     }
-    @AfterEach
-    void deleteUserAll() {
-        userDao.deleteAll();
-    }
+
 
     @Test
     @DisplayName("채팅방 생성(기존에 없는경우)")
@@ -53,8 +51,8 @@ class ChatRoomServiceTest {
         //when
         chatRoomService.createChatRoom(ownUser, opponentUser);
         //then
-        UserChatRoom ownChatRoom = userChatRoomDao.findByUser(ownUser).get(0);
-        UserChatRoom opponentChatRoom = userChatRoomDao.findByUser(opponentUser).get(0);
+        UserChatRoom ownChatRoom = ownUser.getUserChatRooms().get(0);
+        UserChatRoom opponentChatRoom = opponentUser.getUserChatRooms().get(0);
         assertThat(ownChatRoom.getChatRoom()).isEqualTo(opponentChatRoom.getChatRoom());
         assertThat(ownChatRoom.getChatRoomType()).isEqualTo(ChatRoomType.SEEK);
         assertThat(opponentChatRoom.getChatRoomType()).isEqualTo(ChatRoomType.GIVEN_OUT);
@@ -65,7 +63,6 @@ class ChatRoomServiceTest {
     void findExistRoom() {
         //given
         ChatRoom chatRoom = chatRoomService.createChatRoom(ownUser, opponentUser);
-        chatRoomDao.saveAndFlush(chatRoom);
         //when
         Optional<ChatRoom> existRoom = chatRoomService.findExistRoom(ownUser, opponentUser);
         //then
@@ -81,8 +78,6 @@ class ChatRoomServiceTest {
         //then
         assertThat(existRoom.isEmpty()).isTrue();
     }
-
-
 
 
 }

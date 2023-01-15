@@ -5,6 +5,8 @@ import com.dungzi.backend.domain.chat.domain.ChatRoomType;
 import com.dungzi.backend.domain.chat.domain.UserChatRoom;
 import com.dungzi.backend.domain.chat.dao.ChatRoomDao;
 import com.dungzi.backend.domain.chat.dao.UserChatRoomDao;
+import com.dungzi.backend.domain.user.application.UserService;
+import com.dungzi.backend.domain.user.dao.UserDao;
 import com.dungzi.backend.domain.user.domain.User;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChatRoomService {
     private final ChatRoomDao chatRoomDao;
     private final UserChatRoomDao userChatRoomDao;
+    private final UserService userService;
 
 
     @Transactional
@@ -28,23 +31,25 @@ public class ChatRoomService {
         ChatRoom chatRoom = chatRoomDao.save(ChatRoom.builder()
                 .build());
 
-        userChatRoomDao.save(UserChatRoom.builder()
-                .chatRoom(chatRoom)
-                .user(ownUser)
-                .chatRoomType(ChatRoomType.SEEK)
-                .build());
+        saveUserChatRoom(chatRoom, ownUser, ChatRoomType.SEEK);
+        saveUserChatRoom(chatRoom, opponentUser, ChatRoomType.GIVEN_OUT);
 
-        userChatRoomDao.save(UserChatRoom.builder()
-                .chatRoom(chatRoom)
-                .user(opponentUser)
-                .chatRoomType(ChatRoomType.GIVEN_OUT)
-                .build());
         return chatRoom;
     }
 
+    private void saveUserChatRoom(ChatRoom chatRoom, User user, ChatRoomType seek) {
+        UserChatRoom userChatRoom = userChatRoomDao.save(UserChatRoom.builder()
+                .chatRoom(chatRoom)
+                .user(user)
+                .chatRoomType(seek)
+                .build());
+
+        userService.addUserChatRoom(user, userChatRoom);
+    }
+
     public Optional<ChatRoom> findExistRoom(User ownUser, User opponentUser) {
-        List<UserChatRoom> ownUserChatRooms = userChatRoomDao.findByUser(ownUser);
-        List<UserChatRoom> opponentUserChatRooms = userChatRoomDao.findByUser(opponentUser);
+        List<UserChatRoom> ownUserChatRooms = ownUser.getUserChatRooms();
+        List<UserChatRoom> opponentUserChatRooms = opponentUser.getUserChatRooms();
 
         HashSet<ChatRoom> ownUserChatRoomSet = makeHashSet(ownUserChatRooms);
 
