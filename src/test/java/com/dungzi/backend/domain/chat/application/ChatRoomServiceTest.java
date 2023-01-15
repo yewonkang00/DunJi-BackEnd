@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-@Import({ChatRoomService.class, UserService.class})
+@Import({ChatRoomService.class})
 @DataJpaTest
 class ChatRoomServiceTest {
     @Autowired

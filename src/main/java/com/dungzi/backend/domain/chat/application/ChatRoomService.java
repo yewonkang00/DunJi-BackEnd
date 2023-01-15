@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChatRoomService {
     private final ChatRoomDao chatRoomDao;
     private final UserChatRoomDao userChatRoomDao;
-    private final UserService userService;
 
 
     @Transactional
@@ -44,7 +43,7 @@ public class ChatRoomService {
                 .chatRoomType(seek)
                 .build());
 
-        userService.addUserChatRoom(user, userChatRoom);
+        user.addUserChatRoom(userChatRoom);
     }
 
     public Optional<ChatRoom> findExistRoom(User ownUser, User opponentUser) {

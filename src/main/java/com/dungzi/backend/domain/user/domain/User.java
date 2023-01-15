@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 @Getter
 @NoArgsConstructor
@@ -68,6 +69,7 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.roles = roles;
     }
 
+    @Transactional
     public void addUserChatRoom(UserChatRoom userChatRoom) {
         this.userChatRooms.add(userChatRoom);
     }
