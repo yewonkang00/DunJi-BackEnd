@@ -1,7 +1,10 @@
 package com.dungzi.backend.domain.chat.api;
 
+import com.dungzi.backend.domain.chat.dao.ChatRoomDao;
+import com.dungzi.backend.domain.chat.dao.UserChatRoomDao;
 import com.dungzi.backend.domain.chat.domain.ChatRoom;
 import com.dungzi.backend.domain.chat.application.ChatRoomService;
+import com.dungzi.backend.domain.chat.domain.UserChatRoom;
 import com.dungzi.backend.domain.chat.dto.ChatRoomRequestDto;
 import com.dungzi.backend.domain.chat.dto.ChatRoomResponseDto.CreateChatRoom;
 import com.dungzi.backend.domain.user.application.AuthService;
@@ -12,7 +15,9 @@ import com.dungzi.backend.global.common.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +32,8 @@ public class ChatRoomController {
     private final UserDao userDao;
     private final ChatRoomService chatRoomService;
 
+    private final UserChatRoomDao userChatRoomDao;
+    private final ChatRoomDao chatRoomDao;
 
 
     @Operation(summary = "채팅방 생성 api", description = "채팅방 생성을 위한 api")
@@ -54,7 +61,19 @@ public class ChatRoomController {
         return CommonResponse.toResponse(
                 CommonCode.CREATED,
                 CreateChatRoom.builder()
-                .chatRoomId(createdRoom.getChatRoomId()).build());
+                        .chatRoomId(createdRoom.getChatRoomId()).build());
+    }
+
+    @DeleteMapping("/room/{roomId}")
+    public CommonResponse createChatRoom(@PathVariable String roomId) {
+        ChatRoom chatRoom = chatRoomDao.findById(UUID.fromString(roomId)).get();
+        List<UserChatRoom> userChatRooms = userChatRoomDao.findByChatRoom(chatRoom);
+        for (UserChatRoom userChatRoom : userChatRooms) {
+            userChatRoomDao.deleteById(userChatRoom.getUserChatRoomId());
+        }
+        chatRoomDao.deleteById(UUID.fromString(roomId));
+
+        return CommonResponse.toResponse(CommonCode.OK);
     }
 
 
