@@ -6,7 +6,7 @@ import com.dungzi.backend.domain.chat.domain.ChatRoom;
 import com.dungzi.backend.domain.chat.application.ChatRoomService;
 import com.dungzi.backend.domain.chat.domain.UserChatRoom;
 import com.dungzi.backend.domain.chat.dto.ChatRoomRequestDto;
-import com.dungzi.backend.domain.chat.dto.ChatRoomResponseDto.CreateChatRoom;
+import com.dungzi.backend.domain.chat.dto.ChatRoomResponseDto;
 import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.dao.UserDao;
 import com.dungzi.backend.domain.user.domain.User;
@@ -45,22 +45,21 @@ public class ChatRoomController {
     )
     @PostMapping("/room")
     public CommonResponse createChatRoom(@RequestBody ChatRoomRequestDto.CreateChatRoom body) {
-        User ownUser = authService.getUserFromSecurity();
-        User opponentUser = userDao.findByNickname(body.getUserNickName()).get();
+        String opponentNickName=body.getUserNickName();
 
         //기존의 채팅방이 있는경우
-        Optional<ChatRoom> existChatRoom = chatRoomService.findExistRoom(ownUser, opponentUser);
+        Optional<ChatRoom> existChatRoom = chatRoomService.findExistRoom(opponentNickName);
         if (existChatRoom.isPresent()) {
             return CommonResponse.toResponse(
                     CommonCode.OK,
-                    CreateChatRoom.builder()
+                    ChatRoomResponseDto.CreateChatRoom.builder()
                             .chatRoomId(existChatRoom.get().getChatRoomId()).build());
         }
 
-        ChatRoom createdRoom = chatRoomService.createChatRoom(ownUser, opponentUser);
+        ChatRoom createdRoom = chatRoomService.createChatRoom(opponentNickName);
         return CommonResponse.toResponse(
                 CommonCode.CREATED,
-                CreateChatRoom.builder()
+                ChatRoomResponseDto.CreateChatRoom.builder()
                         .chatRoomId(createdRoom.getChatRoomId()).build());
     }
 

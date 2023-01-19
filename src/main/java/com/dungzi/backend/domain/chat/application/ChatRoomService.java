@@ -5,6 +5,7 @@ import com.dungzi.backend.domain.chat.domain.ChatRoomType;
 import com.dungzi.backend.domain.chat.domain.UserChatRoom;
 import com.dungzi.backend.domain.chat.dao.ChatRoomDao;
 import com.dungzi.backend.domain.chat.dao.UserChatRoomDao;
+import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.application.UserService;
 import com.dungzi.backend.domain.user.dao.UserDao;
 import com.dungzi.backend.domain.user.domain.User;
@@ -23,10 +24,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChatRoomService {
     private final ChatRoomDao chatRoomDao;
     private final UserChatRoomDao userChatRoomDao;
+    private final AuthService authService;
+    private final UserDao userDao;
 
 
     @Transactional
-    public ChatRoom createChatRoom(User ownUser, User opponentUser) {
+    public ChatRoom createChatRoom(String opponentNickName) {
+        User ownUser = authService.getUserFromSecurity();
+        User opponentUser = userDao.findByNickname(opponentNickName).get();
         ChatRoom chatRoom = chatRoomDao.save(ChatRoom.builder()
                 .build());
 
@@ -46,10 +51,13 @@ public class ChatRoomService {
         user.addUserChatRoom(userChatRoom);
     }
 
-    public Optional<ChatRoom> findExistRoom(User ownUser, User opponentUser) {
+    @Transactional
+    public Optional<ChatRoom> findExistRoom(String opponentNickName) {
+        User opponentUser = userDao.findByNickname(opponentNickName).get();
+        User ownUser = userDao.findById(authService.getUserFromSecurity().getUserId()).get();
+
         List<UserChatRoom> ownUserChatRooms = ownUser.getUserChatRooms();
         List<UserChatRoom> opponentUserChatRooms = opponentUser.getUserChatRooms();
-
         HashSet<ChatRoom> ownUserChatRoomSet = makeHashSet(ownUserChatRooms);
 
         for (UserChatRoom opponentUserChatRoom : opponentUserChatRooms) {
