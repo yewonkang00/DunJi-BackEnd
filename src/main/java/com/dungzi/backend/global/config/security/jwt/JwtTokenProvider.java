@@ -133,6 +133,13 @@ public class JwtTokenProvider {
 //        String token = httpServletRequest.getHeader(tokenType);
         String token = "";
         Cookie[] cookieList = httpServletRequest.getCookies();
+
+        if(cookieList == null || cookieList.length == 0){
+            //가진 쿠키가 없으면 비회원 사용으로 간주함
+            log.info("jwtTokenProvider getToken : cookieList is empty");
+            throw new AuthException(CommonErrorCode.GUEST_USER);
+        }
+
         for(Cookie cookie : cookieList) {
             if(cookie.getName().equals(tokenType)) {
                 token = cookie.getValue();
