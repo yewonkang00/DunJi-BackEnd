@@ -7,7 +7,6 @@ import lombok.Data;
 public class ChatRoomRequestDto {
     @Data
     public static class CreateChatRoom {
-        private ChatRoomType chatRoomType;
         private String userNickName;
     }
 

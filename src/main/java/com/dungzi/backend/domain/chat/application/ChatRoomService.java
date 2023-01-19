@@ -41,7 +41,7 @@ public class ChatRoomService {
 
     @Transactional
     public ChatRoom createChatRoom(String opponentNickName) {
-        User ownUser = authService.getUserFromSecurity();
+        User ownUser = userDao.findById(authService.getUserFromSecurity().getUserId()).get();
         User opponentUser = userDao.findByNickname(opponentNickName).get();
         ChatRoom chatRoom = chatRoomDao.save(ChatRoom.builder()
                 .build());
@@ -58,8 +58,6 @@ public class ChatRoomService {
                 .user(user)
                 .chatRoomType(seek)
                 .build());
-
-        user.addUserChatRoom(userChatRoom);
     }
 
     @Transactional
@@ -69,6 +67,7 @@ public class ChatRoomService {
 
         List<UserChatRoom> ownUserChatRooms = ownUser.getUserChatRooms();
         List<UserChatRoom> opponentUserChatRooms = opponentUser.getUserChatRooms();
+
         HashSet<ChatRoom> ownUserChatRoomSet = makeHashSet(ownUserChatRooms);
 
         for (UserChatRoom opponentUserChatRoom : opponentUserChatRooms) {

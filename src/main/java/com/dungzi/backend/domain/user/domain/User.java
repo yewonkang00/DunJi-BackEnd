@@ -54,7 +54,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     //    @Column(nullable = false)
 //    private String userName;
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user",cascade = {CascadeType.MERGE, CascadeType.PERSIST} , fetch = FetchType.LAZY)
     @Builder.Default
     private List<UserChatRoom> userChatRooms = new ArrayList<>();
 
