@@ -12,6 +12,7 @@ import com.dungzi.backend.domain.user.domain.User;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,16 @@ public class ChatRoomService {
     private final AuthService authService;
     private final UserDao userDao;
 
+
+    @Transactional
+    public void deleteChatRoom(String chatRoomId) {
+        ChatRoom chatRoom = chatRoomDao.findById(UUID.fromString(chatRoomId)).get();
+        List<UserChatRoom> userChatRooms = userChatRoomDao.findByChatRoom(chatRoom);
+        for (UserChatRoom userChatRoom : userChatRooms) {
+            userChatRoomDao.deleteById(userChatRoom.getUserChatRoomId());
+        }
+        chatRoomDao.deleteById(UUID.fromString(chatRoomId));
+    }
 
     @Transactional
     public ChatRoom createChatRoom(String opponentNickName) {

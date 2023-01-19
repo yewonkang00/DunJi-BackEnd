@@ -63,15 +63,9 @@ public class ChatRoomController {
                         .chatRoomId(createdRoom.getChatRoomId()).build());
     }
 
-    @DeleteMapping("/room/{roomId}")
-    public CommonResponse createChatRoom(@PathVariable String roomId) {
-        ChatRoom chatRoom = chatRoomDao.findById(UUID.fromString(roomId)).get();
-        List<UserChatRoom> userChatRooms = userChatRoomDao.findByChatRoom(chatRoom);
-        for (UserChatRoom userChatRoom : userChatRooms) {
-            userChatRoomDao.deleteById(userChatRoom.getUserChatRoomId());
-        }
-        chatRoomDao.deleteById(UUID.fromString(roomId));
-
+    @DeleteMapping("/room/{chatRoomId}")
+    public CommonResponse createChatRoom(@PathVariable String chatRoomId) {
+        chatRoomService.deleteChatRoom(chatRoomId);
         return CommonResponse.toResponse(CommonCode.OK);
     }
 
