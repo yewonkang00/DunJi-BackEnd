@@ -7,7 +7,7 @@ import lombok.Data;
 public class ChatRoomRequestDto {
     @Data
     public static class CreateChatRoom {
-        private String userNickName;
+        private String opponentUserName;
     }
 
 }

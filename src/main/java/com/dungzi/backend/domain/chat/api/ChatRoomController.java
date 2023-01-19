@@ -45,7 +45,7 @@ public class ChatRoomController {
     )
     @PostMapping("/room")
     public CommonResponse createChatRoom(@RequestBody ChatRoomRequestDto.CreateChatRoom body) {
-        String opponentNickName=body.getUserNickName();
+        String opponentNickName=body.getOpponentUserName();
 
         //기존의 채팅방이 있는경우
         Optional<ChatRoom> existChatRoom = chatRoomService.findExistRoom(opponentNickName);
