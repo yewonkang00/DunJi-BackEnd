@@ -20,11 +20,7 @@ public class UserService {
 
     private final UserDao userDao;
 
-    @Transactional
-    public void addUserChatRoom(User user, UserChatRoom userChatRoom) {
-        user.addUserChatRoom(userChatRoom);
-        userDao.save(user);
-    }
+
 
 
     //access_token 발급

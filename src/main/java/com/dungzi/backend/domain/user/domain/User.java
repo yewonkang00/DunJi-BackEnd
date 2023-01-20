@@ -54,9 +54,7 @@ public class User extends BaseTimeEntity implements UserDetails {
 
     //    @Column(nullable = false)
 //    private String userName;
-    @OneToMany(mappedBy = "user",cascade = {CascadeType.MERGE, CascadeType.PERSIST} , fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<UserChatRoom> userChatRooms = new ArrayList<>();
+
 
 
     public void updateUnivEmailAuth(String univName, Boolean isChecked) {
@@ -69,10 +67,6 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.roles = roles;
     }
 
-    @Transactional
-    public void addUserChatRoom(UserChatRoom userChatRoom) {
-        this.userChatRooms.add(userChatRoom);
-    }
 
 
     ///-- toDto method --///
