@@ -13,5 +13,6 @@ import java.util.UUID;
 @Repository
 public interface UserChatRoomDao extends JpaRepository<UserChatRoom, UUID> {
     List<UserChatRoom> findByChatRoom(ChatRoom chatRoom);
+    List<UserChatRoom> findByUser(User user);
 
 }

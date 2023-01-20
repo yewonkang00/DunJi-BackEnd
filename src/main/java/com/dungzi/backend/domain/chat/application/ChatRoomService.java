@@ -65,8 +65,8 @@ public class ChatRoomService {
         User opponentUser = userDao.findByNickname(opponentNickName).get();
         User ownUser = userDao.findById(authService.getUserFromSecurity().getUserId()).get();
 
-        List<UserChatRoom> ownUserChatRooms = ownUser.getUserChatRooms();
-        List<UserChatRoom> opponentUserChatRooms = opponentUser.getUserChatRooms();
+        List<UserChatRoom> ownUserChatRooms = userChatRoomDao.findByUser(ownUser);
+        List<UserChatRoom> opponentUserChatRooms = userChatRoomDao.findByUser(opponentUser);
 
         HashSet<ChatRoom> ownUserChatRoomSet = makeHashSet(ownUserChatRooms);
 
