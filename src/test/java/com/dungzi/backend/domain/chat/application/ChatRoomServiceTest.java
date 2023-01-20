@@ -1,83 +1,61 @@
 package com.dungzi.backend.domain.chat.application;
 
-import static org.assertj.core.api.Assertions.*;
 
-import com.dungzi.backend.domain.chat.domain.ChatRoom;
-import com.dungzi.backend.domain.chat.domain.ChatRoomType;
-import com.dungzi.backend.domain.chat.domain.UserChatRoom;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.dungzi.backend.domain.chat.dao.ChatRoomDao;
 import com.dungzi.backend.domain.chat.dao.UserChatRoomDao;
-import com.dungzi.backend.domain.user.application.UserService;
+import com.dungzi.backend.domain.chat.domain.ChatRoom;
+import com.dungzi.backend.domain.chat.domain.ChatRoomType;
+import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.dao.UserDao;
 import com.dungzi.backend.domain.user.domain.User;
 import java.util.Optional;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(SpringExtension.class)
-@Import({ChatRoomService.class})
-@DataJpaTest
-class ChatRoomServiceTest {
-    @Autowired
-    private ChatRoomService chatRoomService;
-    @Autowired
-    private ChatRoomDao chatRoomDao;
-    @Autowired
-    private UserChatRoomDao userChatRoomDao;
-    @Autowired
+@ExtendWith(MockitoExtension.class)
+public class ChatRoomServiceTest {
+    @Mock
+    private AuthService authService;
+    @Mock
     private UserDao userDao;
+    @Mock
+    private ChatRoomDao chatRoomDao;
+    @Mock
+    private UserChatRoomDao userChatRoomDao;
 
-    private User ownUser = User.builder().nickname("test").email("test@naver.com").build();
-    private User opponentUser = User.builder().nickname("opponent").email("opponent@naver.com").build();
-
-    @BeforeEach
-    void saveUser() {
-        userDao.save(opponentUser);
-        userDao.save(ownUser);
-    }
-
+    @InjectMocks
+    private ChatRoomService chatRoomService;
 
     @Test
-    @DisplayName("채팅방 생성(기존에 없는경우)")
-    void createChatRoom() {
-        //given
-        //when
-        chatRoomService.createChatRoom(ownUser, opponentUser);
-        //then
-        UserChatRoom ownChatRoom = ownUser.getUserChatRooms().get(0);
-        UserChatRoom opponentChatRoom = opponentUser.getUserChatRooms().get(0);
-        assertThat(ownChatRoom.getChatRoom()).isEqualTo(opponentChatRoom.getChatRoom());
-        assertThat(ownChatRoom.getChatRoomType()).isEqualTo(ChatRoomType.SEEK);
-        assertThat(opponentChatRoom.getChatRoomType()).isEqualTo(ChatRoomType.GIVEN_OUT);
+    @DisplayName("채팅방 생성 로직 테스트")
+    public void testCreateChatRoom() {
+        // Arrange
+        String opponentNickName = "opponent";
+        User ownUser = new User();
+        User opponentUser = new User();
+        ChatRoom expectedChatRoom = new ChatRoom();
+        when(authService.getUserFromSecurity()).thenReturn(ownUser);
+        when(userDao.findById(ownUser.getUserId())).thenReturn(Optional.of(ownUser));
+        when(userDao.findByNickname(opponentNickName)).thenReturn(Optional.of(opponentUser));
+        when(chatRoomDao.save(any(ChatRoom.class))).thenReturn(expectedChatRoom);
+
+        // Act
+        ChatRoom actualChatRoom = chatRoomService.createChatRoom(opponentNickName);
+
+        // Assert
+        assertEquals(expectedChatRoom, actualChatRoom);
+        verify(userChatRoomDao).save(argThat(ownUserChatRoom -> ownUserChatRoom.getChatRoom().equals(expectedChatRoom) && ownUserChatRoom.getUser().equals(ownUser) && ownUserChatRoom.getChatRoomType().equals(
+                ChatRoomType.SEEK)));
+        verify(userChatRoomDao).save(argThat(opponentUserChatRoom -> opponentUserChatRoom.getChatRoom().equals(expectedChatRoom) && opponentUserChatRoom.getUser().equals(opponentUser) && opponentUserChatRoom.getChatRoomType().equals(ChatRoomType.GIVEN_OUT)));
     }
-
-    @Test
-    @DisplayName("기존에 있던 채팅방찾기")
-    void findExistRoom() {
-        //given
-        ChatRoom chatRoom = chatRoomService.createChatRoom(ownUser, opponentUser);
-        //when
-        Optional<ChatRoom> existRoom = chatRoomService.findExistRoom(ownUser, opponentUser);
-        //then
-        assertThat(existRoom.isPresent()).isTrue();
-    }
-
-    @Test
-    @DisplayName("기존에 없는 채팅방을 찾기")
-    void findNotExistRoom() {
-        //given
-        //when
-        Optional<ChatRoom> existRoom = chatRoomService.findExistRoom(ownUser, opponentUser);
-        //then
-        assertThat(existRoom.isEmpty()).isTrue();
-    }
-
-
 }
