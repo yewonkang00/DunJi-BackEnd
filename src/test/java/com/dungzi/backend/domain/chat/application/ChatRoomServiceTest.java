@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +20,7 @@ import com.dungzi.backend.domain.user.domain.User;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,8 +60,13 @@ public class ChatRoomServiceTest {
 
         // then
         assertEquals(expectedChatRoom, actualChatRoom);
-        verify(userChatRoomDao).save(argThat(ownUserChatRoom -> ownUserChatRoom.getChatRoom().equals(expectedChatRoom) && ownUserChatRoom.getUser().equals(ownUser) && ownUserChatRoom.getChatRoomType().equals(ChatRoomType.SEEK)));
-        verify(userChatRoomDao).save(argThat(opponentUserChatRoom -> opponentUserChatRoom.getChatRoom().equals(expectedChatRoom) && opponentUserChatRoom.getUser().equals(opponentUser) && opponentUserChatRoom.getChatRoomType().equals(ChatRoomType.GIVEN_OUT)));
+        verify(userChatRoomDao).save(argThat(ownUserChatRoom -> ownUserChatRoom.getChatRoom().equals(expectedChatRoom)
+                && ownUserChatRoom.getUser().equals(ownUser) && ownUserChatRoom.getChatRoomType()
+                .equals(ChatRoomType.SEEK)));
+        verify(userChatRoomDao).save(
+                argThat(opponentUserChatRoom -> opponentUserChatRoom.getChatRoom().equals(expectedChatRoom)
+                        && opponentUserChatRoom.getUser().equals(opponentUser) && opponentUserChatRoom.getChatRoomType()
+                        .equals(ChatRoomType.GIVEN_OUT)));
     }
 
     @Test
@@ -75,9 +82,11 @@ public class ChatRoomServiceTest {
         when(userDao.findByNickname(opponentNickName)).thenReturn(Optional.of(opponentUser));
 
         List<UserChatRoom> ownUserChatRooms = Arrays.asList(
-                UserChatRoom.builder().user(ownUser).chatRoom(expectedChatRoom).chatRoomType(ChatRoomType.SEEK).build());
+                UserChatRoom.builder().user(ownUser).chatRoom(expectedChatRoom).chatRoomType(ChatRoomType.SEEK)
+                        .build());
         List<UserChatRoom> opponentUserChatRooms = Arrays.asList(
-                UserChatRoom.builder().user(opponentUser).chatRoom(expectedChatRoom).chatRoomType(ChatRoomType.GIVEN_OUT).build());
+                UserChatRoom.builder().user(opponentUser).chatRoom(expectedChatRoom)
+                        .chatRoomType(ChatRoomType.GIVEN_OUT).build());
         when(userChatRoomDao.findByUser(ownUser)).thenReturn(ownUserChatRooms);
         when(userChatRoomDao.findByUser(opponentUser)).thenReturn(opponentUserChatRooms);
         // when
@@ -106,5 +115,26 @@ public class ChatRoomServiceTest {
         Optional<ChatRoom> actualChatRoom = chatRoomService.findExistRoom(opponentNickName);
         // then
         assertTrue(actualChatRoom.isEmpty());
+    }
+
+    @Test
+    @DisplayName("채팅방 삭제 로직 테스트")
+    public void testDeleteChatRoom() {
+        // given
+        String chatRoomId = "123e4567-e89b-12d3-a456-426655440000";
+        String ownUserChatRoomId = "123e4567-e89b-12d3-a456-426655440001";
+        String opponentUserChatRoomID = "123e4567-e89b-12d3-a456-426655440002";
+        ChatRoom chatRoom = new ChatRoom();
+        UserChatRoom ownUserChatRoom = UserChatRoom.builder().userChatRoomId(UUID.fromString(ownUserChatRoomId)).chatRoom(chatRoom).build();
+        UserChatRoom opponentUserChatRoom = UserChatRoom.builder().userChatRoomId(UUID.fromString(opponentUserChatRoomID)).chatRoom(chatRoom).build();
+        List<UserChatRoom> haveSameChatRoom = Arrays.asList(ownUserChatRoom, opponentUserChatRoom);
+        when(chatRoomDao.findById(UUID.fromString(chatRoomId))).thenReturn(Optional.of(chatRoom));
+        when(userChatRoomDao.findByChatRoom(chatRoom)).thenReturn(haveSameChatRoom);
+        // when
+        chatRoomService.deleteChatRoom(chatRoomId);
+        // then
+        verify(userChatRoomDao, times(1)).deleteById(ownUserChatRoom.getUserChatRoomId());
+        verify(userChatRoomDao, times(1)).deleteById(opponentUserChatRoom.getUserChatRoomId());
+        verify(chatRoomDao, times(1)).deleteById(UUID.fromString(chatRoomId));
     }
 }
