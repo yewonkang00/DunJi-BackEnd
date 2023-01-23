@@ -54,6 +54,9 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'com.h2database:h2'
 
+    //chatting
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 
 
 }
