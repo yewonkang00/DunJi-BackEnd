@@ -3,8 +3,8 @@ package com.dungzi.backend.domain.chat.domain;
 import java.util.Arrays;
 
 public enum ChatRoomType {
-    SEEK("SEEK"),
-    GIVEN_OUT("GIVEN_OUT");
+    SEEK("seek"),
+    GIVEN_OUT("given_out");
 
     private String type;
 
@@ -17,5 +17,19 @@ public enum ChatRoomType {
                 .filter(value -> value.type.equals(type))
                 .findAny()
                 .orElse(null);
+    }
+
+    public static ChatRoomType findOppositeChatRoomType(ChatRoomType chatRoomType) {
+        ChatRoomType opponentChatRoomType;
+        if (chatRoomType.equals(ChatRoomType.SEEK)) {
+            opponentChatRoomType = ChatRoomType.GIVEN_OUT;
+        } else {
+            opponentChatRoomType = ChatRoomType.SEEK;
+        }
+        return opponentChatRoomType;
+    }
+
+    public String getType() {
+        return type;
     }
 }
