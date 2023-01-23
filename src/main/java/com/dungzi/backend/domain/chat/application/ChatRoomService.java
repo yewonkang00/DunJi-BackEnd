@@ -39,8 +39,9 @@ public class ChatRoomService {
             Optional<UserChatRoom> opponentUserChatRoom = getOpponentUserChatRoom(chatRoomType, ownUserChatRoom);
 
             //TODO 상대방이 없는 채팅인 경우 예외처리(로직상 잘못됨! 여기로 들어가면 안됨!
-//            if (opponentUserChatRoom.isEmpty()) {
-//            }
+            if (opponentUserChatRoom.isEmpty()) {
+                log.error("채팅방 조회시 상대방의 채팅방이 없음. 조회한 유저{}",ownUser.getNickname());
+            }
 
             //TODO 추후 매물관련 데이터 추가
             responseChatRooms.add(ChatRoomResponseDto.UsersChatRooms.builder()
@@ -48,7 +49,7 @@ public class ChatRoomService {
                     .opponentName(opponentUserChatRoom.get().getUser().getNickname())
                     .build());
         }
-
+        log.debug("채팅방 조회");
         return responseChatRooms;
     }
 
@@ -65,10 +66,14 @@ public class ChatRoomService {
     public void deleteChatRoom(String chatRoomId) {
         ChatRoom chatRoom = chatRoomDao.findById(UUID.fromString(chatRoomId)).get();
         List<UserChatRoom> userChatRooms = userChatRoomDao.findByChatRoom(chatRoom);
+        log.debug("채팅방 삭제");
         for (UserChatRoom userChatRoom : userChatRooms) {
             userChatRoomDao.deleteById(userChatRoom.getUserChatRoomId());
+            log.debug("삭제된 채팅방 유저:{}",userChatRoom.getUser().getNickname());
         }
         chatRoomDao.deleteById(UUID.fromString(chatRoomId));
+
+
     }
 
     @Transactional
@@ -80,6 +85,8 @@ public class ChatRoomService {
 
         saveUserChatRoom(chatRoom, ownUser, ChatRoomType.SEEK);
         saveUserChatRoom(chatRoom, opponentUser, ChatRoomType.GIVEN_OUT);
+        log.debug("채팅방 생성 요청한 유저:{}",ownUser.getNickname());
+        log.debug("채팅방 생성을 요청받은 유저:{}",opponentUser.getNickname());
 
         return chatRoom;
     }
