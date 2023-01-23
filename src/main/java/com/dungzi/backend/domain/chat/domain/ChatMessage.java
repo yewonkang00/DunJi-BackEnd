@@ -1,5 +1,7 @@
 package com.dungzi.backend.domain.chat.domain;
 
+import com.dungzi.backend.domain.user.domain.User;
+import com.dungzi.backend.global.common.BaseTimeEntity;
 import java.util.Date;
 import java.util.UUID;
 import javax.persistence.Column;
@@ -23,7 +25,7 @@ import org.hibernate.annotations.Type;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class ChatMessage {
+public class ChatMessage extends BaseTimeEntity {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -39,6 +41,8 @@ public class ChatMessage {
 
     private String content;
 
+    private User sender;
+
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createDate;
+    private Date sendDate;
 }

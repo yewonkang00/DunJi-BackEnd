@@ -1,12 +1,17 @@
 package com.dungzi.backend.domain.chat.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import com.dungzi.backend.domain.user.domain.User;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +31,10 @@ public class ChatRoom {
     @Column( nullable = false,length = 36)
     @Type(type = "uuid-char")
     private UUID chatRoomId;
+
+    @OneToMany(mappedBy = "chatRoom",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<ChatMessage> chatMessages = new ArrayList<ChatMessage>();
 
 
 }
