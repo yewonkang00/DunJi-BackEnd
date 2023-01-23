@@ -5,10 +5,11 @@ import com.dungzi.backend.domain.chat.domain.ChatRoomType;
 import com.dungzi.backend.domain.chat.domain.UserChatRoom;
 import com.dungzi.backend.domain.chat.dao.ChatRoomDao;
 import com.dungzi.backend.domain.chat.dao.UserChatRoomDao;
+import com.dungzi.backend.domain.chat.dto.ChatRoomResponseDto;
 import com.dungzi.backend.domain.user.application.AuthService;
-import com.dungzi.backend.domain.user.application.UserService;
 import com.dungzi.backend.domain.user.dao.UserDao;
 import com.dungzi.backend.domain.user.domain.User;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,37 @@ public class ChatRoomService {
     private final UserChatRoomDao userChatRoomDao;
     private final AuthService authService;
     private final UserDao userDao;
+
+    public List<ChatRoomResponseDto.UsersChatRooms> findChatRoomsBySeekType(ChatRoomType chatRoomType){
+        List<ChatRoomResponseDto.UsersChatRooms> responseChatRooms = new ArrayList<>();
+
+        User ownUser = authService.getUserFromSecurity();
+
+        List<UserChatRoom> ownUserChatRooms = userChatRoomDao.findByUserAndChatRoomType(ownUser,chatRoomType);
+        for (UserChatRoom ownUserChatRoom : ownUserChatRooms) {
+            Optional<UserChatRoom> opponentUserChatRoom = getOpponentUserChatRoom(chatRoomType, ownUserChatRoom);
+
+            //TODO 상대방이 없는 채팅인 경우 예외처리(로직상 잘못됨! 여기로 들어가면 안됨!
+//            if (opponentUserChatRoom.isEmpty()) {
+//            }
+
+            //TODO 추후 매물관련 데이터 추가
+            responseChatRooms.add(ChatRoomResponseDto.UsersChatRooms.builder()
+                    .chatRoomId(ownUserChatRoom.getChatRoom().getChatRoomId())
+                    .opponentName(opponentUserChatRoom.get().getUser().getNickname())
+                    .build());
+        }
+
+        return responseChatRooms;
+    }
+
+    private Optional<UserChatRoom> getOpponentUserChatRoom(ChatRoomType chatRoomType, UserChatRoom ownUserChatRoom) {
+        ChatRoom commonChatRoom = ownUserChatRoom.getChatRoom();
+        ChatRoomType oppositeChatRoomType = ChatRoomType.findOppositeChatRoomType(chatRoomType);
+        Optional<UserChatRoom> opponentUserChatRoom = userChatRoomDao.findByChatRoomAndChatRoomType(commonChatRoom,
+                oppositeChatRoomType);
+        return opponentUserChatRoom;
+    }
 
 
     @Transactional

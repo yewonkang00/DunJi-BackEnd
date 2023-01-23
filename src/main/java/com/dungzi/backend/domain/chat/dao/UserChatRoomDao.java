@@ -1,6 +1,7 @@
 package com.dungzi.backend.domain.chat.dao;
 
 import com.dungzi.backend.domain.chat.domain.ChatRoom;
+import com.dungzi.backend.domain.chat.domain.ChatRoomType;
 import com.dungzi.backend.domain.chat.domain.UserChatRoom;
 import com.dungzi.backend.domain.user.domain.User;
 import java.util.List;
@@ -14,5 +15,6 @@ import java.util.UUID;
 public interface UserChatRoomDao extends JpaRepository<UserChatRoom, UUID> {
     List<UserChatRoom> findByChatRoom(ChatRoom chatRoom);
     List<UserChatRoom> findByUser(User user);
-
+    List<UserChatRoom> findByUserAndChatRoomType(User user, ChatRoomType chatRoomType);
+    Optional<UserChatRoom> findByChatRoomAndChatRoomType(ChatRoom chatRoom, ChatRoomType chatRoomType);
 }
