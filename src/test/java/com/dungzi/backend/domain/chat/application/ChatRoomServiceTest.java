@@ -14,6 +14,7 @@ import com.dungzi.backend.domain.chat.dao.UserChatRoomDao;
 import com.dungzi.backend.domain.chat.domain.ChatRoom;
 import com.dungzi.backend.domain.chat.domain.ChatRoomType;
 import com.dungzi.backend.domain.chat.domain.UserChatRoom;
+import com.dungzi.backend.domain.chat.dto.ChatRoomResponseDto;
 import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.dao.UserDao;
 import com.dungzi.backend.domain.user.domain.User;
@@ -137,4 +138,41 @@ public class ChatRoomServiceTest {
         verify(userChatRoomDao, times(1)).deleteById(opponentUserChatRoom.getUserChatRoomId());
         verify(chatRoomDao, times(1)).deleteById(UUID.fromString(chatRoomId));
     }
+
+
+    @Test
+    @DisplayName("채팅방 조회 테스트-(구하는방 타입, 내놓은방 타입)")
+    public void testFindChatRoomsBySeekType() {
+        //given
+        ChatRoomType chatRoomType = ChatRoomType.SEEK;
+        User ownUser = User.builder().userId(UUID.randomUUID()).nickname("ownUser").build();
+        ChatRoom commonChatRoom = ChatRoom.builder().chatRoomId(UUID.randomUUID()).build();
+        User opponentUser = User.builder().userId(UUID.randomUUID()).nickname("opponentUser").build();
+        UserChatRoom ownUserChatRoom = UserChatRoom.builder()
+                .user(ownUser)
+                .chatRoom(commonChatRoom)
+                .chatRoomType(chatRoomType)
+                .build();
+        UserChatRoom opponentUserChatRoom = UserChatRoom.builder()
+                .user(opponentUser)
+                .chatRoom(commonChatRoom)
+                .chatRoomType(ChatRoomType.findOppositeChatRoomType(chatRoomType))
+                .build();
+        List<UserChatRoom> ownUserChatRooms = List.of(ownUserChatRoom);
+
+        when(authService.getUserFromSecurity()).thenReturn(ownUser);
+        when(userChatRoomDao.findByUserAndChatRoomType(ownUser, chatRoomType)).thenReturn(ownUserChatRooms);
+        when(userChatRoomDao.findByChatRoomAndChatRoomType(commonChatRoom, ChatRoomType.findOppositeChatRoomType(chatRoomType))).thenReturn(Optional.of(opponentUserChatRoom));
+
+        //when
+        List<ChatRoomResponseDto.UsersChatRooms> result = chatRoomService.findChatRoomsBySeekType(chatRoomType);
+
+        //then
+        assertEquals(1, result.size());
+        ChatRoomResponseDto.UsersChatRooms resultChatRooms = result.get(0);
+        assertEquals(commonChatRoom.getChatRoomId(), resultChatRooms.getChatRoomId());
+        assertEquals(opponentUser.getNickname(), resultChatRooms.getOpponentName());
+    }
+
+
 }
