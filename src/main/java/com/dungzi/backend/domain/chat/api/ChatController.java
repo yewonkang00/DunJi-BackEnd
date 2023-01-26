@@ -27,8 +27,9 @@ public class ChatController {
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequestDto messageSendDto) {
         //TODO dto json 메핑 오류 해결할것
-        ChatRoom chatRoom = chatRoomDao.findById(UUID.fromString(messageSendDto.getChatRoomId())).get();
+        ChatRoom chatRoom = chatRoomDao.findById(messageSendDto.getChatRoomId()).get();
         User sender = authService.getUserFromSecurity();
+
 
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
@@ -44,6 +45,6 @@ public class ChatController {
                 .sender(chatMessage.getSender().getNickname())
                 .build();
 
-        messagingTemplate.convertAndSend("/queue/" + messageSendDto.getChatRoomId(), messageReceiveDto);
+        messagingTemplate.convertAndSend("/queue/" + messageSendDto.getChatRoomId().toString(), messageReceiveDto);
     }
 }

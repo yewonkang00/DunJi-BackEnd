@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ChatMessageRequestDto {
-    private String chatRoomId;
+    private UUID chatRoomId;
     private String content;
 //    @Data
 //    public static class MessageSend {
