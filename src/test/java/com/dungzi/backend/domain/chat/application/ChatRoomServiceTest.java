@@ -126,8 +126,14 @@ public class ChatRoomServiceTest {
         String ownUserChatRoomId = "123e4567-e89b-12d3-a456-426655440001";
         String opponentUserChatRoomID = "123e4567-e89b-12d3-a456-426655440002";
         ChatRoom chatRoom = new ChatRoom();
-        UserChatRoom ownUserChatRoom = UserChatRoom.builder().userChatRoomId(UUID.fromString(ownUserChatRoomId)).chatRoom(chatRoom).build();
-        UserChatRoom opponentUserChatRoom = UserChatRoom.builder().userChatRoomId(UUID.fromString(opponentUserChatRoomID)).chatRoom(chatRoom).build();
+        UserChatRoom ownUserChatRoom = UserChatRoom.builder().userChatRoomId(UUID.fromString(ownUserChatRoomId))
+                .chatRoom(chatRoom)
+                .user(User.builder().nickname("test").build())
+                .build();
+        UserChatRoom opponentUserChatRoom = UserChatRoom.builder().userChatRoomId(UUID.fromString(opponentUserChatRoomID))
+                .chatRoom(chatRoom)
+                .user(User.builder().nickname("test2").build())
+                .build();
         List<UserChatRoom> haveSameChatRoom = Arrays.asList(ownUserChatRoom, opponentUserChatRoom);
         when(chatRoomDao.findById(UUID.fromString(chatRoomId))).thenReturn(Optional.of(chatRoom));
         when(userChatRoomDao.findByChatRoom(chatRoom)).thenReturn(haveSameChatRoom);
