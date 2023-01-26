@@ -4,6 +4,7 @@ import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.application.KakaoService;
 import com.dungzi.backend.global.config.security.jwt.JwtAuthenticationFilter;
 import com.dungzi.backend.global.config.security.jwt.JwtTokenProvider;
+import com.dungzi.backend.global.config.security.jwt.JwtTokenWebSocketFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,11 +31,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("api/users/**").hasRole("ROLE_USER")
 //                .antMatchers("/api/v1/login").permitAll() //그 외 요청들은 누구나 접근 허용
 //                .antMatchers("/api/v1/login/**").hasRole("USER")
-                .antMatchers("/","/**").permitAll() //그 외 요청들은 누구나 접근 허용
+                .antMatchers("/", "/**").permitAll() //그 외 요청들은 누구나 접근 허용
 //                .antMatchers("/api/test/hello").permitAll()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, authService),
-                        UsernamePasswordAuthenticationFilter.class);
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new JwtTokenWebSocketFilter(), JwtAuthenticationFilter.class);
         //JwtAuthenticationFilter 를 UsernamePasswordAuthenticationFilter 전에 넣음
     }
 }
