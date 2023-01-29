@@ -58,32 +58,6 @@ public class User extends BaseTimeEntity implements UserDetails {
     }
 
 
-//    ///-- toDto method --///
-//    public UserDto toUserDto() {
-//        return UserDto.builder()
-//                .nickname(this.getNickname())
-//                .email(this.getEmail())
-//                .ci(this.getCi())
-//                .profileImg(this.getProfileImg())
-//                .phoneNum(this.getPhoneNum())
-//                .userType(this.getUserType())
-//                .gender(this.getGender())
-//                .authCheck(this.getAuthCheck())
-//                .univName(this.getUnivName())
-//                .regDate(this.getRegDate())
-//                .delDate(this.getDelDate())
-//                .build();
-//    }
-
-//    public UserResponseDto.UpdateEmailAuth toUpdateEmailAuthResponseDto() {
-//        return  UserResponseDto.UpdateEmailAuth.builder()
-//                .uuid(this.getUserId().toString())
-//                .univName(this.getUnivName())
-//                .emailAuthCheck(this.getAuthCheck())
-//                .build();
-//    }
-
-
     //////////-- set user roles(Authentication) : implements UserDetails --//////////
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
