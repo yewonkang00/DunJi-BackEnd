@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -24,11 +25,12 @@ public class KakaoService {
     private final String TOKEN_REQUEST_URL = "https://kauth.kakao.com/oauth/token";
     private final String INFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
     private final String TOKEN_GRANT_TYPE = "authorization_code";
-
-    private final String TOKEN_REDIRECT_URI = "http://localhost:8080/api/v1/users/login/kakao"; //받은 인가코드로 요청한 토큰이 리다이렉트되는 url
     private final String API_KEY = "00c48270395b6a27deb3c5a044c1407f";
     private final String ACCESS_TOKEN = "access_token";
     private final String REFRESH_TOKEN = "refresh_token";
+
+    @Value("${KAKAO_TOKEN_REDIRECT_URI}")
+    private String tokenRedirectUri; //받은 인가코드로 요청한 토큰이 리다이렉트되는 url
 
     //access_token 발급
     public HashMap<String, String> getKakaoAccessToken(String code) {
@@ -52,7 +54,7 @@ public class KakaoService {
             sb.append("grant_type=" + TOKEN_GRANT_TYPE);
             sb.append("&client_id=" + API_KEY); // REST_API_KEY 입력
 //            sb.append("&redirect_uri=http://3.39.129.136:8090/DungziProject/login/kakao"); // To-Do 인가코드 받은 redirect_uri 입력
-            sb.append("&redirect_uri=" + TOKEN_REDIRECT_URI); // To-Do 인가코드 받은 redirect_uri 입력
+            sb.append("&redirect_uri=" + tokenRedirectUri); // To-Do 인가코드 받은 redirect_uri 입력
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();
