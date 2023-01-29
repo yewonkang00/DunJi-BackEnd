@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "users") // TODO : 언제부터 반영?
 public class User extends BaseTimeEntity implements UserDetails {
 
     @Id
@@ -26,7 +27,6 @@ public class User extends BaseTimeEntity implements UserDetails {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column( nullable = false, length = 36)
     @Type(type = "uuid-char")
-//    @Column(columnDefinition = "BINARY(16)", nullable = false)
     private UUID userId;
 
     @Column(nullable = false)
@@ -42,11 +42,10 @@ public class User extends BaseTimeEntity implements UserDetails {
     private String phoneNum;
     private String userType;
     private String gender;
-    private String univName;
-    private Boolean authCheck; //TODO : 컬럼명 변경 고려 - isUnivEmailChecked
 
 //    @Temporal(TemporalType.TIMESTAMP)
     private Date delDate;
+    private boolean isActivated;
 
 //    @Column(nullable = false)
 //    private String token;
@@ -54,41 +53,35 @@ public class User extends BaseTimeEntity implements UserDetails {
 //    @Column(nullable = false)
 //    private String userName;
 
-    public void updateUnivEmailAuth(String univName, Boolean isChecked) {
-        this.univName = univName;
-        this.authCheck = isChecked;
-    }
-
     public void updateRoles(List<String> roles) {
         this.roles = roles;
     }
 
 
-    ///-- toDto method --///
-    public UserDto toUserDto() {
-        //TODO : 추후 modelmapper 사용 고려
-        return UserDto.builder()
-                .nickname(this.getNickname())
-                .email(this.getEmail())
-                .ci(this.getCi())
-                .profileImg(this.getProfileImg())
-                .phoneNum(this.getPhoneNum())
-                .userType(this.getUserType())
-                .gender(this.getGender())
-                .authCheck(this.getAuthCheck())
-                .univName(this.getUnivName())
-                .regDate(this.getRegDate())
-                .delDate(this.getDelDate())
-                .build();
-    }
+//    ///-- toDto method --///
+//    public UserDto toUserDto() {
+//        return UserDto.builder()
+//                .nickname(this.getNickname())
+//                .email(this.getEmail())
+//                .ci(this.getCi())
+//                .profileImg(this.getProfileImg())
+//                .phoneNum(this.getPhoneNum())
+//                .userType(this.getUserType())
+//                .gender(this.getGender())
+//                .authCheck(this.getAuthCheck())
+//                .univName(this.getUnivName())
+//                .regDate(this.getRegDate())
+//                .delDate(this.getDelDate())
+//                .build();
+//    }
 
-    public UserResponseDto.UpdateEmailAuth toUpdateEmailAuthResponseDto() {
-        return  UserResponseDto.UpdateEmailAuth.builder()
-                .uuid(this.getUserId().toString())
-                .univName(this.getUnivName())
-                .emailAuthCheck(this.getAuthCheck())
-                .build();
-    }
+//    public UserResponseDto.UpdateEmailAuth toUpdateEmailAuthResponseDto() {
+//        return  UserResponseDto.UpdateEmailAuth.builder()
+//                .uuid(this.getUserId().toString())
+//                .univName(this.getUnivName())
+//                .emailAuthCheck(this.getAuthCheck())
+//                .build();
+//    }
 
 
     //////////-- set user roles(Authentication) : implements UserDetails --//////////

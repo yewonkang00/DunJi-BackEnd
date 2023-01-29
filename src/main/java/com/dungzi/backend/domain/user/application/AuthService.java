@@ -1,5 +1,8 @@
 package com.dungzi.backend.domain.user.application;
 
+import com.dungzi.backend.domain.univ.dao.UnivAuthDao;
+import com.dungzi.backend.domain.univ.domain.Univ;
+import com.dungzi.backend.domain.univ.domain.UnivAuth;
 import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.domain.user.dto.UserDto;
 import com.dungzi.backend.global.common.error.AuthException;
@@ -28,17 +31,16 @@ public class AuthService {
     private final String ROLE_USER = "ROLE_USER"; //TODO : 추후 다른 권한 이름들 정리해서 추가 (공인중개사 계정 등)
 
 
+    //TODO : 비회원 상태일 때 예외 처리하기
+    public User getUserFromSecurity() {
+        log.info("[SERVICE] getUserFromSecurity");
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     public User getUserByUuid(String uuid) throws AuthException {
         log.info("[SERVICE] getUserByUuid");
         return userDao.findByUserId(UUID.fromString(uuid))
                 .orElseThrow(() -> new AuthException(CommonErrorCode.NOT_EXIST_USER));
-    }
-
-    public User updateUserEmailAuth(String univName, Boolean isEmailChecked) {
-        log.info("[SERVICE] updateUserEmailAuth");
-        User user = getUserFromSecurity();
-        user.updateUnivEmailAuth(univName, isEmailChecked);
-        return userDao.save(user);
     }
 
     public void setTokenCookieAndSecurityByUser(HttpServletResponse httpServletResponse, User user) {
@@ -103,11 +105,6 @@ public class AuthService {
     public User userSave(User user) {
         log.info("[SERVICE] userSave");
         return userDao.save(user);
-    }
-
-    public User getUserFromSecurity() {
-        log.info("[SERVICE] getUserFromSecurity");
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
 }

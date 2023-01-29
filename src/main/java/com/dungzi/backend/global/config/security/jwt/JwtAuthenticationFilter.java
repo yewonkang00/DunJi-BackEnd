@@ -73,7 +73,8 @@ public class JwtAuthenticationFilter implements Filter {
                     }
                 }
                 catch (Exception e) {
-                    log.info("[FILTER] jwtAuthenticationFilter Exception : {}", e.getStackTrace());
+                    log.info("[FILTER] jwtAuthenticationFilter Exception : ");
+                    e.printStackTrace();
                     throw e;
                 }
 

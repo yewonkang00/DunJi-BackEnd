@@ -165,10 +165,12 @@ public class KakaoService {
             log.debug("nickname : {}", nickname);
             log.debug("ci : {}", ci);
 
+            //TODO : 회원가입 시 user에 저장할 데이터 다시 확인
             user = User.builder()
                     .email(email)
                     .nickname(nickname)
                     .ci(ci)
+                    .isActivated(true)
                     .build();
 
             br.close();

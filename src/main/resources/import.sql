@@ -1,0 +1,1 @@
+-- insert into univ(univ_Id, univ_name, email_domain) values (1, '한양대학교 에리카', 'hanyang.ac.kr');
