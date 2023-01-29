@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Test</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<h1>WebSocket Test</h1>
+<form>
+  <label for="message">Message:</label>
+  <input type="text" id="message" name="message" value="Hello, WebSocket!">
+  <button type="button" onclick="sendMessage()">Send</button>
+</form>
+<br>
+<div id="output"></div>
+
+<script>
+    var stompClient = null;
+
+    function connect() {
+        var socket = new SockJS('/ws-chat');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/queue/f6a9f43a-c04f-49fa-bee5-a3f791ee4ca7', function (greeting) {
+                showMessage(JSON.parse(greeting.body).content);
+            });
+        });
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+        console.log("Disconnected");
+    }
+
+    function sendMessage() {
+        stompClient.send("/app/chat/message", {}, JSON.stringify(
+        { 'chatRoomId': 'f6a9f43a-c04f-49fa-bee5-a3f791ee4ca7','content': document.getElementById('message').value}
+        ));
+    }
+
+    function showMessage(message) {
+        var output = document.getElementById("output");
+        var p = document.createElement("p");
+        p.style.wordWrap = "break-word";
+        p.appendChild(document.createTextNode(message));
+        output.appendChild(p);
+    }
+
+    connect();
+</script>
+</body>
+</html>
