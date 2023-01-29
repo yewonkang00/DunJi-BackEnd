@@ -1,10 +1,8 @@
 package com.dungzi.backend.global.config.security;
 
 import com.dungzi.backend.domain.user.application.AuthService;
-import com.dungzi.backend.domain.user.application.KakaoService;
 import com.dungzi.backend.global.config.security.jwt.JwtAuthenticationFilter;
 import com.dungzi.backend.global.config.security.jwt.JwtTokenProvider;
-import com.dungzi.backend.global.config.security.jwt.JwtTokenWebSocketFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,8 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/api/test/hello").permitAll()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, authService),
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(new JwtTokenWebSocketFilter(), JwtAuthenticationFilter.class);
+                        UsernamePasswordAuthenticationFilter.class);
         //JwtAuthenticationFilter 를 UsernamePasswordAuthenticationFilter 전에 넣음
     }
 }
