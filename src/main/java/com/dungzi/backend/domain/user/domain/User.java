@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "users")
 public class User extends BaseTimeEntity implements UserDetails {
 
     @Id
