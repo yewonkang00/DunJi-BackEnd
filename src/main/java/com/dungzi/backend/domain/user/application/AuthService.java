@@ -31,7 +31,7 @@ public class AuthService {
     private final String ROLE_USER = "ROLE_USER"; //TODO : 추후 다른 권한 이름들 정리해서 추가 (공인중개사 계정 등)
 
 
-    //TODO : 비회원 상태일 때 예외 처리하기
+    //TODO : 비회원 상태일 때, security 에 사용자 정보 없을 때 예외 처리하기
     public User getUserFromSecurity() {
         log.info("[SERVICE] getUserFromSecurity");
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

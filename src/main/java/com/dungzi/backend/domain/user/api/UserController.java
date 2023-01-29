@@ -38,25 +38,21 @@ public class UserController {
     public CommonResponse sendAuthEmail(@RequestBody UserRequestDto.SendEmailAuth body) throws Exception {
         log.info("[API] users/email-auth/send");
         String code = emailService.sendSimpleMessage(body.getEmail());
-//        User user = authService.getUserFromSecurity();
         log.info("이메일 전송 완료. 인증코드 : {}", code);
         UserResponseDto.SendEmailAuth response = UserResponseDto.SendEmailAuth.builder()
-//                .uuid(user.getUserId().toString())
                 .email(body.getEmail())
                 .authCode(code)
                 .build();
         return CommonResponse.toResponse(CommonCode.OK, response);
     }
 
-    @PostMapping("/email-auth") //TODO : PATCH
+    @PatchMapping("/email-auth")
     public CommonResponse updateUserEmailAuth(@RequestBody UserRequestDto.UpdateEmailAuth body) {
         log.info("[API] users/email-auth");
         User user = authService.getUserFromSecurity();
         Univ univ = univService.getUniv(UUID.fromString(body.getUnivId()));
         //TODO : 대학교 이메일 도메인 일치 확인 univService
         UnivAuth univAuth = univAuthService.updateUserEmailAuth(user, univ, body.getUnivEmail(), body.getIsEmailChecked());
-//        User user = authService.updateUserEmailAuth(body.getUnivName(), body.getUnivEmail(), body.getIsEmailChecked());
-//        return CommonResponse.toResponse(CommonCode.OK, user.toUpdateEmailAuthResponseDto());
         return CommonResponse.toResponse(CommonCode.OK, new UserResponseDto.UpdateEmailAuth(user, univAuth));
     }
 
