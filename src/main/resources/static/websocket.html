@@ -23,7 +23,7 @@
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-            stompClient.subscribe('/queue/f6a9f43a-c04f-49fa-bee5-a3f791ee4ca7', function (greeting) {
+            stompClient.subscribe('/queue/4ac9eaaf-cc4a-472d-bf9e-8301c9f1be04', function (greeting) {
                 showMessage(JSON.parse(greeting.body).content);
             });
         });
@@ -38,7 +38,7 @@
 
     function sendMessage() {
         stompClient.send("/app/chat/message", {}, JSON.stringify(
-        { 'chatRoomId': 'f6a9f43a-c04f-49fa-bee5-a3f791ee4ca7','content': document.getElementById('message').value}
+        { 'chatRoomId': '4ac9eaaf-cc4a-472d-bf9e-8301c9f1be04','content': document.getElementById('message').value}
         ));
     }
 
