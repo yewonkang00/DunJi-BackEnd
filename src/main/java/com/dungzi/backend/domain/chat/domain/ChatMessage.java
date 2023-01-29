@@ -41,7 +41,11 @@ public class ChatMessage extends BaseTimeEntity {
 
     private String content;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @Column(name = "sender_id")
     private User sender;
+
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date sendDate;
