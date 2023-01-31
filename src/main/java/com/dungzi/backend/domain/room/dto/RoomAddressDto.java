@@ -1,13 +1,8 @@
 package com.dungzi.backend.domain.room.dto;
 
-import com.dungzi.backend.domain.room.domain.Room;
 import com.dungzi.backend.domain.room.domain.RoomAddress;
-import com.dungzi.backend.domain.user.domain.User;
-import com.dungzi.backend.domain.user.dto.UserDto;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Data
 @Builder

@@ -35,7 +35,7 @@ public class RoomOption extends BaseTimeEntity {
     //@Convert(converter = SetOptionConverter.class)
     private EnumSet<Options> options;
 
-    private String utility;
+    private EnumSet<Utility> utility;
 
     //@Convert(converter = SetAdvantageConverter.class)
     private EnumSet<Advantage> advantage;

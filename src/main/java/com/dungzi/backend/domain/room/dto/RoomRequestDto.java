@@ -8,7 +8,6 @@ import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.domain.user.dto.UserDto;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.UUID;
@@ -26,10 +25,10 @@ public class RoomRequestDto {
     private double latitude;
     private String address;
     private String addressDetail;
-    private Date startedAt;
-    private Date finishedAt;
+    private String startedAt;
+    private String finishedAt;
     private boolean tenancyAgreement;
-    private float roomSize;
+    private double roomSize;
     private int totalFloor;
     private int floor;
     private String structure;

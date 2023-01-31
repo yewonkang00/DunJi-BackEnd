@@ -1,8 +1,6 @@
 package com.dungzi.backend.domain.room.domain;
 
 import com.dungzi.backend.domain.room.dto.RoomAddressDto;
-import com.dungzi.backend.domain.room.dto.RoomDto;
-import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.global.common.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -15,7 +15,7 @@ public class RoomOptionDto {
     private String roomId;
     // 옵션 추가
     private EnumSet<Options> options;
-    private String utility;
+    private EnumSet<Utility> utility;
     private EnumSet<Advantage> advantage;
 
     public RoomOption toEntity(RoomOptionDto optionDto) {

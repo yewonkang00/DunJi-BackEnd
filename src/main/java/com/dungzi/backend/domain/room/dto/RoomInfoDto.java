@@ -11,10 +11,10 @@ import java.util.Date;
 public class RoomInfoDto {
 
     private String roomId;
-    private Date startedAt;
-    private Date finishedAt;
+    private String startedAt;
+    private String finishedAt;
     private boolean tenancyAgreement;
-    private float roomSize;
+    private double roomSize;
     private int totalFloor;
     private int floor;
     private String structure;
