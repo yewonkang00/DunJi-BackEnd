@@ -4,12 +4,11 @@ import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.global.common.Code;
 import com.dungzi.backend.global.common.error.AuthException;
-import com.dungzi.backend.global.common.error.CommonErrorCode;
+import com.dungzi.backend.global.common.error.AuthErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -69,7 +68,7 @@ public class JwtAuthenticationFilter implements Filter {
 
                 }catch (AuthException authException) {
                     Code code = authException.getCode();
-                    if(code == CommonErrorCode.NOT_EXIST_USER){
+                    if(code == AuthErrorCode.NOT_EXIST_USER){
                         log.info("[FILTER] jwtAuthenticationFilter AuthException : "+code.name()+" - "+code.getMessage());
                     }
                 }

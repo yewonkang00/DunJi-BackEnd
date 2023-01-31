@@ -2,7 +2,7 @@ package com.dungzi.backend.global.config.security;
 
 import com.dungzi.backend.domain.user.dao.UserDao;
 import com.dungzi.backend.global.common.error.AuthException;
-import com.dungzi.backend.global.common.error.CommonErrorCode;
+import com.dungzi.backend.global.common.error.AuthErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,6 +21,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String uuid) throws UsernameNotFoundException {
         return userDao.findByUserId(UUID.fromString(uuid)) //User implements UserDetails
-                .orElseThrow(() -> new AuthException(CommonErrorCode.NOT_EXIST_USER)); //TODO : 이거 왜 Handler에 안잡힐까..
+                .orElseThrow(() -> new AuthException(AuthErrorCode.NOT_EXIST_USER)); //TODO : 이거 왜 Handler에 안잡힐까..
     }
 }

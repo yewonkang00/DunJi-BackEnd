@@ -1,19 +1,14 @@
 package com.dungzi.backend.domain.user.application;
 
-import com.dungzi.backend.domain.univ.dao.UnivAuthDao;
-import com.dungzi.backend.domain.univ.domain.Univ;
-import com.dungzi.backend.domain.univ.domain.UnivAuth;
 import com.dungzi.backend.domain.user.domain.User;
-import com.dungzi.backend.domain.user.dto.UserDto;
 import com.dungzi.backend.domain.user.dto.UserRequestDto;
 import com.dungzi.backend.global.common.error.AuthException;
-import com.dungzi.backend.global.common.error.CommonErrorCode;
+import com.dungzi.backend.global.common.error.AuthErrorCode;
 import com.dungzi.backend.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import com.dungzi.backend.domain.user.dao.UserDao;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +36,7 @@ public class AuthService {
     public User getUserByUuid(String uuid) throws AuthException {
         log.info("[SERVICE] getUserByUuid");
         return userDao.findByUserId(UUID.fromString(uuid))
-                .orElseThrow(() -> new AuthException(CommonErrorCode.NOT_EXIST_USER));
+                .orElseThrow(() -> new AuthException(AuthErrorCode.NOT_EXIST_USER));
     }
 
     // TODO : 한 메서드는 한 가지 기능만 하도록 토큰관련 코드 개선할 것
@@ -91,7 +86,7 @@ public class AuthService {
             return userOptional.get();
         }else{
             log.info("login : User not exist.");
-            throw new AuthException(CommonErrorCode.NOT_EXIST_USER);
+            throw new AuthException(AuthErrorCode.NOT_EXIST_USER);
         }
     }
 

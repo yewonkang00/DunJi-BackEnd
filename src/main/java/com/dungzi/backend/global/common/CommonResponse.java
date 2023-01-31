@@ -1,7 +1,7 @@
 package com.dungzi.backend.global.common;
 
 
-import com.dungzi.backend.global.common.error.CommonErrorCode;
+import com.dungzi.backend.global.common.error.AuthErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -30,10 +30,10 @@ public class CommonResponse {
                 .build();
     }
 
-    public static CommonResponse toErrorResponse(CommonErrorCode commonErrorCode) {
+    public static CommonResponse toErrorResponse(AuthErrorCode authErrorCode) {
         return CommonResponse.builder()
-                .code(commonErrorCode.getCode().value())
-                .message(commonErrorCode.getMessage())
+                .code(authErrorCode.getCode().value())
+                .message(authErrorCode.getMessage())
                 .build();
     }
 

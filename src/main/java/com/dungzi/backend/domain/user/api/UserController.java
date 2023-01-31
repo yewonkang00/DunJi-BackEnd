@@ -13,7 +13,7 @@ import com.dungzi.backend.domain.user.dto.UserResponseDto;
 import com.dungzi.backend.global.common.CommonCode;
 import com.dungzi.backend.global.common.CommonResponse;
 import com.dungzi.backend.global.common.error.AuthException;
-import com.dungzi.backend.global.common.error.CommonErrorCode;
+import com.dungzi.backend.global.common.error.AuthErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -69,7 +69,7 @@ public class UserController {
         } catch (Exception e) {
             log.warn("getKakaoUserInfo failed");
             e.printStackTrace();
-            return CommonResponse.toErrorResponse(CommonErrorCode.KAKAO_FAILED);
+            return CommonResponse.toErrorResponse(AuthErrorCode.KAKAO_FAILED);
         }
         UUID uuid = authService.signUpByKakao(kakaoUser, body);
         return CommonResponse.toResponse(CommonCode.OK, new UserResponseDto.SignUpByKakao(uuid));
@@ -100,7 +100,7 @@ public class UserController {
         } catch (Exception e) {
             log.warn("getKakaoUserInfo failed");
             e.printStackTrace();
-            return CommonResponse.toErrorResponse(CommonErrorCode.KAKAO_FAILED);
+            return CommonResponse.toErrorResponse(AuthErrorCode.KAKAO_FAILED);
         }
 
         // TODO : 코드리뷰 필요 - 회원 확인 코드가 Controller와 Service 중 어디에 위치하는 것이 좋을까?
@@ -117,7 +117,7 @@ public class UserController {
             body.setIsUser(true);
         }
         catch(AuthException authException) {
-            if(authException.getCode() == CommonErrorCode.NOT_EXIST_USER){
+            if(authException.getCode() == AuthErrorCode.NOT_EXIST_USER){
                 body.setKakaoAccessToken(kakao_access_token);
                 body.setIsUser(false);
             }

@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public enum CommonErrorCode implements Code {
+public enum AuthErrorCode implements Code {
 
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Token is invalid."), //401
     GUEST_USER(HttpStatus.UNAUTHORIZED, "Request from guest user. Token is empty."), //401
@@ -17,7 +17,7 @@ public enum CommonErrorCode implements Code {
     private String  message;
 
 
-    CommonErrorCode(HttpStatus code, String message) {
+    AuthErrorCode(HttpStatus code, String message) {
         this.code=code;
         this.message=message;
     }
