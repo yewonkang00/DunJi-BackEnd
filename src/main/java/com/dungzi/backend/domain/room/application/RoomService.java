@@ -9,8 +9,6 @@ import com.dungzi.backend.domain.room.domain.RoomAddress;
 import com.dungzi.backend.domain.room.domain.RoomInfo;
 import com.dungzi.backend.domain.room.domain.RoomOption;
 import com.dungzi.backend.domain.room.dto.*;
-import com.dungzi.backend.domain.user.application.AuthService;
-import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.global.s3.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,35 +22,36 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class RoomService {
-    private AuthService authService;
-    private final User user = authService.getUserFromSecurity();;
+
     private final RoomDao roomDao;
     private final RoomAddressDao roomAddressDao;
     private final RoomInfoDao roomInfoDao;
     private final RoomOptionDao roomOptionDao;
 
     @Transactional
-    public String saveAction(RoomRequestDto requestDto, List<MultipartFile> files) throws Exception {
+    public String saveAction(RoomRequestDto requestDto, List<MultipartFile> files) {
 
         RoomDto roomDto = RoomDto.builder()
-                .userId(user.getUserId().toString())
+                .userId(requestDto.getUserId().toString())
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .image(files.size())        //TO-DO : 날짜는 어떤 형식으로 입력할 지
                 .heartNum(0)
                 .build();
 
-        Room room = new Room();
-        room = roomSave(roomDto);
+        Room room = roomSave(roomDto);
         String roomId = (room.getRoomId()).toString();
 
-        FileUploadService.uploadRoomFile(roomId, files);
+        try {
+            FileUploadService.uploadRoomFile(roomId, files);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         requestDto.setRoomId(roomId);
         roomAddressSave(requestDto);
         roomInfoSave(requestDto);
         roomOptionSave(requestDto);
-
 
         return roomId;
     }
@@ -111,7 +110,7 @@ public class RoomService {
         RoomOptionDto optionDto = RoomOptionDto.builder()
                                     .roomId(requestDto.getRoomId())
                                     .options(option)
-                                    .utility(utility.toString())
+                                    .utility(utility)
                                     .advantage(advantage)
                                     .build();
 
