@@ -19,8 +19,9 @@ import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
-@WebFilter(urlPatterns = {"/api/v1/users/login/kakao", "/api/v1/users/email-auth", "/api/v1/chat/*"}) //필터 등록, 필터링 url 설정
-//public class JwtAuthenticationFilter extends GenericFilterBean { //GenericFilterBean 필터 자동 등록
+//@WebFilter(urlPatterns = {"/api/v1/users/login/kakao", "/api/v1/users/email-auth", "/api/v1/chat/*"}) //필터 등록, 필터링 url 설정
+//@WebFilter(urlPatterns = {"/api/v1/chat/*"}) //필터 등록, 필터링 url 설정
+@WebFilter(urlPatterns = {"/api/v1/chat/*", "/api/v1/rooms"}) //필터 등록, 필터링 url 설정
 public class JwtAuthenticationFilter implements Filter {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthService authService;

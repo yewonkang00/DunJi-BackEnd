@@ -5,6 +5,7 @@ import com.dungzi.backend.domain.univ.domain.Univ;
 import com.dungzi.backend.domain.univ.domain.UnivAuth;
 import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.domain.user.dto.UserDto;
+import com.dungzi.backend.domain.user.dto.UserRequestDto;
 import com.dungzi.backend.global.common.error.AuthException;
 import com.dungzi.backend.global.common.error.CommonErrorCode;
 import com.dungzi.backend.global.config.security.jwt.JwtTokenProvider;
@@ -43,15 +44,12 @@ public class AuthService {
                 .orElseThrow(() -> new AuthException(CommonErrorCode.NOT_EXIST_USER));
     }
 
+    // TODO : 한 메서드는 한 가지 기능만 하도록 토큰관련 코드 개선할 것
     public void setTokenCookieAndSecurityByUser(HttpServletResponse httpServletResponse, User user) {
         log.info("[SERVICE] setTokenCookieAndSecurityByUser");
-
-        Map<String, Cookie> cookieMap = createCookieTokenByUser(user);
-        setCookieTokenInResponse(httpServletResponse, cookieMap);
-
+        Map<String, Cookie> cookieMap = setCookieTokenInResponse(httpServletResponse, user);
         Authentication authentication = jwtTokenProvider.getAuthenticationByToken(cookieMap.get("access").getValue());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
     }
 
     private Map<String, Cookie> createCookieTokenByUser(User user) {
@@ -74,12 +72,42 @@ public class AuthService {
         return cookieMap;
     }
 
-    private void setCookieTokenInResponse(HttpServletResponse httpServletResponse, Map<String, Cookie> cookieMap){
+    public Map<String, Cookie> setCookieTokenInResponse(HttpServletResponse httpServletResponse, User user){
+        log.info("[SERVICE] setCookieTokenInResponse");
+        Map<String, Cookie> cookieMap = createCookieTokenByUser(user);
         cookieMap.forEach( (key, cookie) -> {
             httpServletResponse.addCookie(cookie);
         });
+        return cookieMap;
     }
 
+
+    public User login(User user) throws AuthException {
+        log.info("[SERVICE] login");
+        Optional<User> userOptional = isExistUser(user);
+
+        if(userOptional.isPresent()){
+            log.info("login : Existing user. Login");
+            return userOptional.get();
+        }else{
+            log.info("login : User not exist.");
+            throw new AuthException(CommonErrorCode.NOT_EXIST_USER);
+        }
+    }
+
+    private Optional<User> isExistUser(User user) {
+        return userDao.findByEmail(user.getEmail());
+    }
+
+
+    public UUID signUpByKakao(User user, UserRequestDto.SignUpByKakao body) {
+        log.info("[SERVICE] signUpByKakao");
+        user.updateSignUpInfo(body);
+        user.updateRoles(Collections.singletonList(ROLE_USER));
+        return userSave(user).getUserId();
+    }
+
+    //TODO  추후 제거
     @Transactional
     public User userLoginWithSignUp(User user) {
         log.info("[SERVICE] userLoginWithSignUp");
@@ -94,11 +122,6 @@ public class AuthService {
             log.info("userLoginWithSignUp : Existing user. Login");
             return userOptional.get();
         }
-    }
-
-    @Transactional
-    public User userSave(UserDto requestDto) {
-        return userSave(requestDto.toEntity());
     }
 
     @Transactional

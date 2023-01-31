@@ -5,6 +5,9 @@ import com.dungzi.backend.domain.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 public class UserResponseDto {
 
@@ -33,5 +36,23 @@ public class UserResponseDto {
 //        private String uuid;
         private String email;
         private String authCode;
+    }
+
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    public static class KakaoLogin {
+        private Boolean isUser;
+        private UUID uuid;
+        private String kakaoAccessToken;
+    }
+
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    public static class SignUpByKakao {
+        private UUID uuid;
     }
 }

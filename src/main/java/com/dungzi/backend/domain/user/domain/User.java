@@ -1,7 +1,6 @@
 package com.dungzi.backend.domain.user.domain;
 
-import com.dungzi.backend.domain.user.dto.UserDto;
-import com.dungzi.backend.domain.user.dto.UserResponseDto;
+import com.dungzi.backend.domain.user.dto.UserRequestDto;
 import com.dungzi.backend.global.common.BaseTimeEntity;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -51,12 +50,24 @@ public class User extends BaseTimeEntity implements UserDetails {
 //    private String token;
 
 //    @Column(nullable = false)
-//    private String userName;
+    private String name;
 
     public void updateRoles(List<String> roles) {
         this.roles = roles;
     }
 
+    public void updateSignUpInfo(UserRequestDto.SignUpByKakao body) {
+        //TODO : 항목 논의 필요
+        if(body.getUserName() != null){
+            this.name = body.getUserName();
+        }
+        if(body.getNickname() != null){
+            this.nickname = body.getNickname();
+        }
+        if(body.getPhoneNum() != null){
+            this.phoneNum = body.getPhoneNum();
+        }
+    }
 
     //////////-- set user roles(Authentication) : implements UserDetails --//////////
     @ElementCollection(fetch = FetchType.EAGER)

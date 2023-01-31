@@ -15,4 +15,13 @@ public class UserRequestDto {
     public static class SendEmailAuth {
         private String email;
     }
+
+    @Data
+    public static class SignUpByKakao {
+        private String kakaoAccessToken;
+        // TODO : 항목 논의
+        private String userName;
+        private String nickname;
+        private String phoneNum;
+    }
 }
