@@ -2,11 +2,13 @@ package com.dungzi.backend.domain.user.application;
 
 import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.domain.user.dto.UserRequestDto;
+import com.dungzi.backend.global.common.CommonCode;
 import com.dungzi.backend.global.common.error.AuthException;
 import com.dungzi.backend.global.common.error.AuthErrorCode;
 import com.dungzi.backend.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,15 @@ public class AuthService {
     //TODO : 비회원 상태일 때, security 에 사용자 정보 없을 때 예외 처리하기
     public User getUserFromSecurity() {
         log.info("[SERVICE] getUserFromSecurity");
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if((authentication instanceof AnonymousAuthenticationToken)) {
+            log.info("User in spring security is anonymous");
+            throw new AuthException(CommonCode.UNAUTHORIZED);
+        }
+        else{
+            return (User) authentication.getPrincipal();
+        }
+
     }
 
     public User getUserByUuid(String uuid) throws AuthException {
