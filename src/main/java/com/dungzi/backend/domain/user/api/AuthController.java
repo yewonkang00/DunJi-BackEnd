@@ -35,31 +35,31 @@ public class AuthController {
 
     // TODO : 인증 요청 대학교 도메인과 현제 이메일 도메인 일치 확인 로직 추가할 것 (테스트 시에도 불편할 예정)
     @PostMapping("/email-auth/send")
-    public CommonResponse sendAuthEmail(@RequestBody UserRequestDto.SendEmailAuth body) throws Exception {
+    public CommonResponse sendAuthEmail(@RequestBody UserRequestDto.SendEmailAuth requestDto) throws Exception {
         log.info("[API] auth/email-auth/send");
-        String code = emailService.sendSimpleMessage(body.getEmail());
+        String code = emailService.sendSimpleMessage(requestDto.getEmail());
         log.info("이메일 전송 완료. 인증코드 : {}", code);
         UserResponseDto.SendEmailAuth response = UserResponseDto.SendEmailAuth.builder()
-                .email(body.getEmail())
+                .email(requestDto.getEmail())
                 .authCode(code)
                 .build();
         return CommonResponse.toResponse(CommonCode.OK, response);
     }
 
     @PostMapping("/sign-up/kakao")
-    public CommonResponse signUpByKakao(@RequestBody UserRequestDto.SignUpByKakao body) {
+    public CommonResponse signUpByKakao(@RequestBody UserRequestDto.SignUpByKakao requestDto) {
         log.info("[API] auth/sign-up/kakao");
 
         // TODO : 예외처리 중복코드 개선하기
         User kakaoUser;
         try {
-            kakaoUser = kakaoService.getKakaoUserInfo(body.getKakaoAccessToken());
+            kakaoUser = kakaoService.getKakaoUserInfo(requestDto.getKakaoAccessToken());
         } catch (Exception e) {
             log.warn("getKakaoUserInfo failed");
             e.printStackTrace();
             return CommonResponse.toErrorResponse(AuthErrorCode.KAKAO_FAILED);
         }
-        UUID uuid = authService.signUpByKakao(kakaoUser, body);
+        UUID uuid = authService.signUpByKakao(kakaoUser, requestDto);
         return CommonResponse.toResponse(CommonCode.OK, new UserResponseDto.SignUpByKakao(uuid));
     }
 
@@ -95,23 +95,23 @@ public class AuthController {
         // Conroller에 위치할 경우 : login 메서드와 회원확인 메서드 분리. if-else문 사용
         // Service에 위치할 경우 : login 메서드 안에 회원확인 로직 포함. 예외 throw 하여 try-catch문 사용
 //        boolean isRegistered = authService.isRegistered(kakaoUser);
-        UserResponseDto.KakaoLogin body = new UserResponseDto.KakaoLogin();
-//        body.setIsUser(isRegistered);
+        UserResponseDto.KakaoLogin responseDto = new UserResponseDto.KakaoLogin();
+//        responseDto.setIsUser(isRegistered);
 
         try {
             User loginUser = authService.login(kakaoUser);
             authService.setCookieTokenInResponse(httpServletResponse, loginUser); //위로 합치기
-            body.setUuid(loginUser.getUserId());
-            body.setIsUser(true);
+            responseDto.setUuid(loginUser.getUserId());
+            responseDto.setIsUser(true);
         }
         catch(AuthException authException) {
             if(authException.getCode() == AuthErrorCode.NOT_EXIST_USER){
-                body.setKakaoAccessToken(kakao_access_token);
-                body.setIsUser(false);
+                responseDto.setKakaoAccessToken(kakao_access_token);
+                responseDto.setIsUser(false);
             }
         }
 
-        return CommonResponse.toResponse(CommonCode.OK, body);
+        return CommonResponse.toResponse(CommonCode.OK, responseDto);
     }
 
 

@@ -31,7 +31,7 @@ public class UserUtilController {
     private final UnivAuthService univAuthService;
 
     @PatchMapping("/email-auth")
-    public CommonResponse updateUserEmailAuth(@RequestBody UserRequestDto.UpdateEmailAuth body) {
+    public CommonResponse updateUserEmailAuth(@RequestBody UserRequestDto.UpdateEmailAuth requestDto) {
         log.info("[API] users/email-auth");
         User user = null;
         try {
@@ -42,9 +42,9 @@ public class UserUtilController {
                 return CommonResponse.toErrorResponse(AuthErrorCode.GUEST_USER);
             }
         }
-        Univ univ = univService.getUniv(UUID.fromString(body.getUnivId()));
+        Univ univ = univService.getUniv(UUID.fromString(requestDto.getUnivId()));
         // TODO : 대학교 이메일 도메인 일치 확인 univService
-        UnivAuth univAuth = univAuthService.updateUserEmailAuth(user, univ, body.getUnivEmail(), body.getIsEmailChecked());
+        UnivAuth univAuth = univAuthService.updateUserEmailAuth(user, univ, requestDto.getUnivEmail(), requestDto.getIsEmailChecked());
         return CommonResponse.toResponse(CommonCode.OK, new UserResponseDto.UpdateEmailAuth(user, univAuth));
     }
 }
