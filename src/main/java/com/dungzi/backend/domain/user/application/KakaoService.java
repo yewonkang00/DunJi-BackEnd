@@ -20,8 +20,6 @@ import java.util.HashMap;
 @Slf4j
 public class KakaoService {
 
-    private final UserDao userDao;
-
     private final String TOKEN_REQUEST_URL = "https://kauth.kakao.com/oauth/token";
     private final String INFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
     private final String TOKEN_GRANT_TYPE = "authorization_code";
