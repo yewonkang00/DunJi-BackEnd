@@ -56,16 +56,16 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.roles = roles;
     }
 
-    public void updateSignUpInfo(UserRequestDto.SignUpByKakao body) {
+    public void updateSignUpInfo(UserRequestDto.SignUpByKakao requestDto) {
         //TODO : 항목 논의 필요
-        if(body.getUserName() != null){
-            this.name = body.getUserName();
+        if(requestDto.getUserName() != null){
+            this.name = requestDto.getUserName();
         }
-        if(body.getNickname() != null){
-            this.nickname = body.getNickname();
+        if(requestDto.getNickname() != null){
+            this.nickname = requestDto.getNickname();
         }
-        if(body.getPhoneNum() != null){
-            this.phoneNum = body.getPhoneNum();
+        if(requestDto.getPhoneNum() != null){
+            this.phoneNum = requestDto.getPhoneNum();
         }
     }
 

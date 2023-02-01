@@ -28,8 +28,6 @@ public class AuthService {
     
     private final String ROLE_USER = "ROLE_USER"; //TODO : 추후 다른 권한 이름들 정리해서 추가 (공인중개사 계정 등)
 
-
-    //TODO : 비회원 상태일 때, security 에 사용자 정보 없을 때 예외 처리하기
     public User getUserFromSecurity() {
         log.info("[SERVICE] getUserFromSecurity");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -49,7 +47,7 @@ public class AuthService {
                 .orElseThrow(() -> new AuthException(AuthErrorCode.NOT_EXIST_USER));
     }
 
-    // TODO : 한 메서드는 한 가지 기능만 하도록 토큰관련 코드 개선할 것
+    // TODO : 설계가 바뀌면서 더러워졌음. 한 메서드는 한 가지 기능만 하도록 토큰관련 코드 개선할 것
     public void setTokenCookieAndSecurityByUser(HttpServletResponse httpServletResponse, User user) {
         log.info("[SERVICE] setTokenCookieAndSecurityByUser");
         Map<String, Cookie> cookieMap = setCookieTokenInResponse(httpServletResponse, user);
@@ -105,11 +103,11 @@ public class AuthService {
     }
 
 
-    public UUID signUpByKakao(User user, UserRequestDto.SignUpByKakao body) {
+    public UUID signUpByKakao(User user, UserRequestDto.SignUpByKakao requestDto) { // TODO : dto 클래스 의존 없애기?
         log.info("[SERVICE] signUpByKakao");
-        user.updateSignUpInfo(body);
+        user.updateSignUpInfo(requestDto);
         user.updateRoles(Collections.singletonList(ROLE_USER));
-        return userSave(user).getUserId();
+        return userDao.save(user).getUserId();
     }
 
     //TODO  추후 제거
@@ -122,17 +120,11 @@ public class AuthService {
         if(userOptional.isEmpty()){
             log.info("userLoginWithSignUp : User not exist. Sign up and login");
             user.updateRoles(Collections.singletonList(ROLE_USER));
-            return userSave(user);
+            return userDao.save(user);
         }else{
             log.info("userLoginWithSignUp : Existing user. Login");
             return userOptional.get();
         }
-    }
-
-    @Transactional
-    public User userSave(User user) {
-        log.info("[SERVICE] userSave");
-        return userDao.save(user);
     }
 
 }
