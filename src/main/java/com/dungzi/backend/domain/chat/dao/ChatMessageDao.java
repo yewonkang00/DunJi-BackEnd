@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ChatMessageDao extends JpaRepository<ChatMessage, UUID> {
-    Page<ChatMessage> findByChatRoomOrderBySendDateAsc(ChatRoom chatRoom, Pageable pageable);
+    Page<ChatMessage> findByChatRoomOrderBySendDateDesc(ChatRoom chatRoom, Pageable pageable);
 }
