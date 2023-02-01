@@ -1,19 +1,15 @@
 package com.dungzi.backend.domain.chat.application;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.dungzi.backend.domain.chat.dao.ChatMessageDao;
 import com.dungzi.backend.domain.chat.dao.ChatRoomDao;
-import com.dungzi.backend.domain.chat.dao.UserChatRoomDao;
 import com.dungzi.backend.domain.chat.domain.ChatMessage;
 import com.dungzi.backend.domain.chat.domain.ChatRoom;
-import com.dungzi.backend.domain.chat.domain.MessageType;
+import com.dungzi.backend.domain.chat.domain.ChatMessageType;
 import com.dungzi.backend.domain.chat.dto.ChatMessageRequestDto;
-import com.dungzi.backend.domain.user.application.AuthService;
-import com.dungzi.backend.domain.user.dao.UserDao;
 import com.dungzi.backend.domain.user.domain.User;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,7 +52,7 @@ class ChatMessageServiceTest {
                 .chatMessageId(UUID.randomUUID())
                 .chatRoom(chatRoom)
                 .content(messageSendDto.getContent())
-                .messageType(MessageType.MESSAGE)
+                .chatMessageType(ChatMessageType.MESSAGE)
                 .sender(sender)
                 .build();
         when(chatMessageDao.save(any(ChatMessage.class))).thenReturn(savedChatMessage);

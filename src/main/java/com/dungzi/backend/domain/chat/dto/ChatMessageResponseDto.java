@@ -14,10 +14,10 @@ import lombok.Data;
 @Data
 @Builder
 public class ChatMessageResponseDto {
-    private String chatRoomId;
     private String sender;
     private String content;
     private String sendDate;
+    private String messageType;
 
 
     public static String changeDateFormat(LocalDateTime localDateTime) {

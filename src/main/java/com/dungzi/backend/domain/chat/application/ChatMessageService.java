@@ -4,7 +4,7 @@ import com.dungzi.backend.domain.chat.dao.ChatMessageDao;
 import com.dungzi.backend.domain.chat.dao.ChatRoomDao;
 import com.dungzi.backend.domain.chat.domain.ChatMessage;
 import com.dungzi.backend.domain.chat.domain.ChatRoom;
-import com.dungzi.backend.domain.chat.domain.MessageType;
+import com.dungzi.backend.domain.chat.domain.ChatMessageType;
 import com.dungzi.backend.domain.chat.dto.ChatMessageRequestDto;
 import com.dungzi.backend.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class ChatMessageService {
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
                 .content(messageSendDto.getContent())
-                .messageType(MessageType.MESSAGE)
+                .chatMessageType(ChatMessageType.MESSAGE)
                 .sender(sender)
                 .build();
         log.info("채팅 메세지:{}, 보낸 유저:{}, 채팅방:{}", messageSendDto.getContent(), sender.getNickname(),

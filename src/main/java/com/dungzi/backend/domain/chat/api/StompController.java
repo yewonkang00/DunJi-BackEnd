@@ -3,6 +3,7 @@ package com.dungzi.backend.domain.chat.api;
 import com.dungzi.backend.domain.chat.application.ChatMessageService;
 import com.dungzi.backend.domain.chat.application.StompService;
 import com.dungzi.backend.domain.chat.domain.ChatMessage;
+import com.dungzi.backend.domain.chat.domain.ChatMessageType;
 import com.dungzi.backend.domain.chat.dto.ChatMessageRequestDto;
 import com.dungzi.backend.domain.chat.dto.ChatMessageResponseDto;
 import com.dungzi.backend.domain.user.domain.User;
@@ -38,10 +39,10 @@ public class StompController {
         ChatMessage chatMessage = chatMessageService.saveChatMessage(messageSendDto, sender);
 
         ChatMessageResponseDto messageReceiveDto = ChatMessageResponseDto.builder()
-                .chatRoomId(String.valueOf(chatMessage.getChatRoom().getChatRoomId()))
                 .sendDate(ChatMessageResponseDto.changeDateFormat(chatMessage.getSendDate()))
                 .content(chatMessage.getContent())
                 .sender(chatMessage.getSender().getNickname())
+                .messageType(ChatMessageType.MESSAGE.getType())
                 .build();
 
         messagingTemplate.convertAndSend("/queue/" + messageSendDto.getChatRoomId().toString(), messageReceiveDto);
