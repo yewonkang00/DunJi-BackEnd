@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 //public interface UnivDao extends JpaRepository<Univ, Long> {
-public interface UnivDao extends JpaRepository<Univ, UUID> {
+public interface UnivDao extends JpaRepository<Univ, String> {
 
 }

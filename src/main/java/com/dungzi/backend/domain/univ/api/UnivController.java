@@ -22,8 +22,10 @@ public class UnivController {
                 UnivResponseDto.UnivInfo.toUnivInfoList(univService.getUnivAll()));
     }
 
+
+    // TODO : 임시로 만들고 현재 사용하지 않는 API. 추후 관리자 페이지에 대학교 추가 기능이 필요하면 사용
     @PostMapping("")
-    public CommonResponse saveUniv(@RequestBody UnivRequestDto.UnivInfo body) {
-        return CommonResponse.toResponse(CommonCode.OK, univService.saveUniv(body.toEntity()));
+    public CommonResponse saveUniv(@RequestBody UnivRequestDto.UnivInfo requestDto) {
+        return CommonResponse.toResponse(CommonCode.OK, univService.saveUniv(requestDto.toEntity()));
     }
 }

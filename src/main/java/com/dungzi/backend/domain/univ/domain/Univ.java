@@ -18,15 +18,8 @@ import java.util.UUID;
 @Entity
 public class Univ {
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column( nullable = false, length = 36)
-    @Type(type = "uuid-char")
-    private UUID univId;
-
-//    @Id
-//    @Column(nullable = false)
-//    private String univId;
+    @Column(nullable = false)
+    private String univId;
 
     private String univName;
 

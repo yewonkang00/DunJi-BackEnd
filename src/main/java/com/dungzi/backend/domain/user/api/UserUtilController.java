@@ -42,7 +42,7 @@ public class UserUtilController {
                 return CommonResponse.toErrorResponse(AuthErrorCode.GUEST_USER);
             }
         }
-        Univ univ = univService.getUniv(UUID.fromString(requestDto.getUnivId()));
+        Univ univ = univService.getUniv(requestDto.getUnivId());
         // TODO : 대학교 이메일 도메인 일치 확인 univService
         UnivAuth univAuth = univAuthService.updateUserEmailAuth(user, univ, requestDto.getUnivEmail(), requestDto.getIsEmailChecked());
         return CommonResponse.toResponse(CommonCode.OK, new UserResponseDto.UpdateEmailAuth(user, univAuth));

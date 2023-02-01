@@ -13,8 +13,7 @@ public class UnivResponseDto {
     @Builder
     @Data
     public static class UnivInfo {
-        private UUID univId;
-//        private Long univId;
+        private String univId;
         private String univName;
         private String emailDomain;
 
