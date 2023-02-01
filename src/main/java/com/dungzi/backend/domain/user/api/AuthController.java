@@ -50,7 +50,7 @@ public class AuthController {
     public CommonResponse signUpByKakao(@RequestBody UserRequestDto.SignUpByKakao requestDto) {
         log.info("[API] auth/sign-up/kakao");
 
-        // TODO : 예외처리 중복코드 개선하기
+        // TODO : 예외처리 Handler 사용하여 중복코드 개선하기
         User kakaoUser;
         try {
             kakaoUser = kakaoService.getKakaoUserInfo(requestDto.getKakaoAccessToken());
@@ -82,6 +82,8 @@ public class AuthController {
         String kakao_access_token = token.get(ACCESS_TOKEN);
 //        String refresh_token = token.get(REFRESH_TOKEN);
 
+
+        // TODO : 예외처리 Handler 사용하여 중복코드 개선하기
         User kakaoUser;
         try {
             kakaoUser = kakaoService.getKakaoUserInfo(kakao_access_token);
