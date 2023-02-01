@@ -1,11 +1,10 @@
 package com.dungzi.backend.domain.chat.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.dungzi.backend.domain.chat.domain.ChatMessage;
 import com.dungzi.backend.domain.chat.domain.ChatRoom;
-import com.dungzi.backend.domain.chat.domain.MessageType;
+import com.dungzi.backend.domain.chat.domain.ChatMessageType;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -35,21 +34,26 @@ public class ChatMessageDaoTest {
         chatRoomDao.save(chatRoom);
 
         ChatMessage chatMessage1 = ChatMessage.builder()
-                .chatRoom(chatRoom).content("test message 1").messageType(MessageType.MESSAGE)
+                .chatRoom(chatRoom).content("test message 1").chatMessageType(ChatMessageType.MESSAGE)
                 .sendDate(LocalDateTime.now()).build();
-        ChatMessage chatMessage2 = ChatMessage.builder()
-                .chatRoom(chatRoom).content("test message 2").messageType(MessageType.MESSAGE)
-                .sendDate(LocalDateTime.now().minusHours(1)).build();
-        ChatMessage chatMessage3 = ChatMessage.builder()
-                .chatRoom(chatRoom).content("test message 3").messageType(MessageType.MESSAGE)
-                .sendDate(LocalDateTime.now().minusDays(1)).build();
-        chatMessageDao.saveAll(List.of(chatMessage1, chatMessage2, chatMessage3));
+        chatMessageDao.save(chatMessage1);
         chatMessageDao.flush();
+        ChatMessage chatMessage2 = ChatMessage.builder()
+                .chatRoom(chatRoom).content("test message 2").chatMessageType(ChatMessageType.MESSAGE)
+                .sendDate(LocalDateTime.now().plusHours(1)).build();
+        chatMessageDao.save(chatMessage2);
+        chatMessageDao.flush();
+        ChatMessage chatMessage3 = ChatMessage.builder()
+                .chatRoom(chatRoom).content("test message 3").chatMessageType(ChatMessageType.MESSAGE)
+                .sendDate(LocalDateTime.now().plusDays(1)).build();
+        chatMessageDao.save(chatMessage3);
+        chatMessageDao.flush();
+
         // When
-        Page<ChatMessage> chatMessages = chatMessageDao.findByChatRoomOrderBySendDateAsc(chatRoom, PageRequest.of(0, 10));
+        Page<ChatMessage> chatMessages = chatMessageDao.findByChatRoomOrderBySendDateDesc(chatRoom, PageRequest.of(0, 10));
         // Then
-        assertThat(chatMessages.getContent().get(0)).isEqualTo(chatMessage1);
+        assertThat(chatMessages.getContent().get(0)).isEqualTo(chatMessage3);
         assertThat(chatMessages.getContent().get(1)).isEqualTo(chatMessage2);
-        assertThat(chatMessages.getContent().get(2)).isEqualTo(chatMessage3);
+        assertThat(chatMessages.getContent().get(2)).isEqualTo(chatMessage1);
     }
 }
