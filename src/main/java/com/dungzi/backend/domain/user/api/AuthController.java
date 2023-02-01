@@ -24,13 +24,11 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
-public class UserController {
+@RequestMapping("/api/v1/auth")
+public class AuthController {
     private final KakaoService kakaoService;
     private final AuthService authService;
     private final EmailService emailService;
-    private final UnivService univService;
-    private final UnivAuthService univAuthService;
 
     private final String ACCESS_TOKEN = "access_token";
 //    private final String REFRESH_TOKEN = "refresh_token"; //TODO : 카카오 refresh token은 저장해둘 필요 없을까? 탈퇴나 로그아웃 시
@@ -38,7 +36,7 @@ public class UserController {
     // TODO : 인증 요청 대학교 도메인과 현제 이메일 도메인 일치 확인 로직 추가할 것 (테스트 시에도 불편할 예정)
     @PostMapping("/email-auth/send")
     public CommonResponse sendAuthEmail(@RequestBody UserRequestDto.SendEmailAuth body) throws Exception {
-        log.info("[API] users/email-auth/send");
+        log.info("[API] auth/email-auth/send");
         String code = emailService.sendSimpleMessage(body.getEmail());
         log.info("이메일 전송 완료. 인증코드 : {}", code);
         UserResponseDto.SendEmailAuth response = UserResponseDto.SendEmailAuth.builder()
@@ -48,19 +46,9 @@ public class UserController {
         return CommonResponse.toResponse(CommonCode.OK, response);
     }
 
-    @PatchMapping("/email-auth")
-    public CommonResponse updateUserEmailAuth(@RequestBody UserRequestDto.UpdateEmailAuth body) {
-        log.info("[API] users/email-auth");
-        User user = authService.getUserFromSecurity();
-        Univ univ = univService.getUniv(UUID.fromString(body.getUnivId()));
-        // TODO : 대학교 이메일 도메인 일치 확인 univService
-        UnivAuth univAuth = univAuthService.updateUserEmailAuth(user, univ, body.getUnivEmail(), body.getIsEmailChecked());
-        return CommonResponse.toResponse(CommonCode.OK, new UserResponseDto.UpdateEmailAuth(user, univAuth));
-    }
-
     @PostMapping("/sign-up/kakao")
     public CommonResponse signUpByKakao(@RequestBody UserRequestDto.SignUpByKakao body) {
-        log.info("[API] users/sign-up/kakao");
+        log.info("[API] auth/sign-up/kakao");
 
         // TODO : 예외처리 중복코드 개선하기
         User kakaoUser;
@@ -88,7 +76,7 @@ public class UserController {
     @GetMapping("/login/kakao")
     //TODO : 회원가입/로그인 로직 분리, 변경
     public CommonResponse kakaoCallback(@RequestParam String code, HttpServletResponse httpServletResponse) {
-        log.info("[API] users/login/kakao");
+        log.info("[API] auth/login/kakao");
 
         HashMap<String, String> token = kakaoService.getKakaoAccessToken(code);
         String kakao_access_token = token.get(ACCESS_TOKEN);
@@ -98,7 +86,7 @@ public class UserController {
         try {
             kakaoUser = kakaoService.getKakaoUserInfo(kakao_access_token);
         } catch (Exception e) {
-            log.warn("getKakaoUserInfo failed");
+            log.info("getKakaoUserInfo failed");
             e.printStackTrace();
             return CommonResponse.toErrorResponse(AuthErrorCode.KAKAO_FAILED);
         }
@@ -128,10 +116,10 @@ public class UserController {
 
 
 
-    //TODO : 추후 제거
+    ///////////TODO : 추후 제거
     @GetMapping("/login/kakao/login-with-sign-up")
     public CommonResponse kakaoCallbackLoginWithSignUp(@RequestParam String code, HttpServletResponse httpServletResponse) throws Exception {
-        log.info("[API] users/login/kakao/login-with-sign-up");
+        log.info("[API] auth/login/kakao/login-with-sign-up");
 
         HashMap<String, String> token = kakaoService.getKakaoAccessToken(code);
         String kakao_access_token = token.get(ACCESS_TOKEN);

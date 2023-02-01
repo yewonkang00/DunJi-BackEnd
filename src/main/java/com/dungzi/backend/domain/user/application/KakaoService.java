@@ -61,6 +61,9 @@ public class KakaoService {
 
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
+            if(responseCode != 200){
+                log.info("kakao connection failed : {}", conn.getResponseMessage());
+            }
 
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
