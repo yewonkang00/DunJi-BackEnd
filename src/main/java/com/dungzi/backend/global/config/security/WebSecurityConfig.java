@@ -1,7 +1,6 @@
 package com.dungzi.backend.global.config.security;
 
 import com.dungzi.backend.domain.user.application.AuthService;
-import com.dungzi.backend.domain.user.application.KakaoService;
 import com.dungzi.backend.global.config.security.jwt.JwtAuthenticationFilter;
 import com.dungzi.backend.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("api/users/**").hasRole("ROLE_USER")
 //                .antMatchers("/api/v1/login").permitAll() //그 외 요청들은 누구나 접근 허용
 //                .antMatchers("/api/v1/login/**").hasRole("USER")
-                .antMatchers("/","/**").permitAll() //그 외 요청들은 누구나 접근 허용
+                .antMatchers("/", "/**").permitAll() //그 외 요청들은 누구나 접근 허용
 //                .antMatchers("/api/test/hello").permitAll()
 //                .and()
 //                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, authService),
