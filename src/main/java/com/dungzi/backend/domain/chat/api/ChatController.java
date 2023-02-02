@@ -1,12 +1,11 @@
 package com.dungzi.backend.domain.chat.api;
 
+import com.dungzi.backend.domain.chat.application.ChatMessageService;
 import com.dungzi.backend.domain.chat.dao.ChatMessageDao;
 import com.dungzi.backend.domain.chat.dao.ChatRoomDao;
-import com.dungzi.backend.domain.chat.domain.ChatMessage;
 import com.dungzi.backend.domain.chat.domain.ChatRoom;
 import com.dungzi.backend.domain.chat.application.ChatRoomService;
 import com.dungzi.backend.domain.chat.domain.ChatRoomType;
-import com.dungzi.backend.domain.chat.dto.ChatMessageResponseDto;
 import com.dungzi.backend.domain.chat.dto.ChatRoomRequestDto;
 import com.dungzi.backend.domain.chat.dto.ChatRoomResponseDto;
 import com.dungzi.backend.global.common.CommonCode;
@@ -14,13 +13,10 @@ import com.dungzi.backend.global.common.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController {
 
     private final ChatRoomService chatRoomService;
-    private final ChatMessageDao chatMessageDao;
-    private final ChatRoomDao chatRoomDao;
+    private final ChatMessageService chatMessageService;
 
 
     @Operation(summary = "채팅방 생성 api", description = "채팅방 생성을 위한 api")
@@ -105,20 +100,7 @@ public class ChatController {
     )
     @GetMapping("/message")
     public CommonResponse findMessage(@RequestParam("roomId") String roomId, Pageable pageable) {
-        ChatRoom chatRoom = chatRoomDao.findById(UUID.fromString(roomId)).get();
-        Page<ChatMessage> byChatRoomOrderBySendDateAsc = chatMessageDao.findByChatRoomOrderBySendDateDesc(chatRoom,
-                pageable);
-        List<ChatMessageResponseDto> response = new ArrayList<>();
-        for (ChatMessage chatMessage : byChatRoomOrderBySendDateAsc) {
-            response.add(ChatMessageResponseDto.builder()
-                    .sender(chatMessage.getSender().getNickname())
-                    .content(chatMessage.getContent())
-                    .messageType(chatMessage.getChatMessageType().getType())
-                    .sendDate(ChatMessageResponseDto.changeDateFormat(chatMessage.getSendDate())).build())
-            ;
-
-        }
-        return CommonResponse.toResponse(CommonCode.OK,response);
+        return CommonResponse.toResponse(CommonCode.OK,chatMessageService.findAllChatMessage(roomId, pageable));
     }
 
 
