@@ -11,12 +11,20 @@ public class SwaggerConfig {
     public static final String TITLE="Dunji-Rest API";
     public static final String DESCRIPTION="Dunji API명세서";
     public static final String VERSION="v0.0.1";
+    private static final String BASIC_API_PATH="/api/v1";
 
     @Bean
-    public GroupedOpenApi test() {
+    public GroupedOpenApi login() {
         return GroupedOpenApi.builder()
-                .group("test")
-                .pathsToMatch("/api/test/**")
+                .group("login")
+                .pathsToMatch(BASIC_API_PATH+"/users/**")
+                .build();
+    }
+    @Bean
+    public GroupedOpenApi chat() {
+        return GroupedOpenApi.builder()
+                .group("chat")
+                .pathsToMatch(BASIC_API_PATH+"/chat/**")
                 .build();
     }
     @Bean

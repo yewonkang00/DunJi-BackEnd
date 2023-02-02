@@ -30,7 +30,7 @@ public class AuthService {
 
     public User getUserByUuid(String uuid) throws AuthException {
         log.info("[SERVICE] getUserByUuid");
-        return userDao.findByUserId(UUID.fromString(uuid))
+        return userDao.findById(UUID.fromString(uuid))
                 .orElseThrow(() -> new AuthException(CommonErrorCode.NOT_EXIST_USER));
     }
 

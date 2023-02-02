@@ -1,5 +1,6 @@
 package com.dungzi.backend.domain.user.domain;
 
+import com.dungzi.backend.domain.chat.domain.UserChatRoom;
 import com.dungzi.backend.domain.user.dto.UserDto;
 import com.dungzi.backend.domain.user.dto.UserResponseDto;
 import com.dungzi.backend.global.common.BaseTimeEntity;
@@ -13,20 +14,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "users")
 public class User extends BaseTimeEntity implements UserDetails {
 
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column( nullable = false, length = 36)
+    @Column( nullable = false,length = 36)
     @Type(type = "uuid-char")
-//    @Column(columnDefinition = "BINARY(16)", nullable = false)
     private UUID userId;
 
     @Column(nullable = false)
@@ -45,16 +47,19 @@ public class User extends BaseTimeEntity implements UserDetails {
     private String univName;
     private Boolean authCheck; //TODO : 컬럼명 변경 고려 - isUnivEmailChecked
 
-//    @Temporal(TemporalType.TIMESTAMP)
+    //    @Temporal(TemporalType.TIMESTAMP)
     private Date delDate;
 
 //    @Column(nullable = false)
 //    private String token;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
 //    private String userName;
 
+
+
     public void updateUnivEmailAuth(String univName, Boolean isChecked) {
+
         this.univName = univName;
         this.authCheck = isChecked;
     }
@@ -62,6 +67,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     public void updateRoles(List<String> roles) {
         this.roles = roles;
     }
+
 
 
     ///-- toDto method --///

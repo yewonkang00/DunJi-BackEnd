@@ -1,16 +1,27 @@
 package com.dungzi.backend.domain.user.application;
 
+import com.dungzi.backend.domain.chat.domain.UserChatRoom;
+import com.dungzi.backend.domain.user.dao.UserDao;
+import com.dungzi.backend.domain.user.domain.User;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
+
+    private final UserDao userDao;
+
+
+
 
     //access_token 발급
     public String getKakaoAccessToken(String code) {
