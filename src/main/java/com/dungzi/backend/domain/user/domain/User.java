@@ -1,6 +1,9 @@
 package com.dungzi.backend.domain.user.domain;
 
 import com.dungzi.backend.domain.user.dto.UserRequestDto;
+import com.dungzi.backend.domain.chat.domain.UserChatRoom;
+import com.dungzi.backend.domain.user.dto.UserDto;
+import com.dungzi.backend.domain.user.dto.UserResponseDto;
 import com.dungzi.backend.global.common.BaseTimeEntity;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -12,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 @Getter
 @NoArgsConstructor
@@ -24,7 +28,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column( nullable = false, length = 36)
+    @Column( nullable = false,length = 36)
     @Type(type = "uuid-char")
     private UUID userId;
 
@@ -42,7 +46,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     private String userType;
     private String gender;
 
-//    @Temporal(TemporalType.TIMESTAMP)
+    //    @Temporal(TemporalType.TIMESTAMP)
     private Date delDate;
     private boolean isActivated;
 

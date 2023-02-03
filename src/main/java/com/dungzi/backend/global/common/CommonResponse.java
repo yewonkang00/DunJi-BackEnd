@@ -30,6 +30,13 @@ public class CommonResponse {
                 .build();
     }
 
+    public static CommonResponse toResponse(CommonCode commonCode) {
+        return CommonResponse.builder()
+                .code(commonCode.getCode().value())
+                .message(commonCode.getMessage())
+                .build();
+    }
+
     public static CommonResponse toErrorResponse(AuthErrorCode authErrorCode) {
         return CommonResponse.builder()
                 .code(authErrorCode.getCode().value())
