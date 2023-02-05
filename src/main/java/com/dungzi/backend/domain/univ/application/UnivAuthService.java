@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -17,28 +18,32 @@ public class UnivAuthService {
     private final UnivAuthDao univAuthDao;
 
 
+    @Transactional
     public UnivAuth updateUserEmailAuth(User user, Univ univ, String email, Boolean isEmailChecked) {
         log.info("[SERVICE] updateUserEmailAuth");
 //        User user = getUserFromSecurity();
 
         Optional<UnivAuth> univAuthOp = univAuthDao.findByUser(user);
-        UnivAuth univAuth;
+        UnivAuth univAuth = createOrUpdateUnivAuth(univAuthOp, user, univ, email, isEmailChecked);
 
+        return univAuthDao.save(univAuth);
+    }
+
+    private UnivAuth createOrUpdateUnivAuth(Optional<UnivAuth> univAuthOp, User user, Univ univ, String email, Boolean isEmailChecked) {
         if(univAuthOp.isPresent()){
-            univAuth = univAuthOp.get();
+            UnivAuth univAuth = univAuthOp.get();
             univAuth.updateUnivAuth(univ, isEmailChecked);
+            return univAuth;
         }
         else {
             // TODO 고려사항 : 파라미터를 묶은 Controller<->Service 간 model dto클래스를 만들면 이 코드를 그쪽 메서드로 넘길 수 있음
-            univAuth = UnivAuth.builder()
+            return UnivAuth.builder()
                     .user(user)
                     .univ(univ)
                     .email(email)
                     .isChecked(isEmailChecked)
                     .build();
         }
-
-        return univAuthDao.save(univAuth);
     }
 
 }
