@@ -9,6 +9,10 @@ import com.dungzi.backend.domain.room.domain.RoomAddress;
 import com.dungzi.backend.domain.room.domain.RoomInfo;
 import com.dungzi.backend.domain.room.domain.RoomOption;
 import com.dungzi.backend.domain.room.dto.*;
+import com.dungzi.backend.domain.room.dto.RoomResponseDto.RoomRegist;
+import com.dungzi.backend.domain.room.dto.RoomRequestDto.RegisterDto;
+import com.dungzi.backend.domain.user.application.AuthService;
+import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.global.s3.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -27,54 +32,99 @@ public class RoomService {
     private final RoomAddressDao roomAddressDao;
     private final RoomInfoDao roomInfoDao;
     private final RoomOptionDao roomOptionDao;
+    private final AuthService authService;
 
     @Transactional
-    public String saveAction(RoomRequestDto requestDto, List<MultipartFile> files) {
+    public RoomRegist saveAction(RegisterDto requestDto, List<MultipartFile> files, User user) {
 
-        RoomDto roomDto = RoomDto.builder()
-                .userId(requestDto.getUserId().toString())
+        log.info("[Service] saveAction");
+        //User user  = authService.getUserFromSecurity();
+        log.info("[After]");
+        //log.info("[userId]:{}",user);
+        // Room 데이터 저장
+//        RoomDto roomDto = RoomDto.builder()
+//                        .userId(user.getUserId().toString())
+//                        .title(requestDto.getTitle())
+//                        .content(requestDto.getContent())
+//                        .image(0)        //TODO : 날짜는 어떤 형식으로 입력할 지
+//                        .heartNum(0)
+//                        .build();
+
+        Room room = Room.builder()
+                .user(user)
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
-                .image(files.size())        //TO-DO : 날짜는 어떤 형식으로 입력할 지
+                .image(0)        //TODO : 날짜는 어떤 형식으로 입력할 지
                 .heartNum(0)
                 .build();
+        log.info("[finish]");
+        //requestDto.getRoom().setImage(files.size());
+        //requestDto.getRoom().setHeartNum(0);
+        Room roomRes = roomDao.save(room);
 
-        Room room = roomSave(roomDto);
-        String roomId = (room.getRoomId()).toString();
+        // 공통으로 저장되어야 할 roomId
+        UUID roomId = room.getRoomId();
+        //String userId = requestDto.getUserId().toString();
 
+        log.debug("[RoomService] Room Save. 매물 ID:{}, 등록한 유저:{}", roomId, user.getUserId());
+
+//        // RoomAddress 데이터 저장
+//        //requestDto.getAddress().setRoomId(roomId);
+//        RoomAddress address = roomAddressDao.save(requestDto.getAddress().toEntity(roomId));
+//
+//        log.debug("[RoomService] RoomAddress Save. 매물 ID:{}, 등록한 유저:{}", roomId, userId);
+//
+//        // RoomInfo 데이터 저장
+//        //requestDto.getInfo().setRoomId(roomId);
+//        RoomInfo info = roomInfoDao.save(requestDto.getInfo().toEntity(roomId));
+//
+//        log.debug("[RoomService] RoomInfo Save. 매물 ID:{}, 등록한 유저:{}", roomId, userId);
+//
+//        // RoomOption 데이터 저장
+//        requestDto.getOption().setRoomId(roomId);
+//        //RoomOption option = roomOptionDao.save(requestDto.getOption().toEntity());
+//        log.debug("[RoomService] RoomOption Save. 매물 ID:{}, 등록한 유저:{}", roomId, userId);
+
+        // 이미지 저장
         try {
-            FileUploadService.uploadRoomFile(roomId, files);
+            FileUploadService.uploadRoomFile(roomId.toString(), files);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("[RoomService] FileUpload Error. 매물 ID:{}, 등록한 유저:{}", roomId, user.getUserId());
+            e.printStackTrace();
         }
 
-        requestDto.setRoomId(roomId);
-        roomAddressSave(requestDto);
-        roomInfoSave(requestDto);
-        roomOptionSave(requestDto);
 
-        return roomId;
+//        requestDto.setRoomId(roomId);
+//        roomAddressSave(requestDto);
+//        roomInfoSave(requestDto);
+//        roomOptionSave(requestDto);
+
+        RoomRegist responseDto = RoomRegist.builder()
+                                    .roomId(roomId)
+                                    .build();
+        return responseDto;
     }
 
 
-    @Transactional
-    public Room roomSave(RoomDto requestDto) {
-        //requestDto.setUserId(user.getUserId());
-        return roomSave(requestDto.toEntity(requestDto));
-    }
+//    @Transactional
+//    public Room roomSave(RoomDto requestDto) {
+//        //requestDto.setUserId(user.getUserId());
+//        return roomSave(requestDto.toEntity(requestDto));
+//    }
+//
+//    @Transactional
+//    public RoomAddress roomAddressSave(RoomRequestDto requestDto) {
+//        RoomAddress address = roomAddressDao.save(requestDto.toRoomEntity());
+//        return address;
+//    }
+//
+//    @Transactional
+//    public RoomInfo roomInfoSave(RoomRequestDto requestDto) {
+//        return roomInfoSave(requestDto.toInfoEntity(requestDto));
+//    }
 
     @Transactional
-    public RoomAddress roomAddressSave(RoomRequestDto requestDto) {
-        return roomAddressSave(requestDto.toAddressEntity(requestDto));
-    }
-
-    @Transactional
-    public RoomInfo roomInfoSave(RoomRequestDto requestDto) {
-        return roomInfoSave(requestDto.toInfoEntity(requestDto));
-    }
-
-    @Transactional
-    public RoomOption roomOptionSave(RoomRequestDto requestDto) {
+    public RoomOption roomOptionSave(RoomRequestDto.RoomRequestOptionDto requestDto) {
 
         // Option
         EnumSet<Options> option = EnumSet.noneOf(Options.class);
@@ -107,39 +157,45 @@ public class RoomService {
         if(requestDto.isInternet()) utility.add(Utility.internet);
         if(requestDto.isTv()) utility.add(Utility.tv);
 
-        RoomOptionDto optionDto = RoomOptionDto.builder()
-                                    .roomId(requestDto.getRoomId())
-                                    .options(option)
-                                    .utility(utility)
-                                    .advantage(advantage)
-                                    .build();
 
-        return roomOptionSave(optionDto.toEntity(optionDto));
-    }
+        RoomOptionDto roomOptionDto = null;
+        RoomOptionDto room = roomOptionDto.toEnumDto(requestDto.getRoomId(), option, utility, advantage);
+//                RoomOptionDto.builder()
+//                                    .roomId(requestDto.getRoomId())
+//                                    .options(option)
+//                                    .utility(utility)
+//                                    .advantage(advantage)
+//                                    .build();
 
-    @Transactional
-    public Room roomSave(Room room) {
-        log.info("[SERVICE] roomSave");
-        return roomDao.save(room);
-    }
+//        return roomOptionSave(roomOptionDto.toEntity(roomOptionDto));
 
-    @Transactional
-    public RoomAddress roomAddressSave(RoomAddress roomAddress) {
-        log.info("[SERVICE] roomAddressSave");
-        return roomAddressDao.save(roomAddress);
-    }
-
-    @Transactional
-    public RoomInfo roomInfoSave(RoomInfo roomInfo) {
-        log.info("[SERVICE] roomInfoSave");
-        return roomInfoDao.save(roomInfo);
-    }
-
-    @Transactional
-    public RoomOption roomOptionSave(RoomOption roomOption) {
         log.info("[SERVICE] roomOptionSave");
-        return roomOptionDao.save(roomOption);
+        return roomOptionDao.save(room.toEntity(room));
     }
+
+//    @Transactional
+//    public Room roomSave(Room room) {
+//        log.info("[SERVICE] roomSave");
+//        return roomDao.save(room);
+//    }
+//
+//    @Transactional
+//    public RoomAddress roomAddressSave(RoomAddress roomAddress) {
+//        log.info("[SERVICE] roomAddressSave");
+//        return roomAddressDao.save(roomAddress);
+//    }
+//
+//    @Transactional
+//    public RoomInfo roomInfoSave(RoomInfo roomInfo) {
+//        log.info("[SERVICE] roomInfoSave");
+//        return roomInfoDao.save(roomInfo);
+//    }
+//
+//    @Transactional
+//    public RoomOption roomOptionSave(RoomOption roomOption) {
+//        log.info("[SERVICE] roomOptionSave");
+//        return roomOptionDao.save(roomOption);
+//    }
 
     @Transactional
     public List<Room> findRooms() {
