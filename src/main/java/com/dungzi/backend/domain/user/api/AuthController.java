@@ -34,13 +34,14 @@ public class AuthController {
 //    private final String REFRESH_TOKEN = "refresh_token"; //TODO : 카카오 refresh token은 저장해둘 필요 없을까? 탈퇴나 로그아웃 시
 
     // TODO : 인증 요청 대학교 도메인과 현제 이메일 도메인 일치 확인 로직 추가할 것 (테스트 시에도 불편할 예정)
-    @PostMapping("/email-auth/send")
-    public CommonResponse sendAuthEmail(@RequestBody UserRequestDto.SendEmailAuth requestDto) throws Exception {
+    @GetMapping("/code")
+    public CommonResponse sendAuthEmail(@RequestParam String email, @RequestParam String univ) throws Exception {
         log.info("[API] auth/email-auth/send");
-        String code = emailService.sendSimpleMessage(requestDto.getEmail());
+        log.info("univ : {}",univ);
+        String code = emailService.sendSimpleMessage(email);
         log.info("이메일 전송 완료. 인증코드 : {}", code);
         UserResponseDto.SendEmailAuth response = UserResponseDto.SendEmailAuth.builder()
-                .email(requestDto.getEmail())
+                .email(email)
                 .authCode(code)
                 .build();
         return CommonResponse.toResponse(CommonCode.OK, response);
