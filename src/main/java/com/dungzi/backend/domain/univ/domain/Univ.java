@@ -29,10 +29,9 @@ public class Univ {
 
     private String emailDomain;
 
-    public boolean isDomain(String domain) {
+    public void checkDomain(String domain) {
         if(this.getEmailDomain().equals(domain)){
             log.info("univ email domain is correct");
-            return true;
         }
         else{
             throw new UnivException(UnivErrorCode.UNIV_DOMAIN_MISMATCH);

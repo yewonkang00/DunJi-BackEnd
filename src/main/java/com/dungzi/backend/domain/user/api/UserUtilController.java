@@ -14,12 +14,7 @@ import com.dungzi.backend.global.common.error.AuthErrorCode;
 import com.dungzi.backend.global.common.error.AuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.UUID;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -30,9 +25,9 @@ public class UserUtilController {
     private final UnivService univService;
     private final UnivAuthService univAuthService;
 
-    @PatchMapping("/email-auth")
+    @PutMapping("/univs")
     public CommonResponse updateUserEmailAuth(@RequestBody UserRequestDto.UpdateEmailAuth requestDto) {
-        log.info("[API] users/email-auth");
+        log.info("[API] users/univs");
         User user = null;
         try {
             user = authService.getUserFromSecurity();
@@ -42,8 +37,10 @@ public class UserUtilController {
                 return CommonResponse.toErrorResponse(AuthErrorCode.GUEST_USER);
             }
         }
+
         Univ univ = univService.getUniv(requestDto.getUnivId());
-        // TODO : 대학교 이메일 도메인 일치 확인 univService
+        univService.checkUnivDomain(requestDto.getUnivEmail(), univ);
+
         UnivAuth univAuth = univAuthService.updateUserEmailAuth(user, univ, requestDto.getUnivEmail(), requestDto.getIsEmailChecked());
         return CommonResponse.toResponse(CommonCode.OK, new UserResponseDto.UpdateEmailAuth(user, univAuth));
     }

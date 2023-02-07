@@ -3,7 +3,6 @@ package com.dungzi.backend.domain.user.api;
 import com.dungzi.backend.domain.univ.application.UnivAuthService;
 import com.dungzi.backend.domain.univ.application.UnivService;
 import com.dungzi.backend.domain.univ.domain.Univ;
-import com.dungzi.backend.domain.univ.domain.UnivAuth;
 import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.application.EmailService;
 import com.dungzi.backend.domain.user.application.KakaoService;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -40,7 +38,7 @@ public class AuthController {
     @GetMapping("/code")
     public CommonResponse sendAuthEmail(@RequestParam String email, @RequestParam(value = "univ") String univId) throws Exception {
         log.info("[API] auth/email-auth/send");
-        univService.isUnivDomain(email, univId);
+        univService.checkUnivDomain(email, univId);
         String code = emailService.sendSimpleMessage(email);
         log.info("이메일 전송 완료. 인증코드 : {}", code);
         UserResponseDto.SendEmailAuth response = UserResponseDto.SendEmailAuth.builder()
