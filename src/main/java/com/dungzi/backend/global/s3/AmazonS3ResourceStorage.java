@@ -14,16 +14,16 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AmazonS3ResourceStorage {
 
-    @Value("${cloud.aws.s3.bucket}")
-
     //bucketName
-    private final String bucket;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
     private final AmazonS3Client amazonS3Client;
 
     // 폴더 생성 (폴더는 파일명 뒤에 "/"를 붙여야한다.)
     public void createFolder(String bucketName, String folderName) {
         amazonS3Client.putObject(bucketName, folderName + "/", new ByteArrayInputStream(new byte[0]), new ObjectMetadata());
     }
+
     // 파일 업로드
     public void fileUpload(String fileName, byte[] fileData) throws FileNotFoundException {
         String filePath = (fileName).replace(File.separatorChar, '/');

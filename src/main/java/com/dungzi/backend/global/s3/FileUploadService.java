@@ -11,10 +11,11 @@ import java.util.List;
 
 @Slf4j
 public class FileUploadService {
-    @Value("${cloud.aws.s3.bucket}")
 
     //bucketName
+    @Value("${cloud.aws.s3.bucket}")
     private static String bucket;
+
     private static AmazonS3ResourceStorage amazonS3ResourceStorage;
     private static String formatName = "jpg"; // 파일 포맷 jpg로 통일
 
@@ -46,7 +47,7 @@ public class FileUploadService {
             fileName = '/' + ReviewID + '/' + i + "." + formatName;
 
             amazonS3ResourceStorage.fileUpload(bucket+uploadPath+fileName, file.get(i).getBytes());
-            System.out.println("****file name : " + fileName);
+            log.info("[S3] Upload File : " + fileName);
 
         }
 
