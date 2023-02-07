@@ -18,6 +18,7 @@ public class UnivController {
 
     @GetMapping("/all")
     public CommonResponse getUnivAll() {
+        log.info("[API] univs/all");
         return CommonResponse.toResponse(CommonCode.OK,
                 UnivResponseDto.UnivInfo.toUnivInfoList(univService.getUnivAll()));
     }

@@ -48,9 +48,9 @@ public class AuthController {
         return CommonResponse.toResponse(CommonCode.OK, response);
     }
 
-    @PostMapping("/sign-up/kakao")
+    @PostMapping("/kakao")
     public CommonResponse signUpByKakao(@RequestBody UserRequestDto.SignUpByKakao requestDto) {
-        log.info("[API] auth/sign-up/kakao");
+        log.info("[API] auth/kakao");
 
         // TODO : 예외처리 Handler 사용하여 중복코드 개선하기
         User kakaoUser;
@@ -75,10 +75,10 @@ public class AuthController {
 //                    @ApiResponse(responseCode = "404", description = "해당 유저가 없음")
 //            }
 //    )
-    @GetMapping("/login/kakao")
+    @GetMapping("/kakao")
     //TODO : 회원가입/로그인 로직 분리, 변경
     public CommonResponse kakaoCallback(@RequestParam String code, HttpServletResponse httpServletResponse) {
-        log.info("[API] auth/login/kakao");
+        log.info("[API] auth/kakao");
 
         HashMap<String, String> token = kakaoService.getKakaoAccessToken(code);
         String kakao_access_token = token.get(ACCESS_TOKEN);
