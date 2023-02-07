@@ -107,6 +107,9 @@ public class AuthService {
         log.info("[SERVICE] signUpByKakao");
         user.updateSignUpInfo(requestDto);
         user.updateRoles(Collections.singletonList(ROLE_USER));
+
+        // TODO : 대학교 인증 정보 추가 저장
+
         return userDao.save(user).getUserId();
     }
 

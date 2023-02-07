@@ -61,16 +61,9 @@ public class User extends BaseTimeEntity implements UserDetails {
     }
 
     public void updateSignUpInfo(UserRequestDto.SignUpByKakao requestDto) {
-        //TODO : 항목 논의 필요
-        if(requestDto.getUserName() != null){
-            this.name = requestDto.getUserName();
-        }
-        if(requestDto.getNickname() != null){
-            this.nickname = requestDto.getNickname();
-        }
-        if(requestDto.getPhoneNum() != null){
-            this.phoneNum = requestDto.getPhoneNum();
-        }
+        //이메일 변경
+        Optional<String> nicknameOp = Optional.ofNullable(requestDto.getNickname());
+        nicknameOp.ifPresent(nickname -> this.nickname = nickname);
     }
 
     //////////-- set user roles(Authentication) : implements UserDetails --//////////
