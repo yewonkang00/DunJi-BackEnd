@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -17,7 +18,7 @@ import javax.persistence.*;
 public class RoomAddress extends BaseTimeEntity {
     @Id
     @Column(name = "roomId", nullable = false)
-    private String roomId;
+    private UUID roomId;
 
     @OneToOne(fetch = FetchType.EAGER)
     @MapsId
@@ -28,19 +29,23 @@ public class RoomAddress extends BaseTimeEntity {
 //    @JoinColumn(name = "univId")
 //    private Univ univ;
 
-    private double longtitude;
+    private double longitude;
     private double latitude;
     private String address;
     private String addressDetail;
+    private String sigungu;
+    private String dong;
 
     public RoomAddressDto toRoomAddressDto() {
 
         return RoomAddressDto.builder()
-                .roomId(this.getRoomId().toString())
-                .longtitude(this.getLongtitude())
+                .roomId(this.getRoomId())
+                .longitude(this.getLongitude())
                 .latitude(this.getLatitude())
                 .address(this.getAddress())
                 .address(this.getAddressDetail())
+                .sigungu(this.getSigungu())
+                .dong(this.getDong())
                 .build();
     }
 }

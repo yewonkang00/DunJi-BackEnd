@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -18,7 +19,7 @@ public class RoomInfo extends BaseTimeEntity {
 
     @Id
     @Column(name = "roomId", nullable = false)
-    private String roomId;
+    private UUID roomId;
 
     @OneToOne(fetch = FetchType.EAGER)
     @MapsId

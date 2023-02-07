@@ -14,7 +14,7 @@ import java.util.UUID;
 @Builder
 public class RoomDto {
 
-    private String roomId;
+    private UUID roomId;
     private String userId;
     private String univId;
     private String title;
@@ -25,14 +25,14 @@ public class RoomDto {
     private Date dealDate;
     private int heartNum;
 
-    public Room toEntity(RoomDto roomDto) {
+    public Room toEntity(int image) {
         UUID uuid = null;
         if(roomId != null) {
-            uuid = UUID.fromString(roomId);
+            uuid = roomId;
         }
 
         UserDto userDto = null;
-        userDto.setUserId(roomDto.getUserId());
+        //userDto.setUserId(roomDto.getUserId());
         User user = userDto.toEntity();
 
         return Room.builder()

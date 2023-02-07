@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @Builder
 public class RoomInfoDto {
 
-    private String roomId;
+    private UUID roomId;
     private String startedAt;
     private String finishedAt;
     private boolean tenancyAgreement;
@@ -26,7 +27,7 @@ public class RoomInfoDto {
     private int managementCost;
     private boolean fullOption;
 
-    public RoomInfo toEntity(String roomId) {
+    public RoomInfo toEntity(UUID roomId) {
 
         return RoomInfo.builder()
                 .roomId(roomId)

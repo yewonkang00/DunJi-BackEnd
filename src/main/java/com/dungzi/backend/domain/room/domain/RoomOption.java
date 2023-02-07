@@ -4,6 +4,7 @@ import com.dungzi.backend.domain.room.application.SetAdvantageConverter;
 import com.dungzi.backend.domain.room.application.SetOptionConverter;
 import com.dungzi.backend.domain.room.dto.Advantage;
 import com.dungzi.backend.domain.room.dto.Options;
+import com.dungzi.backend.domain.room.dto.RoomOptionDto;
 import com.dungzi.backend.domain.room.dto.Utility;
 import com.dungzi.backend.global.common.BaseTimeEntity;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import javax.persistence.*;
 import java.lang.Enum;
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
@@ -25,7 +27,7 @@ public class RoomOption extends BaseTimeEntity {
 
     @Id
     @Column(name = "roomId", nullable = false)
-    private String roomId;
+    private UUID roomId;
 
     @OneToOne(fetch = FetchType.EAGER)
     @MapsId

@@ -29,7 +29,7 @@ public class Room extends BaseTimeEntity {
     private UUID roomId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
 //    @ManyToOne
@@ -45,20 +45,5 @@ public class Room extends BaseTimeEntity {
     private Date delDate;
     private Date dealDate;
     private int heartNum;
-
-
-    public RoomDto toRoomDto() {
-
-        return RoomDto.builder()
-                .userId(this.getUser().getUserId().toString())
-                .title(this.getTitle())
-                .content(this.getContent())
-                .image(this.getImage())
-                .regDate(this.getRegDate())
-                .delDate(this.getDelDate())
-                .dealDate(this.getDealDate())
-                .heartNum(this.getHeartNum())
-                .build();
-    }
 
 }
