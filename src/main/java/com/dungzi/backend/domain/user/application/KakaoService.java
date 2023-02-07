@@ -20,8 +20,6 @@ import java.util.HashMap;
 @Slf4j
 public class KakaoService {
 
-    private final UserDao userDao;
-
     private final String TOKEN_REQUEST_URL = "https://kauth.kakao.com/oauth/token";
     private final String INFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
     private final String TOKEN_GRANT_TYPE = "authorization_code";
@@ -61,6 +59,9 @@ public class KakaoService {
 
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
+            if(responseCode != 200){
+                log.info("kakao connection failed : {}", conn.getResponseMessage());
+            }
 
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -78,8 +79,8 @@ public class KakaoService {
             access_Token = element.getAsJsonObject().get(ACCESS_TOKEN).getAsString();
             refresh_Token = element.getAsJsonObject().get(REFRESH_TOKEN).getAsString();
 
-            log.debug("{} : {}", ACCESS_TOKEN, access_Token);
-            log.debug("{} : {}", REFRESH_TOKEN, refresh_Token);
+            log.info("kakao {} : {}", ACCESS_TOKEN, access_Token);
+            log.info("kakao {} : {}", REFRESH_TOKEN, refresh_Token);
 
             br.close();
             bw.close();
@@ -167,10 +168,12 @@ public class KakaoService {
             log.debug("nickname : {}", nickname);
             log.debug("ci : {}", ci);
 
+            //TODO : 회원가입 시 user에 저장할 데이터 다시 확인
             user = User.builder()
                     .email(email)
                     .nickname(nickname)
                     .ci(ci)
+                    .isActivated(true)
                     .build();
 
             br.close();
