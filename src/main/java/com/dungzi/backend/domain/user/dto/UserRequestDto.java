@@ -19,9 +19,9 @@ public class UserRequestDto {
     @Data
     public static class SignUpByKakao {
         private String kakaoAccessToken;
-        // TODO : 항목 논의
-        private String userName;
+        private Boolean isUnivAuth;
+        private String univId;
+        private String univEmail;
         private String nickname;
-        private String phoneNum;
     }
 }

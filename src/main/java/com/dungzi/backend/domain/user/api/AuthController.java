@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -30,6 +31,7 @@ public class AuthController {
     private final AuthService authService;
     private final EmailService emailService;
     private final UnivService univService;
+    private final UnivAuthService univAuthService;
 
     private final String ACCESS_TOKEN = "access_token";
 //    private final String REFRESH_TOKEN = "refresh_token"; //TODO : 카카오 refresh token은 저장해둘 필요 없을까? 탈퇴나 로그아웃 시
@@ -61,8 +63,20 @@ public class AuthController {
             e.printStackTrace();
             return CommonResponse.toErrorResponse(AuthErrorCode.KAKAO_FAILED);
         }
-        UUID uuid = authService.signUpByKakao(kakaoUser, requestDto);
-        return CommonResponse.toResponse(CommonCode.OK, new UserResponseDto.SignUpByKakao(uuid));
+
+        // TODO : 형식적 유효성 검사가 원래 컨트롤러에서 하는 일이니 여기서 Optional로 하는 게 맞을 듯 (필수값이 아니니까 여기서 isPresent를 확인하진 않아도 되지 않을까?
+        Optional<String> nicknameOp = Optional.ofNullable(requestDto.getNickname());
+
+        //회원가입
+        User newUser = authService.signUpByKakao(kakaoUser, nicknameOp);
+
+        //이메일 인증 정보 저장
+        if(requestDto.getIsUnivAuth()){
+            Univ univ = univService.getUniv(requestDto.getUnivId());
+            univAuthService.createUnivAuth(newUser, univ, requestDto.getUnivEmail(), true);
+        }
+
+        return CommonResponse.toResponse(CommonCode.OK, UserResponseDto.SignUpByKakao.toDto(newUser));
     }
 
     //카카오 로그인

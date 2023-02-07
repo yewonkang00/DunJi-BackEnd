@@ -49,10 +49,14 @@ public class UserResponseDto {
     }
 
     @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
     @Data
     public static class SignUpByKakao {
         private UUID uuid;
+
+        public static SignUpByKakao toDto(User user){
+            return SignUpByKakao.builder()
+                    .uuid(user.getUserId())
+                    .build();
+        }
     }
 }

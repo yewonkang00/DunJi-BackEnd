@@ -103,14 +103,11 @@ public class AuthService {
     }
 
 
-    public UUID signUpByKakao(User user, UserRequestDto.SignUpByKakao requestDto) { // TODO : dto 클래스 의존 없애기?
+    public User signUpByKakao(User kakaoUser, Optional<String> nicknameOp) {
         log.info("[SERVICE] signUpByKakao");
-        user.updateSignUpInfo(requestDto);
-        user.updateRoles(Collections.singletonList(ROLE_USER));
-
-        // TODO : 대학교 인증 정보 추가 저장
-
-        return userDao.save(user).getUserId();
+        kakaoUser.updateSignUpInfo(nicknameOp);
+        kakaoUser.updateRoles(Collections.singletonList(ROLE_USER));
+        return userDao.save(kakaoUser);
     }
 
     //TODO  추후 제거

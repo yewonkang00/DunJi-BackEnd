@@ -24,26 +24,24 @@ public class UnivAuthService {
 //        User user = getUserFromSecurity();
 
         Optional<UnivAuth> univAuthOp = univAuthDao.findByUser(user);
-        UnivAuth univAuth = createOrUpdateUnivAuth(univAuthOp, user, univ, email, isEmailChecked);
 
+        // .isPresent()가 true이면 get()해서 updateUnivAuth로 수정 저장, false이면 createUnivAuth로 생성 저장
+        return univAuthOp.map(univAuth -> updateUnivAuth(univAuth, user, univ, email, isEmailChecked))
+                .orElseGet(() -> createUnivAuth(user, univ, email, isEmailChecked));
+    }
+
+    private UnivAuth updateUnivAuth(UnivAuth univAuth, User user, Univ univ, String email, Boolean isEmailChecked) {
+        univAuth.updateUnivAuth(univ, isEmailChecked);
         return univAuthDao.save(univAuth);
     }
 
-    private UnivAuth createOrUpdateUnivAuth(Optional<UnivAuth> univAuthOp, User user, Univ univ, String email, Boolean isEmailChecked) {
-        if(univAuthOp.isPresent()){
-            UnivAuth univAuth = univAuthOp.get();
-            univAuth.updateUnivAuth(univ, isEmailChecked);
-            return univAuth;
-        }
-        else {
-            // TODO 고려사항 : 파라미터를 묶은 Controller<->Service 간 model dto클래스를 만들면 이 코드를 그쪽 메서드로 넘길 수 있음
-            return UnivAuth.builder()
-                    .user(user)
-                    .univ(univ)
-                    .email(email)
-                    .isChecked(isEmailChecked)
-                    .build();
-        }
+    public UnivAuth createUnivAuth(User user, Univ univ, String email, Boolean isEmailChecked){
+        return univAuthDao.save(UnivAuth.builder()
+                .user(user)
+                .univ(univ)
+                .email(email)
+                .isChecked(isEmailChecked)
+                .build());
     }
 
 }
