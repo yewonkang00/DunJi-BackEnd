@@ -40,6 +40,7 @@ public class TestController {
         response.sendRedirect(redirect_uri);
     }
 
+
     @GetMapping("/checkToken/{tokenType}")
 //    public CommonResponse checkAccessToken(HttpServletRequest httpServletRequest) { //@CookieValue("x-access-token") String accessToken
     public CommonResponse checkToken(@PathVariable String tokenType, HttpServletRequest httpServletRequest) {
