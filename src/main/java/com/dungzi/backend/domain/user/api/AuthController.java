@@ -42,7 +42,7 @@ public class AuthController {
     // TODO : 인증 요청 대학교 도메인과 현제 이메일 도메인 일치 확인 로직 추가할 것 (테스트 시에도 불편할 예정)
     @GetMapping("/code")
     public CommonResponse sendAuthEmail(@RequestParam String email, @RequestParam(value = "univ") String univId) throws Exception {
-        log.info("[API] auth/email-auth/send");
+        log.info("[API] auth/code");
         univService.checkUnivDomain(email, univId);
         String code = emailService.sendSimpleMessage(email);
         log.info("이메일 전송 완료. 인증코드 : {}", code);
