@@ -25,7 +25,7 @@ public class UnivService {
     }
 
     public void checkUnivDomain(String email, Univ univ) {
-        String domain = email.substring(email.lastIndexOf("@")+1);
+        String domain = email.split("@")[1];
         univ.checkDomain(domain);
     }
 
