@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -25,6 +26,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class AuthController {
+    private final String LOGIN_SUCCESS_REDIRECT_URL = "http://localhost:3000";
+    private final String LOGIN_FAIL_REDIRECT_URL = "http://localhost:3000/login/kakao";
+    private final String LOGIN_FAIL_KAKAO_TOKEN_HEADER = "kakao-access-token";
+
     private final KakaoService kakaoService;
     private final AuthService authService;
     private final EmailService emailService;
@@ -89,7 +94,7 @@ public class AuthController {
 //    )
     @GetMapping("/kakao")
     //TODO : 회원가입/로그인 로직 분리, 변경
-    public CommonResponse kakaoCallback(@RequestParam String code, HttpServletResponse httpServletResponse) {
+    public void kakaoCallback(@RequestParam String code, HttpServletResponse httpServletResponse) throws IOException {
         log.info("[API] auth/kakao");
 
         HashMap<String, String> token = kakaoService.getKakaoAccessToken(code);
@@ -104,30 +109,34 @@ public class AuthController {
         } catch (Exception e) {
             log.info("getKakaoUserInfo failed");
             e.printStackTrace();
-            return CommonResponse.toErrorResponse(AuthErrorCode.KAKAO_FAILED);
+//            return CommonResponse.toErrorResponse(AuthErrorCode.KAKAO_FAILED);
+            throw new AuthException(AuthErrorCode.KAKAO_FAILED);
         }
 
         // TODO : 코드리뷰 필요 - 회원 확인 코드가 Controller와 Service 중 어디에 위치하는 것이 좋을까?
         // Conroller에 위치할 경우 : login 메서드와 회원확인 메서드 분리. if-else문 사용
         // Service에 위치할 경우 : login 메서드 안에 회원확인 로직 포함. 예외 throw 하여 try-catch문 사용
 //        boolean isRegistered = authService.isRegistered(kakaoUser);
-        UserResponseDto.KakaoLogin responseDto = new UserResponseDto.KakaoLogin();
+//        UserResponseDto.KakaoLogin responseDto = new UserResponseDto.KakaoLogin();
 //        responseDto.setIsUser(isRegistered);
 
         try {
             User loginUser = authService.login(kakaoUser);
             authService.setCookieTokenInResponse(httpServletResponse, loginUser); //위로 합치기
-            responseDto.setUuid(loginUser.getUserId());
-            responseDto.setIsUser(true);
+//            responseDto.setUuid(loginUser.getUserId());
+//            responseDto.setIsUser(true);
+            httpServletResponse.sendRedirect(LOGIN_SUCCESS_REDIRECT_URL);
         }
         catch(AuthException authException) {
             if(authException.getCode() == AuthErrorCode.NOT_EXIST_USER){
-                responseDto.setKakaoAccessToken(kakao_access_token);
-                responseDto.setIsUser(false);
+//                responseDto.setKakaoAccessToken(kakao_access_token);
+//                responseDto.setIsUser(false);
+                httpServletResponse.addHeader(LOGIN_FAIL_KAKAO_TOKEN_HEADER, kakao_access_token);
+                httpServletResponse.sendRedirect(LOGIN_FAIL_REDIRECT_URL);
             }
         }
 
-        return CommonResponse.toResponse(CommonCode.OK, responseDto);
+//        return CommonResponse.toResponse(CommonCode.OK, responseDto);
     }
 
 
