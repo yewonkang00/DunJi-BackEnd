@@ -33,12 +33,12 @@ public class TestController {
         return CommonResponse.toResponse(CommonCode.OK, "hello");
     }
 
-
-//    @GetMapping("/google")
-//    public void googleRedirect(HttpServletResponse response) throws IOException {
+    @GetMapping("/redirect")
+    public void testRedirect(HttpServletResponse response) throws IOException {
 //        String redirect_uri="http://www.google.com"; //http://localhost:3000/login/kakao
-//        response.sendRedirect(redirect_uri);
-//    }
+        String redirect_uri="http://localhost:3000/chat";
+        response.sendRedirect(redirect_uri);
+    }
 
 
     @GetMapping("/checkToken/{tokenType}")
