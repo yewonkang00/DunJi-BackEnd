@@ -99,8 +99,6 @@ public class AuthController {
 
         HashMap<String, String> token = kakaoService.getKakaoAccessToken(code);
         String kakao_access_token = token.get(ACCESS_TOKEN);
-//        String refresh_token = token.get(REFRESH_TOKEN);
-
 
         // TODO : 예외처리 Handler 사용하여 중복코드 개선하기
         User kakaoUser;
@@ -113,12 +111,7 @@ public class AuthController {
             throw new AuthException(AuthErrorCode.KAKAO_FAILED);
         }
 
-        // TODO : 코드리뷰 필요 - 회원 확인 코드가 Controller와 Service 중 어디에 위치하는 것이 좋을까?
-        // Conroller에 위치할 경우 : login 메서드와 회원확인 메서드 분리. if-else문 사용
-        // Service에 위치할 경우 : login 메서드 안에 회원확인 로직 포함. 예외 throw 하여 try-catch문 사용
-//        boolean isRegistered = authService.isRegistered(kakaoUser);
 //        UserResponseDto.KakaoLogin responseDto = new UserResponseDto.KakaoLogin();
-//        responseDto.setIsUser(isRegistered);
 
         try {
             User loginUser = authService.login(kakaoUser);
