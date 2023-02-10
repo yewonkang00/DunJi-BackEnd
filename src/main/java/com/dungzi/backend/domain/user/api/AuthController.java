@@ -8,7 +8,7 @@ import com.dungzi.backend.domain.user.application.EmailService;
 import com.dungzi.backend.domain.user.application.KakaoService;
 import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.domain.user.dto.UserRequestDto;
-import com.dungzi.backend.domain.user.dto.UserResponseDto;
+import com.dungzi.backend.domain.user.dto.UserAuthResponseDto;
 import com.dungzi.backend.global.common.CommonCode;
 import com.dungzi.backend.global.common.CommonResponse;
 import com.dungzi.backend.global.common.error.AuthException;
@@ -46,7 +46,7 @@ public class AuthController {
         univService.checkUnivDomain(email, univId);
         String code = emailService.sendSimpleMessage(email);
         log.info("이메일 전송 완료. 인증코드 : {}", code);
-        UserResponseDto.SendEmailAuth response = UserResponseDto.SendEmailAuth.builder()
+        UserAuthResponseDto.SendEmailAuth response = UserAuthResponseDto.SendEmailAuth.builder()
                 .email(email)
                 .authCode(code)
                 .build();
@@ -79,7 +79,7 @@ public class AuthController {
             univAuthService.createUnivAuth(newUser, univ, requestDto.getUnivEmail(), true);
         }
 
-        return CommonResponse.toResponse(CommonCode.OK, UserResponseDto.SignUpByKakao.toDto(newUser));
+        return CommonResponse.toResponse(CommonCode.OK, UserAuthResponseDto.SignUpByKakao.toDto(newUser));
     }
 
     //카카오 로그인

@@ -1,9 +1,5 @@
 package com.dungzi.backend.domain.user.domain;
 
-import com.dungzi.backend.domain.user.dto.UserRequestDto;
-import com.dungzi.backend.domain.chat.domain.UserChatRoom;
-import com.dungzi.backend.domain.user.dto.UserDto;
-import com.dungzi.backend.domain.user.dto.UserResponseDto;
 import com.dungzi.backend.global.common.BaseTimeEntity;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -15,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.springframework.transaction.annotation.Transactional;
 
 @Getter
 @NoArgsConstructor
