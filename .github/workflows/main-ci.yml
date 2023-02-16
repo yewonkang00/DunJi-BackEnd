@@ -36,6 +36,14 @@ jobs:
           JWT_TOKEN_SECRET_KEY: ${{ secrets.JWT_TOKEN.SECRET_KEY }}
           KAKAO_TOKEN_REDIRECT_URI: ${{ secrets.KAKAO.TOKEN_REDIRECT_URL }}
 
+      - name: Discord notification with Build complete
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_USERNAME: 둥지봇
+        uses: Ilshidur/action-discord@master
+        with:
+          args: 'Project has been built successfully'
+
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
@@ -59,3 +67,11 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Discord notification with complete
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_USERNAME: 둥지봇
+        uses: Ilshidur/action-discord@master
+        with:
+          args: 'Project has been deployed successfully'
