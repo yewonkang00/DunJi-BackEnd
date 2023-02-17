@@ -44,4 +44,11 @@ public class CommonResponse {
                 .build();
     }
 
+    public static CommonResponse toErrorResponse(Code code) {
+        return CommonResponse.builder()
+                .code(code.getCode().value())
+                .message(code.getMessage())
+                .build();
+    }
+
 }
