@@ -15,26 +15,32 @@ public class RoomOptionDto {
 
     private UUID roomId;
     // 옵션 추가
-    private EnumSet<Options> options;
-    private EnumSet<Utility> utility;
-    private EnumSet<Advantage> advantage;
+    private String options;
+    private String utility;
+    private String advantage;
+    private String startedAt;
+    private String finishedAt;
+    private boolean tenancyAgreement;
 
     public RoomOption toEntity(RoomOptionDto optionDto) {
 
         return RoomOption.builder()
-                .roomId(roomId)
+              //  .roomId(roomId)
                 .options(options)
                 .utility(utility)
-                .advantage(advantage)
+                //.advantage(advantage)
+                .tenancyAgreement(tenancyAgreement)
+                .startedAt(startedAt)
+                .finishedAt(finishedAt)
                 .build();
     }
 
-    public RoomOptionDto toEnumDto(UUID roomId, EnumSet<Options> option, EnumSet<Utility> utility, EnumSet<Advantage> advantage) {
-        return RoomOptionDto.builder()
-                .roomId(roomId)
-                .options(option)
-                .utility(utility)
-                .advantage(advantage)
-                .build();
-    }
+//    public RoomOption toEnumDto(UUID roomId, EnumSet<Options> option, EnumSet<Utility> utility, EnumSet<Advantage> advantage) {
+//        return RoomOption.builder()
+//                .roomId(roomId)
+//                .options(option)
+//                .utility(utility)
+//                .advantage(advantage)
+//                .build();
+//    }
 }

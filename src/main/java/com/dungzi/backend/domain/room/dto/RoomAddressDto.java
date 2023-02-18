@@ -21,7 +21,7 @@ public class RoomAddressDto {
     public RoomAddress toEntity(UUID roomId) {
 
         return RoomAddress.builder()
-                .roomId(roomId)
+                //.roomId(roomId)
                 .longitude(longitude)
                 .latitude(latitude)
                 .address(address)

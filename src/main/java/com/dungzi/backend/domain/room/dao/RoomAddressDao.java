@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface RoomAddressDao extends JpaRepository<RoomAddress, String> {
+public interface RoomAddressDao extends JpaRepository<RoomAddress, UUID> {
     Optional<RoomAddress> findByRoomId(UUID roomId);
 }

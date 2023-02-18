@@ -12,9 +12,6 @@ import java.util.UUID;
 public class RoomInfoDto {
 
     private UUID roomId;
-    private String startedAt;
-    private String finishedAt;
-    private boolean tenancyAgreement;
     private double roomSize;
     private int totalFloor;
     private int floor;
@@ -26,14 +23,19 @@ public class RoomInfoDto {
     private String priceUnit;
     private int managementCost;
     private boolean fullOption;
+    private boolean elevators;
+    private boolean parking;
+    private boolean pets;
+    private boolean womenOnly;
+    private boolean loan;
 
     public RoomInfo toEntity(UUID roomId) {
 
         return RoomInfo.builder()
-                .roomId(roomId)
-                .startedAt(startedAt)
-                .finishedAt(finishedAt)
-                .tenancyAgreement(tenancyAgreement)
+          //      .roomId(roomId)
+//                .startedAt(startedAt)
+//                .finishedAt(finishedAt)
+//                .tenancyAgreement(tenancyAgreement)
                 .roomSize(roomSize)
                 .totalFloor(totalFloor)
                 .floor(floor)
@@ -45,6 +47,11 @@ public class RoomInfoDto {
                 .priceUnit(priceUnit)
                 .managementCost(managementCost)
                 .fullOption(fullOption)
+                .elevators(elevators)
+                .parking(parking)
+                .pets(pets)
+                .womenOnly(womenOnly)
+                .loan(loan)
                 .build();
     }
 }

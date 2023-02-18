@@ -1,21 +1,13 @@
 package com.dungzi.backend.domain.room.domain;
 
-import com.dungzi.backend.domain.room.application.SetAdvantageConverter;
-import com.dungzi.backend.domain.room.application.SetOptionConverter;
-import com.dungzi.backend.domain.room.dto.Advantage;
-import com.dungzi.backend.domain.room.dto.Options;
-import com.dungzi.backend.domain.room.dto.RoomOptionDto;
-import com.dungzi.backend.domain.room.dto.Utility;
 import com.dungzi.backend.global.common.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.lang.Enum;
-import java.util.EnumSet;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -26,20 +18,25 @@ import java.util.UUID;
 public class RoomOption extends BaseTimeEntity {
 
     @Id
-    @Column(name = "roomId", nullable = false)
+    @Column(name = "room_id", nullable = false,length = 36)
+    @Type(type = "uuid-char")
     private UUID roomId;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
-    @JoinColumn(name = "roomId")
+    @JoinColumn(name = "room_id")
     private Room room;
 
     //@Convert(converter = SetOptionConverter.class)
-    private EnumSet<Options> options;
+//    private EnumSet<Options> options;
+    private String options;
 
-    private EnumSet<Utility> utility;
+    private String utility;
 
     //@Convert(converter = SetAdvantageConverter.class)
-    private EnumSet<Advantage> advantage;
+    //private String advantage;
 
+    private String startedAt;
+    private String finishedAt;
+    private boolean tenancyAgreement;
 }

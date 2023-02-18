@@ -42,7 +42,7 @@ public class RoomDto {
                 .title(title)
                 .content(content)
                 .image(image)
-//                .regDate(regDate)
+                //.regDate(regDate)
                 .delDate(delDate)
                 .dealDate(dealDate)
                 .heartNum(heartNum)

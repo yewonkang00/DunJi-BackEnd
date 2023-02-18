@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -17,12 +18,13 @@ import java.util.UUID;
 @Entity
 public class RoomAddress extends BaseTimeEntity {
     @Id
-    @Column(name = "roomId", nullable = false)
+    @Column(name = "room_id", nullable = false,length = 36)
+    @Type(type = "uuid-char")
     private UUID roomId;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
-    @JoinColumn(name = "roomId")
+    @JoinColumn(name = "room_id")
     private Room room;
 
 //    @OneToOne
@@ -35,17 +37,18 @@ public class RoomAddress extends BaseTimeEntity {
     private String addressDetail;
     private String sigungu;
     private String dong;
+    private String status;
 
-    public RoomAddressDto toRoomAddressDto() {
-
-        return RoomAddressDto.builder()
-                .roomId(this.getRoomId())
-                .longitude(this.getLongitude())
-                .latitude(this.getLatitude())
-                .address(this.getAddress())
-                .address(this.getAddressDetail())
-                .sigungu(this.getSigungu())
-                .dong(this.getDong())
-                .build();
-    }
+//    public RoomAddressDto toRoomAddressDto() {
+//
+//        return RoomAddressDto.builder()
+//                .roomId(this.getRoomId())
+//                .longitude(this.getLongitude())
+//                .latitude(this.getLatitude())
+//                .address(this.getAddress())
+//                .address(this.getAddressDetail())
+//                .sigungu(this.getSigungu())
+//                .dong(this.getDong())
+//                .build();
+//    }
 }

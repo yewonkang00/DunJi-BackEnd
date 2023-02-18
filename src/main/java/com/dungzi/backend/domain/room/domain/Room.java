@@ -11,6 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -28,8 +29,8 @@ public class Room extends BaseTimeEntity {
     @Type(type = "uuid-char")
     private UUID roomId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User user;
 
 //    @ManyToOne
@@ -41,7 +42,7 @@ public class Room extends BaseTimeEntity {
 
     private String content;
     private int image;
-    //private Date regDate;
+    //private ZonedDateTime regDate;
     private Date delDate;
     private Date dealDate;
     private int heartNum;
