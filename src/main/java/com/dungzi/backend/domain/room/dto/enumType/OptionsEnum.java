@@ -1,10 +1,6 @@
-package com.dungzi.backend.domain.room.dto;
+package com.dungzi.backend.domain.room.dto.enumType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-public enum Options {
+public enum OptionsEnum {
     airConditioner("에어컨"),
     refrigerator("냉장고"),
     washingMachine("세탁기"),
@@ -20,7 +16,15 @@ public enum Options {
 
     public String option;
 
-    Options(String value) {
+    public String getKey() {
+        return name();
+    }
+
+    public String getValue() {
+        return option;
+    }
+
+    OptionsEnum(String value) {
         this.option = value;
     }
 

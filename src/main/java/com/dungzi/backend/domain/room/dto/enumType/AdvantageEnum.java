@@ -1,11 +1,6 @@
-package com.dungzi.backend.domain.room.dto;
+package com.dungzi.backend.domain.room.dto.enumType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-
-public enum Advantage {
+public enum AdvantageEnum {
     elevators("엘리베이터"),
     parking("주차공간"),
     pets("반려동물"),
@@ -16,7 +11,7 @@ public enum Advantage {
 
     public String advantage;
 
-    Advantage(String value) {
+    AdvantageEnum(String value) {
         this.advantage = value;
     }
 
