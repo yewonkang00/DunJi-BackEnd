@@ -55,8 +55,8 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: dungzi/backend
-          tags: "1.0"
-          
+          tags: main
+
       - name: Copy jar file to Docker context
         run: cp ./build/libs/DunJi-BackEnd-0.0.1-SNAPSHOT.jar ./
 
@@ -75,3 +75,12 @@ jobs:
         uses: Ilshidur/action-discord@master
         with:
           args: 'Project has been deployed successfully'
+
+      - name: Execute CD for script
+          uses: appleboy/ssh-action@master
+          with:
+            username: ubuntu
+            host: ${{ secrets.EC2_IP }}
+            key: ${{ secrets.EC2_PASSWORD }}
+            script_stop: true
+            script: chmod +x /home/ubuntu/backend/main/deploy.sh && sh /home/ubuntu/backend/main/deploy.sh
