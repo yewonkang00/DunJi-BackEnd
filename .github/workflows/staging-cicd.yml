@@ -83,4 +83,4 @@ jobs:
           host: ${{ secrets.EC2_IP }}
           key: ${{ secrets.EC2_PASSWORD }}
           script_stop: true
-          script: chmod +x /home/ubuntu/backend/staging/deploy.sh && sh /home/ubuntu/backend/staging/deploy.sh
+          script: chmod +x /home/ubuntu/backend/staging/deploy.sh && cd /home/ubuntu/backend/staging && sh ./deploy.sh
