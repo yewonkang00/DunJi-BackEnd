@@ -9,6 +9,8 @@ import com.dungzi.backend.domain.room.dto.enumType.OptionsEnum;
 import com.dungzi.backend.domain.room.dto.enumType.UtilityEnum;
 import com.dungzi.backend.domain.room.dto.enumType.roomStatus;
 import com.dungzi.backend.domain.user.domain.User;
+import com.dungzi.backend.global.common.CommonCode;
+import com.dungzi.backend.global.common.CommonResponse;
 import com.dungzi.backend.global.s3.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -169,5 +171,29 @@ public class RoomService {
         log.info("[SERVICE] getRoomByUuid");
         return roomDao.findByRoomId(UUID.fromString(uuid))
                 .orElse(null);
+    }
+
+    @Transactional
+    public CommonResponse deleteRoom(UUID user, UUID roomId) {
+        log.info("[SERCICE] Delete Room : {}", roomId);
+
+        // TODO : 관리자 생성 시 관리자도 삭제 가능하도록 추가
+        Optional<Room> searchRoom = roomDao.findByRoomId(roomId);
+        log.info("search Room : {}", searchRoom.get().getRoomId());
+
+        // ID에 해당하는 매물이 존재하는지 확인
+        if(searchRoom.isPresent()) {
+            Room room = searchRoom.get();
+            log.info("userID : {}", room.getUser().getUserId());
+            log.info("userID2 : {}", user);
+            // User가 매물을 등록한 user와 일치하는 경우만 삭제 가능
+            if(room.getUser().getUserId().equals(user)) {
+
+                roomAddressDao.deleteRoom(roomStatus.deleted.toString(), roomId);
+                return CommonResponse.toResponse(CommonCode.OK);
+            }
+            return CommonResponse.toResponse(CommonCode.UNAUTHORIZED, "삭제 권한이 없습니다.");
+        }
+        return CommonResponse.toResponse(CommonCode.NOT_FOUND, "해당 매물이 존재하지 않습니다.");
     }
 }

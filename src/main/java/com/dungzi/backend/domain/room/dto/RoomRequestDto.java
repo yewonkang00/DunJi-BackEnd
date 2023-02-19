@@ -7,10 +7,9 @@ import com.dungzi.backend.domain.room.domain.RoomOption;
 import com.dungzi.backend.domain.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
-@Slf4j
+
 public class RoomRequestDto {
 
     @Data
@@ -85,8 +84,7 @@ public class RoomRequestDto {
         }
 
         public RoomAddress toAddressEntity() {
-         //   log.info("[RoomAddress] roomId : {}", roomId);
-            log.info("[RoomAddress] room : {}", room.getRoomId());
+
             return RoomAddress.builder()
            //         .roomId(roomId)
                     .room(room)
@@ -141,28 +139,5 @@ public class RoomRequestDto {
         }
 
     }
-
-
-
-
-//    public Room toRoomEntity(RoomDto roomDto) {
-//
-//        UserDto userDto = null;
-//        userDto.setUserId(roomDto.getUserId().toString());
-//        User user = userDto.toEntity();
-//
-//        return Room.builder()
-//                .roomId(roomDto.getRoomId())
-//                .user(user)
-////                .univId(requestDto.getUnivId())
-//                .title(roomDto.getTitle())
-//                .content(roomDto.getContent())
-//                .image(roomDto.getImage())
-////                .regDate(requestDto.getRegDate)
-//                .delDate(roomDto.getDelDate())
-//                .dealDate(roomDto.getDealDate())
-//                .heartNum(roomDto.getHeartNum())
-//                .build();
-//    }
 
 }
