@@ -76,11 +76,11 @@ jobs:
         with:
           args: 'Project has been deployed successfully'
 
-      - name: Execute CD for script
-          uses: appleboy/ssh-action@master
-          with:
-            username: ubuntu
-            host: ${{ secrets.EC2_IP }}
-            key: ${{ secrets.EC2_PASSWORD }}
-            script_stop: true
-            script: chmod +x /home/ubuntu/backend/main/deploy.sh && sh /home/ubuntu/backend/main/deploy.sh
+#      - name: Execute CD for script
+#          uses: appleboy/ssh-action@master
+#          with:
+#            username: ubuntu
+#            host: ${{ secrets.EC2_IP }}
+#            key: ${{ secrets.EC2_PASSWORD }}
+#            script_stop: true
+#            script: chmod +x /home/ubuntu/backend/main/deploy.sh && sh /home/ubuntu/backend/main/deploy.sh
