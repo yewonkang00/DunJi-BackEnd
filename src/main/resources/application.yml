@@ -6,7 +6,7 @@ spring:
       enabled: always
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://dunzi-database.c0qdci4sjpq3.ap-northeast-2.rds.amazonaws.com/dunzi
+    url: jdbc:mysql://dunzi-database.c0qdci4sjpq3.ap-northeast-2.rds.amazonaws.com/dunzi?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 #spring:
