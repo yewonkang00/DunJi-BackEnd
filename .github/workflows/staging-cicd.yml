@@ -37,12 +37,22 @@ jobs:
           KAKAO_TOKEN_REDIRECT_URI: ${{ secrets.KAKAO.TOKEN_REDIRECT_URL }}
 
       - name: Discord notification with Build complete
+        if: success()
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           DISCORD_USERNAME: 둥지봇
         uses: Ilshidur/action-discord@master
         with:
-          args: 'Project has been built successfully'
+          args: '✅ Project has been built successfully ✅'
+          
+      - name: Discord notification with Build Failed
+        if: failure()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_USERNAME: 둥지봇
+        uses: Ilshidur/action-discord@master
+        with:
+          args: '🚨🚨🚨🚨🚨 The project has failed to build. 🚨🚨🚨🚨🚨'
 
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
@@ -74,7 +84,7 @@ jobs:
           DISCORD_USERNAME: 둥지봇
         uses: Ilshidur/action-discord@master
         with:
-          args: 'Project has been deployed successfully'
+          args: '✅ Project has been deployed successfully ✅'
 
       - name: Execute Server Init Script
         uses: appleboy/ssh-action@master
