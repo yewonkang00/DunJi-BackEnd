@@ -10,23 +10,16 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(AuthException.class)
-    public ResponseEntity<Object> handleAuthException(AuthException e){
+    @ExceptionHandler(DefaultException.class)
+    public ResponseEntity<Object> handleAuthException(DefaultException e){
         Code code = e.getCode();
         return handleExceptionInternal(code);
     }
-
-    @ExceptionHandler(UnivException.class)
-    public ResponseEntity<Object> handleUnivException(UnivException e){
-        Code code = e.getCode();
-        return handleExceptionInternal(code);
-    }
-
 
     private ResponseEntity<Object> handleExceptionInternal(Code code){
         CommonResponse errorResponse = CommonResponse.toErrorResponse(code);
         return ResponseEntity
                 .status(code.getCode())
-                .body(errorResponse); //errorResonse 를 body로 줌
+                .body(errorResponse);
     }
 }
