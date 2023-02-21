@@ -7,9 +7,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum AuthErrorCode implements Code {
 
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Token is invalid."), //401
-    GUEST_USER(HttpStatus.UNAUTHORIZED, "Unauthorized. Request from guest user."), //401
-    NOT_EXIST_USER(HttpStatus.UNAUTHORIZED, "User of this uuid is not exist."), //401
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다."), //401
+    GUEST_USER(HttpStatus.UNAUTHORIZED, "사용자 정보를 확인할 수 없습니다. 비회원 사용자입니다."), //401
+    NOT_EXIST_USER(HttpStatus.UNAUTHORIZED, "이 uuid 에 해당하는 사용자가 존재하지 않습니다."), //401
     KAKAO_FAILED(HttpStatus.CONFLICT, "카카오관련 처리를 실행할 수 없습니다."), //500
     ;
 

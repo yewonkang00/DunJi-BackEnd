@@ -4,6 +4,8 @@ import com.dungzi.backend.domain.univ.dao.UnivAuthDao;
 import com.dungzi.backend.domain.univ.domain.Univ;
 import com.dungzi.backend.domain.univ.domain.UnivAuth;
 import com.dungzi.backend.domain.user.domain.User;
+import com.dungzi.backend.global.common.CommonCode;
+import com.dungzi.backend.global.common.error.AuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,12 @@ import java.util.Optional;
 public class UnivAuthService {
     private final UnivAuthDao univAuthDao;
 
+
+    public UnivAuth getUnivAuthByUser(User user) {
+        log.info("[SERVICE] getUnivAuthByUser");
+        return univAuthDao.findByUser(user)
+                .orElseThrow(() -> new AuthException(CommonCode.NOT_FOUND));
+    }
 
     @Transactional
     public UnivAuth updateUserEmailAuth(User user, Univ univ, String email, Boolean isEmailChecked) {

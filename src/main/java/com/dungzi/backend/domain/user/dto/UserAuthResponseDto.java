@@ -9,26 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-public class UserResponseDto {
-
-    @Builder
-    @AllArgsConstructor
-    @Data
-    public static class UpdateEmailAuth {
-        private String uuid;
-        private String univName;
-        private Boolean emailAuthCheck;
-
-        //TODO : 추후 modelmapper 사용 고려
-        public UpdateEmailAuth(User user, UnivAuth univAuth) {
-            this.uuid = user.getUserId().toString();
-            this.univName = univAuth.getUniv().getUnivName();
-            this.emailAuthCheck = univAuth.isChecked();
-//            this.univName = user.getUnivName();
-//            this.emailAuthCheck = user.getAuthCheck();
-        }
-
-    }
+public class UserAuthResponseDto {
 
     @Builder
     @Data
