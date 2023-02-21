@@ -33,7 +33,7 @@ public class AuthService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication instanceof AnonymousAuthenticationToken) {
             log.info("User in spring security is anonymous");
-            throw new AuthException(CommonCode.UNAUTHORIZED);
+            throw new AuthException(AuthErrorCode.GUEST_USER);
         }
         else{
             return (User) authentication.getPrincipal();
