@@ -18,13 +18,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 
 @Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -50,7 +54,7 @@ public class AuthController {
             }
     )
     @GetMapping("/code")
-    public CommonResponse sendAuthEmail(@RequestParam String email, @RequestParam(value = "univ") String univId) throws Exception {
+    public CommonResponse getAuthCodeEmail(@RequestParam @Email String email, @RequestParam(value = "univ") @NotBlank String univId) throws Exception {
         log.info("[API] auth/code");
         univService.checkUnivDomain(email, univId);
         String code = emailService.sendSimpleMessage(email);
@@ -121,7 +125,6 @@ public class AuthController {
         }
 
     }
-
 
 
     ///////////TODO : 추후 제거

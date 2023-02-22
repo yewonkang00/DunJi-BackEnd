@@ -37,17 +37,17 @@ public class CommonResponse {
                 .build();
     }
 
-    public static CommonResponse toErrorResponse(AuthErrorCode authErrorCode) {
-        return CommonResponse.builder()
-                .code(authErrorCode.getCode().value())
-                .message(authErrorCode.getMessage())
-                .build();
-    }
-
     public static CommonResponse toErrorResponse(Code code) {
         return CommonResponse.builder()
                 .code(code.getCode().value())
                 .message(code.getMessage())
+                .build();
+    }
+
+    public static CommonResponse toErrorResponse(Code code, String message) {
+        return CommonResponse.builder()
+                .code(code.getCode().value())
+                .message(message)
                 .build();
     }
 
