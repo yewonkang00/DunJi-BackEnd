@@ -11,10 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -39,6 +36,19 @@ public class ReviewController {
         User user = authService.getUserFromSecurity();
         UUID buildingId = reviewService.saveReview(requestDto,files,user);
         return CommonResponse.toResponse(CommonCode.OK, reviewService.saveReviewDetail(requestDto.toReviewDetailEntity(buildingId)));
+    }
+
+    @Operation(summary = "후기 삭제 api", description = "후기 삭제를 위한 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "정상적으로 후기 삭제 완료")
+            }
+    )
+    @DeleteMapping("/{reviewId}")
+    public CommonResponse deleteReview(@PathVariable String reviewId){
+        System.out.println(reviewId);
+        reviewService.deleteReview(reviewId);
+        return CommonResponse.toResponse(CommonCode.OK);
     }
 
 }

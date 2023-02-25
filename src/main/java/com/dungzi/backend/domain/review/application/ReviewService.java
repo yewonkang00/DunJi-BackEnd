@@ -23,7 +23,6 @@ public class ReviewService {
 
     private final ReviewDetailDao reviewDetailDao;
     private final ReviewDao reviewDao;
-
     private final FileUploadService fileUploadService;
 
 
@@ -54,4 +53,9 @@ public class ReviewService {
     public ReviewDetail saveReviewDetail(ReviewDetail reviewDetail){
         return reviewDetailDao.save(reviewDetail);
     }
+
+    public void deleteReview(String reviewId){
+        reviewDetailDao.deleteById(UUID.fromString(reviewId));
+    }
+
 }
