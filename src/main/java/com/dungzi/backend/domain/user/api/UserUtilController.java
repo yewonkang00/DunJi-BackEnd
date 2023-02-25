@@ -7,7 +7,8 @@ import com.dungzi.backend.domain.univ.domain.UnivAuth;
 import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.domain.user.dto.UserRequestDto;
-import com.dungzi.backend.domain.user.dto.UserResponseDto;
+import com.dungzi.backend.domain.user.dto.UserAuthResponseDto;
+import com.dungzi.backend.domain.user.dto.UserUtilResponseDto;
 import com.dungzi.backend.global.common.CommonCode;
 import com.dungzi.backend.global.common.CommonResponse;
 import com.dungzi.backend.global.common.error.AuthErrorCode;
@@ -24,6 +25,14 @@ public class UserUtilController {
     private final AuthService authService;
     private final UnivService univService;
     private final UnivAuthService univAuthService;
+
+    @GetMapping("/profile")
+    public CommonResponse getUserProfile() {
+        log.info("[API] users/profile");
+        User user = authService.getUserFromSecurity();
+        UnivAuth univAuth = univAuthService.getUnivAuthByUser(user);
+        return CommonResponse.toResponse(CommonCode.OK, UserUtilResponseDto.GetUserProfile.toDto(user, univAuth));
+    }
 
     @PutMapping("/univs")
     public CommonResponse updateUserEmailAuth(@RequestBody UserRequestDto.UpdateEmailAuth requestDto) {
@@ -42,6 +51,6 @@ public class UserUtilController {
         univService.checkUnivDomain(requestDto.getUnivEmail(), univ);
 
         UnivAuth univAuth = univAuthService.updateUserEmailAuth(user, univ, requestDto.getUnivEmail(), requestDto.getIsEmailChecked());
-        return CommonResponse.toResponse(CommonCode.OK, new UserResponseDto.UpdateEmailAuth(user, univAuth));
+        return CommonResponse.toResponse(CommonCode.OK, UserUtilResponseDto.UpdateEmailAuth.toDto(user, univAuth));
     }
 }
