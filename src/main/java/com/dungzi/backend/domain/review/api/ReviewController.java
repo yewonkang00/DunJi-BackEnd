@@ -2,6 +2,8 @@ package com.dungzi.backend.domain.review.api;
 
 import com.dungzi.backend.domain.review.application.ReviewService;
 import com.dungzi.backend.domain.review.dto.ReviewRequestDto;
+import com.dungzi.backend.domain.user.application.AuthService;
+import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.global.common.CommonCode;
 import com.dungzi.backend.global.common.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -23,7 +27,7 @@ import java.util.UUID;
 public class ReviewController {
 
     private final ReviewService reviewService;
-
+    private final AuthService authService;
     @Operation(summary = "후기 생성 api", description = "후기 생성을 위한 api")
     @ApiResponses(
             value = {
@@ -31,9 +35,10 @@ public class ReviewController {
             }
     )
     @PostMapping("/")
-    public CommonResponse createReview(@RequestBody ReviewRequestDto.CreateReview requestDto){
-        UUID buildingId = reviewService.saveReview(requestDto);
-        System.out.println(buildingId);
+    public CommonResponse createReview(@RequestBody ReviewRequestDto.CreateReview requestDto, List<MultipartFile> files){
+        User user = authService.getUserFromSecurity();
+        UUID buildingId = reviewService.saveReview(requestDto,files,user);
         return CommonResponse.toResponse(CommonCode.OK, reviewService.saveReviewDetail(requestDto.toReviewDetailEntity(buildingId)));
     }
+
 }
