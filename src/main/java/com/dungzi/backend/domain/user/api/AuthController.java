@@ -13,6 +13,8 @@ import com.dungzi.backend.global.common.CommonCode;
 import com.dungzi.backend.global.common.CommonResponse;
 import com.dungzi.backend.global.common.error.AuthException;
 import com.dungzi.backend.global.common.error.AuthErrorCode;
+import com.dungzi.backend.global.common.error.ValidErrorCode;
+import com.dungzi.backend.global.common.error.ValidException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -21,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
@@ -46,15 +49,18 @@ public class AuthController {
     private final String ACCESS_TOKEN = "access_token";
 //    private final String REFRESH_TOKEN = "refresh_token";
 
-    @Operation(summary = "이메일 인증코드 api", description = "이메일 인증코드 전송 요청 api")
+    @Operation(summary = "이메일 인증코드 전송 api", description = "이메일 인증코드 전송 요청 api")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "회원 가입 성공"),
-                    @ApiResponse(responseCode = "500", description = "카카오 관련 에러")
+                    @ApiResponse(responseCode = "200", description = "이메일 인증코드 전송 성공"),
+                    @ApiResponse(responseCode = "400", description = "이메일 주소 형식 오류"),
+                    @ApiResponse(responseCode = "400", description = "이메일 값 필수 오류"),
+                    @ApiResponse(responseCode = "400", description = "대학코드 값 필수 오류"),
+                    @ApiResponse(responseCode = "409", description = "카카오 관련 오류 (카카오 토큰값 확인 권장)")
             }
     )
     @GetMapping("/code")
-    public CommonResponse getAuthCodeEmail(@RequestParam @Email String email, @RequestParam(value = "univ") @NotBlank String univId) throws Exception {
+    public CommonResponse getAuthCodeEmail(@RequestParam @NotBlank @Email String email, @RequestParam(value = "univ") @NotBlank String univId) throws Exception {
         log.info("[API] auth/code");
         univService.checkUnivDomain(email, univId);
         String code = emailService.sendSimpleMessage(email);
@@ -69,17 +75,19 @@ public class AuthController {
     @Operation(summary = "카카오 회원가입 api", description = "카카오 계정 연동 회원가입")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "회원 가입 성공"),
-                    @ApiResponse(responseCode = "500", description = "카카오 관련 에러")
+                    @ApiResponse(responseCode = "201", description = "회원 가입 성공"),
+                    @ApiResponse(responseCode = "400", description = "request body 값 관련 오류"),
+                    @ApiResponse(responseCode = "409", description = "카카오 관련 오류 (카카오 토큰값 확인 권장)")
             }
     )
     @PostMapping("/kakao")
-    public CommonResponse signUpByKakao(@RequestBody UserRequestDto.SignUpByKakao requestDto) {
+    public CommonResponse signUpByKakao(@RequestBody @Valid UserRequestDto.SignUpByKakao requestDto) {
         log.info("[API] auth/kakao");
 
-        User kakaoUser = kakaoService.getKakaoUserInfo(requestDto.getKakaoAccessToken());
+        //isUnivAuth == true 일 경우 univId, univEmail 필수값 체크
+        if(requestDto.getIsUnivAuth()) { validateUnivAuthFields(requestDto); }
 
-        // TODO : 형식적 유효성 검사가 원래 컨트롤러에서 하는 일이니 여기서 Optional로 하는 게 맞을 듯 (필수값이 아니니까 여기서 isPresent를 확인하진 않아도 되지 않을까?
+        User kakaoUser = kakaoService.getKakaoUserInfo(requestDto.getKakaoAccessToken());
         Optional<String> nicknameOp = Optional.ofNullable(requestDto.getNickname());
 
         //회원가입
@@ -91,16 +99,17 @@ public class AuthController {
             univAuthService.createUnivAuth(newUser, univ, requestDto.getUnivEmail(), true);
         }
 
-        return CommonResponse.toResponse(CommonCode.OK, UserAuthResponseDto.SignUpByKakao.toDto(newUser));
+        return CommonResponse.toResponse(CommonCode.CREATED, UserAuthResponseDto.SignUpByKakao.toDto(newUser));
     }
 
-    //카카오 로그인
-    @Operation(summary = "카카오 로그인 api", description = "카카오 계정 연동 로그인")
+
+    //카카오 로그인 콜백
+    @Operation(summary = "카카오 로그인 콜백 api", description = "카카오 계정 연동 로그인에 사용되는 콜백 api")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "회원 가입된 유저. 로그인 성공"),
-                    @ApiResponse(responseCode = "200", description = "가입되지 않은 유저인 경우 카카오 액세스 토큰 전달"),
-                    @ApiResponse(responseCode = "500", description = "카카오 관련 에러")
+                    @ApiResponse(responseCode = "200", description = "가입되지 않은 유저. 카카오 액세스 토큰 전달"),
+                    @ApiResponse(responseCode = "409", description = "카카오 관련 오류 (카카오 토큰값 확인 권장)")
             }
     )
     @GetMapping("/kakao")
@@ -124,6 +133,18 @@ public class AuthController {
             }
         }
 
+    }
+
+
+    private void validateUnivAuthFields(UserRequestDto.SignUpByKakao requestDto) {
+        if(requestDto.getUnivEmail() == null || requestDto.getUnivId() == null){
+            throw new ValidException(ValidErrorCode.REQUIRED_VALUE);
+        }
+        else{
+            if(requestDto.getUnivEmail().isBlank() || requestDto.getUnivId().isBlank()){
+                throw new ValidException(ValidErrorCode.REQUIRED_VALUE);
+            }
+        }
     }
 
 

@@ -62,7 +62,7 @@ public class KakaoService {
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
             if(responseCode != 200){
-                log.info("kakao connection failed : {}", conn.getResponseMessage());
+                log.info("kakao connection failed : {} {}", conn.getResponseCode(), conn.getResponseMessage());
             }
 
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
@@ -86,8 +86,10 @@ public class KakaoService {
 
             br.close();
             bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.warn("getKakaoAccessToken failed : {}", e.getMessage());
+//            e.printStackTrace();
+            throw new AuthException(AuthErrorCode.KAKAO_FAILED);
         }
 
         HashMap<String, String> userInfo = new HashMap<String, String>();
@@ -113,6 +115,9 @@ public class KakaoService {
 
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
+            if(responseCode != 200){
+                log.warn("kakao connection failed : {} {}", conn.getResponseCode(), conn.getResponseMessage());
+            }
 
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -181,8 +186,8 @@ public class KakaoService {
             br.close();
 
         } catch (Exception e) {
-            log.warn("getKakaoUserInfo failed");
-            e.printStackTrace();
+            log.warn("getKakaoUserInfo failed : {}", e.getMessage());
+//            e.printStackTrace();
             throw new AuthException(AuthErrorCode.KAKAO_FAILED);
         }
 
