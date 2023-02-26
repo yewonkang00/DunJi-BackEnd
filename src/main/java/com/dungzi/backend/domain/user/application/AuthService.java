@@ -69,7 +69,7 @@ public class AuthService {
         cookieMap.forEach( (key, cookie) -> {
             cookie.setHttpOnly(true);
             cookie.setPath("/");
-            //cookie.setSecure(true); //https 상에서만 동작
+            cookie.setSecure(true); //https 상에서만 동작
         });
 
         return cookieMap;
