@@ -62,7 +62,7 @@ public class KakaoService {
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
             if(responseCode != 200){
-                log.info("kakao connection failed : {}", conn.getResponseMessage());
+                log.info("kakao connection failed : {} {}", conn.getResponseCode(), conn.getResponseMessage());
             }
 
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
@@ -86,8 +86,10 @@ public class KakaoService {
 
             br.close();
             bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.warn("getKakaoAccessToken failed : {}", e.getMessage());
+//            e.printStackTrace();
+            throw new AuthException(AuthErrorCode.KAKAO_FAILED);
         }
 
         HashMap<String, String> userInfo = new HashMap<String, String>();
@@ -113,6 +115,9 @@ public class KakaoService {
 
             //결과 코드가 200이라면 성공
             int responseCode = conn.getResponseCode();
+            if(responseCode != 200){
+                log.warn("kakao connection failed : {} {}", conn.getResponseCode(), conn.getResponseMessage());
+            }
 
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -134,7 +139,7 @@ public class KakaoService {
             JsonObject kakao_account = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
             JsonObject profile = kakao_account.getAsJsonObject().get("profile").getAsJsonObject();
 
-            String id = element.getAsJsonObject().get("id").getAsString();
+//            String id = element.getAsJsonObject().get("id").getAsString();
 
             // email, ci, nickname 필수 값으로 변경시 수정 필요
             boolean hasEmail = kakao_account.getAsJsonObject().get("has_email").getAsBoolean();
@@ -160,20 +165,27 @@ public class KakaoService {
                 nickname = profile.getAsJsonObject().get("nickname").getAsString();
             }
 
+            String profileImage = "";
+            if (profile.getAsJsonObject().get("profile_image_url") != null) {
+                profileImage = profile.getAsJsonObject().get("profile_image_url").getAsString();
+            }
+
             String ci = "";
             if (kakao_account.getAsJsonObject().get("ci") != null) {
                 ci = kakao_account.getAsJsonObject().get("ci").getAsString();
             }
 
-            log.debug("id : {}", id);
-            log.debug("email : {}", email);
-            log.debug("nickname : {}", nickname);
-            log.debug("ci : {}", ci);
+//            log.info("id : {}", id);
+            log.info("email : {}", email);
+            log.info("nickname : {}", nickname);
+            log.info("profileImage : {}", profileImage);
+            log.info("ci : {}", ci);
 
             //TODO : 회원가입 시 user에 저장할 데이터 다시 확인
             user = User.builder()
                     .email(email)
                     .nickname(nickname)
+                    .profileImg(profileImage)
                     .ci(ci)
                     .isActivated(true)
                     .build();
@@ -181,8 +193,8 @@ public class KakaoService {
             br.close();
 
         } catch (Exception e) {
-            log.warn("getKakaoUserInfo failed");
-            e.printStackTrace();
+            log.warn("getKakaoUserInfo failed : {}", e.getMessage());
+//            e.printStackTrace();
             throw new AuthException(AuthErrorCode.KAKAO_FAILED);
         }
 

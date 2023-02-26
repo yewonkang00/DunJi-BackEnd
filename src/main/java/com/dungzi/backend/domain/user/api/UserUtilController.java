@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -48,11 +50,12 @@ public class UserUtilController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "조회 성공"),
+                    @ApiResponse(responseCode = "400", description = "request body 값 관련 오류"),
                     @ApiResponse(responseCode = "401", description = "사용자 확인 불가")
             }
     )
     @PutMapping("/univs")
-    public CommonResponse updateUserEmailAuth(@RequestBody UserRequestDto.UpdateEmailAuth requestDto) {
+    public CommonResponse updateUserEmailAuth(@RequestBody @Valid UserRequestDto.UpdateEmailAuth requestDto) {
         log.info("[API] users/univs");
         User user = authService.getUserFromSecurity();
 
