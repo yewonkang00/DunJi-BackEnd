@@ -139,7 +139,7 @@ public class KakaoService {
             JsonObject kakao_account = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
             JsonObject profile = kakao_account.getAsJsonObject().get("profile").getAsJsonObject();
 
-            String id = element.getAsJsonObject().get("id").getAsString();
+//            String id = element.getAsJsonObject().get("id").getAsString();
 
             // email, ci, nickname 필수 값으로 변경시 수정 필요
             boolean hasEmail = kakao_account.getAsJsonObject().get("has_email").getAsBoolean();
@@ -165,20 +165,27 @@ public class KakaoService {
                 nickname = profile.getAsJsonObject().get("nickname").getAsString();
             }
 
+            String profileImage = "";
+            if (profile.getAsJsonObject().get("profile_image_url") != null) {
+                profileImage = profile.getAsJsonObject().get("profile_image_url").getAsString();
+            }
+
             String ci = "";
             if (kakao_account.getAsJsonObject().get("ci") != null) {
                 ci = kakao_account.getAsJsonObject().get("ci").getAsString();
             }
 
-            log.debug("id : {}", id);
-            log.debug("email : {}", email);
-            log.debug("nickname : {}", nickname);
-            log.debug("ci : {}", ci);
+//            log.info("id : {}", id);
+            log.info("email : {}", email);
+            log.info("nickname : {}", nickname);
+            log.info("profileImage : {}", profileImage);
+            log.info("ci : {}", ci);
 
             //TODO : 회원가입 시 user에 저장할 데이터 다시 확인
             user = User.builder()
                     .email(email)
                     .nickname(nickname)
+                    .profileImg(profileImage)
                     .ci(ci)
                     .isActivated(true)
                     .build();
