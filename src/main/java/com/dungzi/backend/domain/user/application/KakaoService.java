@@ -2,6 +2,8 @@ package com.dungzi.backend.domain.user.application;
 
 import com.dungzi.backend.domain.user.dao.UserDao;
 import com.dungzi.backend.domain.user.domain.User;
+import com.dungzi.backend.global.common.error.AuthErrorCode;
+import com.dungzi.backend.global.common.error.AuthException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -96,7 +98,7 @@ public class KakaoService {
     }
 
     // access_token을 이용하여 사용자 정보 조회
-    public User getKakaoUserInfo(String token) throws Exception {
+    public User getKakaoUserInfo(String token) {
         log.info("[SERVICE] getKakaoUserInfo");
 
         User user = new User();
@@ -178,8 +180,10 @@ public class KakaoService {
 
             br.close();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
+            log.warn("getKakaoUserInfo failed");
             e.printStackTrace();
+            throw new AuthException(AuthErrorCode.KAKAO_FAILED);
         }
 
         return user;

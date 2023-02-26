@@ -18,13 +18,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 
 @Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -40,11 +44,17 @@ public class AuthController {
     private final UnivAuthService univAuthService;
 
     private final String ACCESS_TOKEN = "access_token";
-//    private final String REFRESH_TOKEN = "refresh_token"; //TODO : 카카오 refresh token은 저장해둘 필요 없을까? 탈퇴나 로그아웃 시
+//    private final String REFRESH_TOKEN = "refresh_token";
 
-    // TODO : 인증 요청 대학교 도메인과 현제 이메일 도메인 일치 확인 로직 추가할 것 (테스트 시에도 불편할 예정)
+    @Operation(summary = "이메일 인증코드 api", description = "이메일 인증코드 전송 요청 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "회원 가입 성공"),
+                    @ApiResponse(responseCode = "500", description = "카카오 관련 에러")
+            }
+    )
     @GetMapping("/code")
-    public CommonResponse sendAuthEmail(@RequestParam String email, @RequestParam(value = "univ") String univId) throws Exception {
+    public CommonResponse getAuthCodeEmail(@RequestParam @Email String email, @RequestParam(value = "univ") @NotBlank String univId) throws Exception {
         log.info("[API] auth/code");
         univService.checkUnivDomain(email, univId);
         String code = emailService.sendSimpleMessage(email);
@@ -56,19 +66,18 @@ public class AuthController {
         return CommonResponse.toResponse(CommonCode.OK, response);
     }
 
+    @Operation(summary = "카카오 회원가입 api", description = "카카오 계정 연동 회원가입")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "회원 가입 성공"),
+                    @ApiResponse(responseCode = "500", description = "카카오 관련 에러")
+            }
+    )
     @PostMapping("/kakao")
     public CommonResponse signUpByKakao(@RequestBody UserRequestDto.SignUpByKakao requestDto) {
         log.info("[API] auth/kakao");
 
-        // TODO : 예외처리 Handler 사용하여 중복코드 개선하기
-        User kakaoUser;
-        try {
-            kakaoUser = kakaoService.getKakaoUserInfo(requestDto.getKakaoAccessToken());
-        } catch (Exception e) {
-            log.warn("getKakaoUserInfo failed");
-            e.printStackTrace();
-            return CommonResponse.toErrorResponse(AuthErrorCode.KAKAO_FAILED);
-        }
+        User kakaoUser = kakaoService.getKakaoUserInfo(requestDto.getKakaoAccessToken());
 
         // TODO : 형식적 유효성 검사가 원래 컨트롤러에서 하는 일이니 여기서 Optional로 하는 게 맞을 듯 (필수값이 아니니까 여기서 isPresent를 확인하진 않아도 되지 않을까?
         Optional<String> nicknameOp = Optional.ofNullable(requestDto.getNickname());
@@ -86,12 +95,11 @@ public class AuthController {
     }
 
     //카카오 로그인
-    //TODO : swagger 작성하기
-    @Operation(summary = "카카오 로그인 api", description = "카카오 계정 연동 로그인 api")
+    @Operation(summary = "카카오 로그인 api", description = "카카오 계정 연동 로그인")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "회원 가입된 유저"),
-                    @ApiResponse(responseCode = "", description = "새로운 방 생성"),
+                    @ApiResponse(responseCode = "200", description = "회원 가입된 유저. 로그인 성공"),
+                    @ApiResponse(responseCode = "200", description = "가입되지 않은 유저인 경우 카카오 액세스 토큰 전달"),
                     @ApiResponse(responseCode = "500", description = "카카오 관련 에러")
             }
     )
@@ -102,38 +110,21 @@ public class AuthController {
         HashMap<String, String> token = kakaoService.getKakaoAccessToken(code);
         String kakao_access_token = token.get(ACCESS_TOKEN);
 
-        // TODO : 예외처리 Handler 사용하여 중복코드 개선하기
-        User kakaoUser;
-        try {
-            kakaoUser = kakaoService.getKakaoUserInfo(kakao_access_token);
-        } catch (Exception e) {
-            log.info("getKakaoUserInfo failed");
-            e.printStackTrace();
-//            return CommonResponse.toErrorResponse(AuthErrorCode.KAKAO_FAILED);
-            throw new AuthException(AuthErrorCode.KAKAO_FAILED);
-        }
-
-//        UserResponseDto.KakaoLogin responseDto = new UserResponseDto.KakaoLogin();
+        User kakaoUser = kakaoService.getKakaoUserInfo(kakao_access_token);
 
         try {
             User loginUser = authService.login(kakaoUser);
             authService.setCookieTokenInResponse(httpServletResponse, loginUser); //위로 합치기
-//            responseDto.setUuid(loginUser.getUserId());
-//            responseDto.setIsUser(true);
             httpServletResponse.sendRedirect(LOGIN_SUCCESS_REDIRECT_URL);
         }
         catch(AuthException authException) {
             if(authException.getCode() == AuthErrorCode.NOT_EXIST_USER){
-//                responseDto.setKakaoAccessToken(kakao_access_token);
-//                responseDto.setIsUser(false);
                 httpServletResponse.addHeader(LOGIN_FAIL_KAKAO_TOKEN_HEADER, kakao_access_token);
                 httpServletResponse.sendRedirect(LOGIN_FAIL_REDIRECT_URL);
             }
         }
 
-//        return CommonResponse.toResponse(CommonCode.OK, responseDto);
     }
-
 
 
     ///////////TODO : 추후 제거

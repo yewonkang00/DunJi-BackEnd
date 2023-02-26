@@ -1,6 +1,8 @@
 package com.dungzi.backend.global.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -16,5 +18,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true) // 쿠키 전송 허용
 //                .maxAge(3000) // 원하는 시간만큼 pre-flight 리퀘스트 캐싱
                 ;
+    }
+
+    @Bean
+    public MethodValidationPostProcessor methodValidationPostProcessor() {
+        return new MethodValidationPostProcessor();
     }
 }

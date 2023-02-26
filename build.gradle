@@ -60,6 +60,8 @@ dependencies {
     //chatting
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
+    //validator
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 
 }
