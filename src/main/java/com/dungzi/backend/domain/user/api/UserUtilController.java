@@ -25,7 +25,7 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/users") // cookie 에서 사용자 정보를 확인하는 api 들
 public class UserUtilController {
     private final AuthService authService;
     private final UnivService univService;

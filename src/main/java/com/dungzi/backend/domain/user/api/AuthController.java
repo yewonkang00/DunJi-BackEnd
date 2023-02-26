@@ -34,7 +34,7 @@ import java.util.Optional;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/auth") // cookie 에서 사용자 정보를 확인하지 않는 api 들
 public class AuthController {
     private final String LOGIN_SUCCESS_REDIRECT_URL = "http://localhost:3000";
     private final String LOGIN_FAIL_REDIRECT_URL = "http://localhost:3000/login/kakao";
