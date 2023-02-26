@@ -24,6 +24,7 @@ public class UserUtilResponseDto {
         public static GetUserProfile toDto(User user, UnivAuth univAuth){
             return GetUserProfile.builder()
                     .userId(user.getUserId())
+                    .email(user.getEmail())
                     .nickname(user.getNickname())
                     .profileImg(user.getProfileImg())
                     .univName(univAuth.getUniv().getUnivName())
