@@ -105,9 +105,15 @@ public class AuthService {
 
     public User signUpByKakao(User kakaoUser, Optional<String> nicknameOp) {
         log.info("[SERVICE] signUpByKakao");
-        kakaoUser.updateSignUpInfo(nicknameOp);
-        kakaoUser.updateRoles(Collections.singletonList(ROLE_USER));
-        return userDao.save(kakaoUser);
+        Optional<User> userOptional = isExistUser(kakaoUser);
+
+        if(userOptional.isPresent()){
+            throw new AuthException(AuthErrorCode.ALREADY_EXIST_USER);
+        }else{
+            kakaoUser.updateSignUpInfo(nicknameOp);
+            kakaoUser.updateRoles(Collections.singletonList(ROLE_USER));
+            return userDao.save(kakaoUser);
+        }
     }
 
     //TODO  추후 제거

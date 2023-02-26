@@ -77,6 +77,7 @@ public class AuthController {
             value = {
                     @ApiResponse(responseCode = "201", description = "회원 가입 성공"),
                     @ApiResponse(responseCode = "400", description = "request body 값 관련 오류"),
+                    @ApiResponse(responseCode = "409", description = "해당 email 로 가입된 사용자가 이미 존재함"),
                     @ApiResponse(responseCode = "409", description = "카카오 관련 오류 (카카오 토큰값 확인 권장)")
             }
     )
