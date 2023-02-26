@@ -84,6 +84,20 @@ public class AuthService {
         return cookieMap;
     }
 
+    public void removeCookieToken(HttpServletResponse servletResponse) {
+        log.info("[SERVICE] removeCookieToken");
+
+        List<Cookie> cookieList = new ArrayList<>();
+        cookieList.add(new Cookie(jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME, null));
+        cookieList.add(new Cookie(jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME, null));
+
+        for(Cookie cookie : cookieList) {
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+            servletResponse.addCookie(cookie);
+        }
+    }
+
 
     public User login(User user) throws AuthException {
         log.info("[SERVICE] login");

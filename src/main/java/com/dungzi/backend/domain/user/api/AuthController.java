@@ -103,6 +103,19 @@ public class AuthController {
         return CommonResponse.toResponse(CommonCode.CREATED, UserAuthResponseDto.SignUpByKakao.toDto(newUser));
     }
 
+    @Operation(summary = "로그아웃 api", description = "쿠키에 저장되어있던 액세스 토큰, 리프레시 토큰 값 삭제")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "로그아웃 성공")
+            }
+    )
+    @GetMapping("/logout")
+    public CommonResponse logout(HttpServletResponse servletResponse) {
+        log.info("[API] auth/logout");
+        authService.removeCookieToken(servletResponse);
+        return CommonResponse.toResponse(CommonCode.OK, null);
+    }
+
 
     //카카오 로그인 콜백
     @Operation(summary = "카카오 로그인 콜백 api", description = "카카오 계정 연동 로그인에 사용되는 콜백 api")
