@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -40,8 +41,8 @@ public class UserUtilController {
     public CommonResponse getUserProfile() {
         log.info("[API] users/profile");
         User user = authService.getUserFromSecurity();
-        UnivAuth univAuth = univAuthService.getUnivAuthByUser(user);
-        return CommonResponse.toResponse(CommonCode.OK, UserUtilResponseDto.GetUserProfile.toDto(user, univAuth));
+        Optional<UnivAuth> univAuthOp = univAuthService.getUnivAuthByUser(user);
+        return CommonResponse.toResponse(CommonCode.OK, UserUtilResponseDto.GetUserProfile.toDto(user, univAuthOp));
     }
 
     @Operation(summary = "대학교 이메일 인증 api", description = "대학교 이메일 인증 정보 저장")

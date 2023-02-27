@@ -20,10 +20,9 @@ public class UnivAuthService {
     private final UnivAuthDao univAuthDao;
 
 
-    public UnivAuth getUnivAuthByUser(User user) {
+    public Optional<UnivAuth> getUnivAuthByUser(User user) {
         log.info("[SERVICE] getUnivAuthByUser");
-        return univAuthDao.findByUser(user)
-                .orElseThrow(() -> new AuthException(CommonCode.NOT_FOUND));
+        return univAuthDao.findByUser(user);
     }
 
     @Transactional

@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class UserUtilResponseDto {
@@ -21,14 +22,15 @@ public class UserUtilResponseDto {
         private String email;
         private String univName;
 
-        public static GetUserProfile toDto(User user, UnivAuth univAuth){
-            return GetUserProfile.builder()
+        public static GetUserProfile toDto(User user, Optional<UnivAuth> univAuthOp){
+            GetUserProfile dto = GetUserProfile.builder()
                     .userId(user.getUserId())
                     .email(user.getEmail())
                     .nickname(user.getNickname())
                     .profileImg(user.getProfileImg())
-                    .univName(univAuth.getUniv().getUnivName())
                     .build();
+            univAuthOp.ifPresent(univAuth -> dto.setUnivName(univAuth.getUniv().getUnivName()));
+            return dto;
         }
     }
 
