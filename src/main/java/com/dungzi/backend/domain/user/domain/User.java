@@ -2,7 +2,6 @@ package com.dungzi.backend.domain.user.domain;
 
 import com.dungzi.backend.global.common.BaseTimeEntity;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,8 +55,7 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.roles = roles;
     }
 
-    public void updateSignUpInfo(String nickname) {
-        //이메일 변경
+    public void updateNickname(String nickname) {
 //        nicknameOp.ifPresent(nickname -> this.nickname = nickname);
         this.nickname = nickname;
     }

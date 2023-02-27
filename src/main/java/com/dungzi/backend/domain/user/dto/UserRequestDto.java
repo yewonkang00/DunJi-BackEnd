@@ -40,7 +40,7 @@ public class UserRequestDto {
     }
 
     @Data
-    public static class CheckNicknameExist {
+    public static class NicknameOnly {
         @NotBlank
         private String nickname;
     }

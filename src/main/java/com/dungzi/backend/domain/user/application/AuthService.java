@@ -25,8 +25,10 @@ import java.util.*;
 public class AuthService {
     private final UserDao userDao;
     private final JwtTokenProvider jwtTokenProvider;
-    
+
     private final String ROLE_USER = "ROLE_USER"; //TODO : 추후 다른 권한 이름들 정리해서 추가 (공인중개사 계정 등)
+    private final String NICKNAME_RULE_REGEX = "^[0-9A-Za-zㄱ-ㅎㅏ-ㅣ가-힣][0-9A-Za-zㄱ-ㅎㅏ-ㅣ가-힣\\.\\/\\_\\[\\]]*[0-9A-Za-zㄱ-ㅎㅏ-ㅣ가-힣]$";
+
 
     public User getUserFromSecurity() {
         log.info("[SERVICE] getUserFromSecurity");
@@ -124,7 +126,7 @@ public class AuthService {
         if(userOptional.isPresent()){
             throw new AuthException(AuthErrorCode.ALREADY_EXIST_USER);
         }else{
-            kakaoUser.updateSignUpInfo(nickname);
+            kakaoUser.updateNickname(nickname);
             kakaoUser.updateRoles(Collections.singletonList(ROLE_USER));
             return userDao.save(kakaoUser);
         }
@@ -134,6 +136,32 @@ public class AuthService {
         log.info("[SERVICE] isNicknameExist");
         return userDao.findByNickname(nickname).isPresent();
     }
+
+    public void updateNickname(String nickname) {
+        log.info("[SERVICE] updateNickname");
+        User user = getUserFromSecurity();
+        user.updateNickname(nickname);
+        userDao.save(user);
+    }
+
+    public void validateNickname(String nickname) {
+        if(nickname.length() < 2 || nickname.length() > 12){
+            log.info("validateNickname : too long or too short");
+            throw new ValidException(ValidErrorCode.NICKNAME_FORBIDDEN);
+        }
+
+        if(! nickname.matches(NICKNAME_RULE_REGEX)) {
+            log.info("validateNickname : do not fit with nickname rule");
+            throw new ValidException(ValidErrorCode.NICKNAME_FORBIDDEN);
+        }
+
+        //TODO : isNicknameExist() 메서드를 재사용 하고 싶었으나 그러면 내부 호출된 함수라 @Transactional 적용이 안된다고 함..
+        if(userDao.findByNickname(nickname).isPresent()) {
+            log.info("validateNickname : NICKNAME_ALREADY_EXIST");
+            throw new ValidException(ValidErrorCode.NICKNAME_ALREADY_EXIST);
+        }
+    }
+
 
     //TODO  추후 제거
     @Transactional

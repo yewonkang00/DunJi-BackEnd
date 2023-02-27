@@ -7,17 +7,15 @@ import com.dungzi.backend.domain.univ.domain.UnivAuth;
 import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.domain.user.dto.UserRequestDto;
-import com.dungzi.backend.domain.user.dto.UserAuthResponseDto;
 import com.dungzi.backend.domain.user.dto.UserUtilResponseDto;
 import com.dungzi.backend.global.common.CommonCode;
 import com.dungzi.backend.global.common.CommonResponse;
-import com.dungzi.backend.global.common.error.AuthErrorCode;
-import com.dungzi.backend.global.common.error.AuthException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -64,5 +62,21 @@ public class UserUtilController {
 
         UnivAuth univAuth = univAuthService.updateUserEmailAuth(user, univ, requestDto.getUnivEmail(), requestDto.getIsEmailChecked());
         return CommonResponse.toResponse(CommonCode.OK, UserUtilResponseDto.UpdateEmailAuth.toDto(user, univAuth));
+    }
+
+    @Operation(summary = "닉네임 변경 api", description = "사용자 닉네임 변경")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "변경 성공"),
+                    @ApiResponse(responseCode = "401", description = "사용자 확인 불가")
+            }
+    )
+    @Transactional
+    @PatchMapping("/nickname")
+    public CommonResponse updateNickname(@RequestBody @Valid UserRequestDto.NicknameOnly requestDto) {
+        log.info("[API] users/nickname");
+        authService.validateNickname(requestDto.getNickname());
+        authService.updateNickname(requestDto.getNickname());
+        return CommonResponse.toResponse(CommonCode.OK, null);
     }
 }

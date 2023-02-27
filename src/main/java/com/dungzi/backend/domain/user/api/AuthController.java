@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +29,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Optional;
 
 @Slf4j
 @Validated
@@ -39,7 +39,6 @@ public class AuthController {
     private final String LOGIN_SUCCESS_REDIRECT_URL = "http://localhost:3000";
     private final String LOGIN_FAIL_REDIRECT_URL = "http://localhost:3000/login/kakao";
     private final String LOGIN_FAIL_KAKAO_TOKEN_HEADER = "kakao-access-token";
-    private final String NICKNAME_RULE_REGEX = "^[0-9A-Za-zㄱ-ㅎㅏ-ㅣ가-힣][0-9A-Za-zㄱ-ㅎㅏ-ㅣ가-힣\\.\\/\\_\\[\\]]*[0-9A-Za-zㄱ-ㅎㅏ-ㅣ가-힣]$";
 
     private final KakaoService kakaoService;
     private final AuthService authService;
@@ -84,6 +83,7 @@ public class AuthController {
                     @ApiResponse(responseCode = "409", description = "카카오 관련 오류 (카카오 토큰값 확인 권장)")
             }
     )
+    @Transactional
     @PostMapping("/kakao")
     public CommonResponse signUpByKakao(@RequestBody @Valid UserRequestDto.SignUpByKakao requestDto) {
         log.info("[API] auth/kakao");
@@ -91,11 +91,7 @@ public class AuthController {
         //isUnivAuth == true 일 경우 univId, univEmail 필수값 체크
         if(requestDto.getIsUnivAuth()) { validateUnivAuthFields(requestDto); }
 
-        //닉네임 유효성 검사
-        validateNickname(requestDto.getNickname());
-        if(authService.isNicknameExist(requestDto.getNickname())) {
-            throw new ValidException(ValidErrorCode.NICKNAME_ALREADY_EXIST);
-        }
+        authService.validateNickname(requestDto.getNickname());
 
         User kakaoUser = kakaoService.getKakaoUserInfo(requestDto.getKakaoAccessToken());
 
@@ -119,7 +115,7 @@ public class AuthController {
             }
     )
     @PostMapping("/nickname")
-    public CommonResponse checkNicknameExist(@RequestBody @Valid UserRequestDto.CheckNicknameExist requestDto) {
+    public CommonResponse checkNicknameExist(@RequestBody @Valid UserRequestDto.NicknameOnly requestDto) {
         log.info("[API] auth/nickname");
         boolean isExist = authService.isNicknameExist(requestDto.getNickname());
         return CommonResponse.toResponse(CommonCode.OK,
@@ -176,16 +172,6 @@ public class AuthController {
             if(requestDto.getUnivEmail().isBlank() || requestDto.getUnivId().isBlank()){
                 throw new ValidException(ValidErrorCode.REQUIRED_VALUE);
             }
-        }
-    }
-
-    private void validateNickname(String nickname) {
-        if(nickname.length() < 2 || nickname.length() > 12){
-            throw new ValidException(ValidErrorCode.NICKNAME_FORBIDDEN);
-        }
-
-        if(! nickname.matches(NICKNAME_RULE_REGEX)) {
-            throw new ValidException(ValidErrorCode.NICKNAME_FORBIDDEN);
         }
     }
 
