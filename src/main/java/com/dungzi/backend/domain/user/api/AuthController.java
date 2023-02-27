@@ -39,6 +39,7 @@ public class AuthController {
     private final String LOGIN_SUCCESS_REDIRECT_URL = "http://localhost:3000";
     private final String LOGIN_FAIL_REDIRECT_URL = "http://localhost:3000/login/kakao";
     private final String LOGIN_FAIL_KAKAO_TOKEN_HEADER = "kakao-access-token";
+    private final String NICKNAME_RULE_REGEX = "^[0-9A-Za-zㄱ-ㅎㅏ-ㅣ가-힣][0-9A-Za-zㄱ-ㅎㅏ-ㅣ가-힣\\.\\/\\_\\[\\]]*[0-9A-Za-zㄱ-ㅎㅏ-ㅣ가-힣]$";
 
     private final KakaoService kakaoService;
     private final AuthService authService;
@@ -78,6 +79,8 @@ public class AuthController {
                     @ApiResponse(responseCode = "201", description = "회원 가입 성공"),
                     @ApiResponse(responseCode = "400", description = "request body 값 관련 오류"),
                     @ApiResponse(responseCode = "409", description = "해당 email 로 가입된 사용자가 이미 존재함"),
+                    @ApiResponse(responseCode = "409", description = "해당 nickname 은 사용할 수 없는 형식임"),
+                    @ApiResponse(responseCode = "409", description = "해당 nickname 으로 가입된 사용자가 이미 존재함"),
                     @ApiResponse(responseCode = "409", description = "카카오 관련 오류 (카카오 토큰값 확인 권장)")
             }
     )
@@ -88,11 +91,16 @@ public class AuthController {
         //isUnivAuth == true 일 경우 univId, univEmail 필수값 체크
         if(requestDto.getIsUnivAuth()) { validateUnivAuthFields(requestDto); }
 
+        //닉네임 유효성 검사
+        validateNickname(requestDto.getNickname());
+        if(authService.isNicknameExist(requestDto.getNickname())) {
+            throw new ValidException(ValidErrorCode.NICKNAME_ALREADY_EXIST);
+        }
+
         User kakaoUser = kakaoService.getKakaoUserInfo(requestDto.getKakaoAccessToken());
-        Optional<String> nicknameOp = Optional.ofNullable(requestDto.getNickname());
 
         //회원가입
-        User newUser = authService.signUpByKakao(kakaoUser, nicknameOp);
+        User newUser = authService.signUpByKakao(kakaoUser, requestDto.getNickname());
 
         //이메일 인증 정보 저장
         if(requestDto.getIsUnivAuth()){
@@ -112,6 +120,7 @@ public class AuthController {
     )
     @PostMapping("/nickname")
     public CommonResponse checkNicknameExist(@RequestBody @Valid UserRequestDto.CheckNicknameExist requestDto) {
+        log.info("[API] auth/nickname");
         boolean isExist = authService.isNicknameExist(requestDto.getNickname());
         return CommonResponse.toResponse(CommonCode.OK,
                 UserAuthResponseDto.CheckNicknameExist.toDto(requestDto.getNickname(), isExist));
@@ -167,6 +176,16 @@ public class AuthController {
             if(requestDto.getUnivEmail().isBlank() || requestDto.getUnivId().isBlank()){
                 throw new ValidException(ValidErrorCode.REQUIRED_VALUE);
             }
+        }
+    }
+
+    private void validateNickname(String nickname) {
+        if(nickname.length() < 2 || nickname.length() > 12){
+            throw new ValidException(ValidErrorCode.NICKNAME_FORBIDDEN);
+        }
+
+        if(! nickname.matches(NICKNAME_RULE_REGEX)) {
+            throw new ValidException(ValidErrorCode.NICKNAME_FORBIDDEN);
         }
     }
 

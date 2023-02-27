@@ -8,7 +8,7 @@ public class UserRequestDto {
 
     @Data
     public static class UpdateEmailAuth {
-        @Pattern(regexp = "^[U][0-9]{4}$")
+        @Pattern(regexp = "^U[0-9]{4}$")
         @NotBlank
         private String univId;
 
@@ -29,12 +29,13 @@ public class UserRequestDto {
         @NotNull
         private Boolean isUnivAuth;
 
-        @Pattern(regexp = "^[U][0-9]{4}$")
+        @Pattern(regexp = "^U[0-9]{4}$")
         private String univId;
 
         @Email
         private String univEmail;
 
+        @NotBlank
         private String nickname;
     }
 

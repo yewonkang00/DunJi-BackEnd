@@ -3,6 +3,8 @@ package com.dungzi.backend.domain.user.application;
 import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.global.common.error.AuthException;
 import com.dungzi.backend.global.common.error.AuthErrorCode;
+import com.dungzi.backend.global.common.error.ValidErrorCode;
+import com.dungzi.backend.global.common.error.ValidException;
 import com.dungzi.backend.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -115,20 +117,21 @@ public class AuthService {
     }
 
 
-    public User signUpByKakao(User kakaoUser, Optional<String> nicknameOp) {
+    public User signUpByKakao(User kakaoUser, String nickname) {
         log.info("[SERVICE] signUpByKakao");
         Optional<User> userOptional = isExistUser(kakaoUser);
 
         if(userOptional.isPresent()){
             throw new AuthException(AuthErrorCode.ALREADY_EXIST_USER);
         }else{
-            kakaoUser.updateSignUpInfo(nicknameOp);
+            kakaoUser.updateSignUpInfo(nickname);
             kakaoUser.updateRoles(Collections.singletonList(ROLE_USER));
             return userDao.save(kakaoUser);
         }
     }
 
     public boolean isNicknameExist(String nickname) {
+        log.info("[SERVICE] isNicknameExist");
         return userDao.findByNickname(nickname).isPresent();
     }
 
