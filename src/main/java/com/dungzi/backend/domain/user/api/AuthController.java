@@ -103,12 +103,21 @@ public class AuthController {
         return CommonResponse.toResponse(CommonCode.CREATED, UserAuthResponseDto.SignUpByKakao.toDto(newUser));
     }
 
-    @Operation(summary = "로그아웃 api", description = "쿠키에 저장되어있던 액세스 토큰, 리프레시 토큰 값 삭제")
+    @Operation(summary = "닉네임 중복 검사 api", description = "이미 존재하는 닉네임인지 확인하는 api")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "로그아웃 성공")
+                    @ApiResponse(responseCode = "200", description = "확인 성공"),
+                    @ApiResponse(responseCode = "400", description = "request body 값 관련 오류")
             }
     )
+    @PostMapping("/nickname")
+    public CommonResponse checkNicknameExist(@RequestBody @Valid UserRequestDto.CheckNicknameExist requestDto) {
+        boolean isExist = authService.isNicknameExist(requestDto.getNickname());
+        return CommonResponse.toResponse(CommonCode.OK,
+                UserAuthResponseDto.CheckNicknameExist.toDto(requestDto.getNickname(), isExist));
+    }
+
+
     @GetMapping("/logout")
     public CommonResponse logout(HttpServletResponse servletResponse) {
         log.info("[API] auth/logout");

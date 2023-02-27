@@ -1,6 +1,5 @@
 package com.dungzi.backend.domain.user.dto;
 
-import com.dungzi.backend.domain.univ.domain.UnivAuth;
 import com.dungzi.backend.domain.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +13,6 @@ public class UserAuthResponseDto {
     @Builder
     @Data
     public static class SendEmailAuth {
-//        private String uuid;
         private String email;
         private String authCode;
     }
@@ -37,6 +35,20 @@ public class UserAuthResponseDto {
         public static SignUpByKakao toDto(User user){
             return SignUpByKakao.builder()
                     .uuid(user.getUserId())
+                    .build();
+        }
+    }
+
+    @Builder
+    @Data
+    public static class CheckNicknameExist {
+        private String nickname;
+        private Boolean isExsit;
+
+        public static CheckNicknameExist toDto(String nickname, Boolean isExsit){
+            return CheckNicknameExist.builder()
+                    .nickname(nickname)
+                    .isExsit(isExsit)
                     .build();
         }
     }

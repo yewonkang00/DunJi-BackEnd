@@ -37,4 +37,10 @@ public class UserRequestDto {
 
         private String nickname;
     }
+
+    @Data
+    public static class CheckNicknameExist {
+        @NotBlank
+        private String nickname;
+    }
 }
