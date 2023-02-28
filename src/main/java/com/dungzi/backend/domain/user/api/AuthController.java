@@ -146,7 +146,7 @@ public class AuthController {
             }
     )
     @GetMapping("/kakao")
-    public void kakaoCallback(@RequestParam String state, @RequestParam String code, HttpServletResponse httpServletResponse) throws IOException {
+    public void kakaoCallback(@RequestParam @NotBlank String state, @RequestParam @NotBlank String code, HttpServletResponse httpServletResponse) throws IOException {
         log.info("[API] auth/kakao");
         log.info("state : {}", state);
 
