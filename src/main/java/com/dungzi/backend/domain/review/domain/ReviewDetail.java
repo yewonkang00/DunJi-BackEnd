@@ -4,6 +4,7 @@ import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.global.common.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -16,6 +17,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class ReviewDetail extends BaseTimeEntity{
 
     @Id

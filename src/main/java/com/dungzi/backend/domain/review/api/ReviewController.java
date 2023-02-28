@@ -1,6 +1,7 @@
 package com.dungzi.backend.domain.review.api;
 
 import com.dungzi.backend.domain.review.application.ReviewService;
+import com.dungzi.backend.domain.review.dto.ReviewDetailResponseDto;
 import com.dungzi.backend.domain.review.dto.ReviewRequestDto;
 import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.domain.User;
@@ -11,6 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,6 +53,19 @@ public class ReviewController {
         System.out.println(reviewId);
         reviewService.deleteReview(reviewId);
         return CommonResponse.toResponse(CommonCode.OK);
+    }
+
+    @Operation(summary = "후기 리스트 최신순 조회 api", description = "후기 상세정보 리스트 조회를 위한 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "정상적으로 후기리스트 조회 완료")
+            }
+    )
+    @GetMapping("/detail")
+    public CommonResponse getReviewList(Pageable pageable){
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("regDate").descending());
+        List<ReviewDetailResponseDto> reviewList = reviewService.getReviewList(pageRequest);
+        return CommonResponse.toResponse(CommonCode.OK,reviewList);
     }
 
 }
