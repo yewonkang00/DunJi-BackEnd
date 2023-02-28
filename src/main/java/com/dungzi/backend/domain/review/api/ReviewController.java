@@ -3,6 +3,7 @@ package com.dungzi.backend.domain.review.api;
 import com.dungzi.backend.domain.review.application.ReviewService;
 import com.dungzi.backend.domain.review.dto.ReviewDetailResponseDto;
 import com.dungzi.backend.domain.review.dto.ReviewRequestDto;
+import com.dungzi.backend.domain.review.dto.ReviewResponseDto;
 import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.global.common.CommonCode;
@@ -61,7 +62,7 @@ public class ReviewController {
                     @ApiResponse(responseCode = "200", description = "정상적으로 후기리스트 조회 완료")
             }
     )
-    @GetMapping("/detail")
+    @GetMapping("/list")
     public CommonResponse getReviewList(Pageable pageable){
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("regDate").descending());
         List<ReviewDetailResponseDto> reviewList = reviewService.getReviewList(pageRequest);
@@ -76,8 +77,21 @@ public class ReviewController {
     )
     @GetMapping("/")
     public CommonResponse getReview(@RequestParam("buildingId") String buildingId,Pageable pageable){
-        List<ReviewDetailResponseDto> reviewList = reviewService.getReview(buildingId, pageable);
+        List<ReviewDetailResponseDto> reviewDetailList = reviewService.getReview(buildingId, pageable);
+        return CommonResponse.toResponse(CommonCode.OK,reviewDetailList);
+    }
+
+    @Operation(summary = "주소로 건물 검색 api", description = "해당 주소의 건물 리스트 조회를 위한 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "정상적으로 해당 주소의 건물리스트 조회 완료")
+            }
+    )
+    @GetMapping("/search")
+    public CommonResponse findReview(@RequestParam("address") String address,Pageable pageable){
+        List<ReviewResponseDto> reviewList = reviewService.findReview(address, pageable);
         return CommonResponse.toResponse(CommonCode.OK,reviewList);
     }
+
 
 }

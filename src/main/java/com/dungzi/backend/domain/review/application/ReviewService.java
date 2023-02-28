@@ -6,6 +6,7 @@ import com.dungzi.backend.domain.review.domain.Review;
 import com.dungzi.backend.domain.review.domain.ReviewDetail;
 import com.dungzi.backend.domain.review.dto.ReviewDetailResponseDto;
 import com.dungzi.backend.domain.review.dto.ReviewRequestDto;
+import com.dungzi.backend.domain.review.dto.ReviewResponseDto;
 import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.global.s3.FileUploadService;
 import lombok.RequiredArgsConstructor;
@@ -64,14 +65,30 @@ public class ReviewService {
     }
 
     public List<ReviewDetailResponseDto> getReviewList(Pageable pageable){
-        return changeToReviewResponseDto(reviewDetailDao.findAll(pageable));
+        return changeToReviewDetailResponseDto(reviewDetailDao.findAll(pageable));
     }
 
     public List<ReviewDetailResponseDto> getReview(String buildingId,Pageable pageable){
-        return changeToReviewResponseDto(reviewDetailDao.findByBuildingId(UUID.fromString(buildingId),pageable));
+        return changeToReviewDetailResponseDto(reviewDetailDao.findByBuildingId(UUID.fromString(buildingId),pageable));
     }
 
-    private List<ReviewDetailResponseDto> changeToReviewResponseDto(Page<ReviewDetail> reviewList) {
+    public List<ReviewResponseDto> findReview(String address,Pageable pageable){
+        return changeToReviewResponseDto(reviewDao.findByAddress(address,pageable));
+    }
+    private List<ReviewResponseDto> changeToReviewResponseDto(Page<Review> reviewList) {
+        List<ReviewResponseDto> response = new ArrayList<>();
+        long count = reviewList.stream().count();
+        response.addAll(reviewList.stream()
+                .map(review -> ReviewResponseDto.builder()
+                        .address(review.getAddress())
+                        .totalRate(review.getTotalRate())
+                        .count(count)
+                        .build())
+                .collect(Collectors.toList()));
+        return response;
+    }
+
+    private List<ReviewDetailResponseDto> changeToReviewDetailResponseDto(Page<ReviewDetail> reviewList) {
         List<ReviewDetailResponseDto> response = new ArrayList<>();
         response.addAll(reviewList.stream()
                 .map(reviewDetail -> ReviewDetailResponseDto.builder()
