@@ -38,8 +38,8 @@ public class ReviewService {
 
 
         if (find_review.isEmpty()) { //해당주소의 객체가 없다면
-            UUID reviewId = reviewDao.save(requestDto.toReviewEntity()).getReviewId();
-            fileUploadService.uploadRoomFile(reviewId.toString(), files);
+            UUID reviewId = reviewDao.save(requestDto.toReviewEntity(user)).getReviewId();
+            fileUploadService.uploadReviewFile(reviewId.toString(), files);
 
             return reviewId;
 
@@ -51,7 +51,7 @@ public class ReviewService {
             review.updateReview(requestDto,curCount);
 
             UUID reviewId = review.getReviewId();
-            fileUploadService.uploadRoomFile(reviewId.toString(), files);
+            fileUploadService.uploadReviewFile(reviewId.toString(), files);
 
             return reviewId;
         }

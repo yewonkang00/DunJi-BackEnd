@@ -2,6 +2,7 @@ package com.dungzi.backend.domain.review.dto;
 
 import com.dungzi.backend.domain.review.domain.Review;
 import com.dungzi.backend.domain.review.domain.ReviewDetail;
+import com.dungzi.backend.domain.user.domain.User;
 import lombok.Data;
 
 
@@ -40,8 +41,9 @@ public class ReviewRequestDto {
 
         private String period;
 
-        public ReviewDetail toReviewDetailEntity(UUID buildingId){
+        public ReviewDetail toReviewDetailEntity(UUID buildingId, User user){
             return ReviewDetail.builder()
+                    .user(user)
                     .buildingId(buildingId)
                     .content(this.content)
                     .address(this.address)
@@ -56,8 +58,9 @@ public class ReviewRequestDto {
                     .build();
 
         }
-        public Review toReviewEntity(){
+        public Review toReviewEntity(User user){
             return Review.builder()
+                    .user(user)
                     .address(this.address)
                     .totalRate(this.totalRate)
                     .cleanRate(this.cleanRate)
