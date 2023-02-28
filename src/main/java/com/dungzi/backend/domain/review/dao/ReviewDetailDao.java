@@ -11,5 +11,6 @@ public interface ReviewDetailDao extends JpaRepository<ReviewDetail, UUID> {
     int countByBuildingId(UUID buildingId);
     Page<ReviewDetail> findAll(Pageable pageable);
 
+    Page<ReviewDetail> findByBuildingId(UUID buildingId,Pageable pageable);
 
 }

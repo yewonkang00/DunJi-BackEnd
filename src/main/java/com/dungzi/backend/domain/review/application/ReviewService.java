@@ -67,6 +67,10 @@ public class ReviewService {
         return changeToReviewResponseDto(reviewDetailDao.findAll(pageable));
     }
 
+    public List<ReviewDetailResponseDto> getReview(String buildingId,Pageable pageable){
+        return changeToReviewResponseDto(reviewDetailDao.findByBuildingId(UUID.fromString(buildingId),pageable));
+    }
+
     private List<ReviewDetailResponseDto> changeToReviewResponseDto(Page<ReviewDetail> reviewList) {
         List<ReviewDetailResponseDto> response = new ArrayList<>();
         response.addAll(reviewList.stream()

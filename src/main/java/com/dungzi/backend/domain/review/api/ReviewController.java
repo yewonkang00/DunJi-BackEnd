@@ -68,4 +68,10 @@ public class ReviewController {
         return CommonResponse.toResponse(CommonCode.OK,reviewList);
     }
 
+    @GetMapping("/")
+    public CommonResponse getReview(@RequestParam("buildingId") String buildingId,Pageable pageable){
+        List<ReviewDetailResponseDto> reviewList = reviewService.getReview(buildingId, pageable);
+        return CommonResponse.toResponse(CommonCode.OK,reviewList);
+    }
+
 }
