@@ -36,8 +36,12 @@ import java.util.HashMap;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth") // cookie 에서 사용자 정보를 확인하지 않는 api 들
 public class AuthController {
-    private final String LOGIN_SUCCESS_REDIRECT_URL = "http://localhost:3000";
-    private final String LOGIN_FAIL_REDIRECT_URL = "http://localhost:3000/signup/policy";
+    private final String LOGIN_SUCCESS_REDIRECT_DOMAIN_URL = "https://dankan.co.kr";
+    private final String LOGIN_SUCCESS_REDIRECT_LOCAL_URL = "http://localhost:3000";
+    private final String LOGIN_FAIL_REDIRECT_DOMAIN_URL = "https://dankan.co.kr/signup/policy";
+    private final String LOGIN_FAIL_REDIRECT_LOCAL_URL = "http://localhost:3000/signup/policy";
+    private final String LOGIN_REDIRECT_STATE_RELEASE = "release";
+    private final String LOGIN_REDIRECT_STATE_DEVELOP = "develop";
     private final String LOGIN_FAIL_KAKAO_TOKEN_HEADER = "kakao-access-token";
 
     private final KakaoService kakaoService;
@@ -141,8 +145,9 @@ public class AuthController {
             }
     )
     @GetMapping("/kakao")
-    public void kakaoCallback(@RequestParam String code, HttpServletResponse httpServletResponse) throws IOException {
+    public void kakaoCallback(@RequestParam String state, @RequestParam String code, HttpServletResponse httpServletResponse) throws IOException {
         log.info("[API] auth/kakao");
+        log.info("state : {}", state);
 
         HashMap<String, String> token = kakaoService.getKakaoAccessToken(code);
         String kakao_access_token = token.get(ACCESS_TOKEN);
@@ -152,15 +157,39 @@ public class AuthController {
         try {
             User loginUser = authService.login(kakaoUser);
             authService.setCookieTokenInResponse(httpServletResponse, loginUser); //위로 합치기
-            httpServletResponse.sendRedirect(LOGIN_SUCCESS_REDIRECT_URL);
+            setLoginRedirect(httpServletResponse, state, true);
+            log.info("kakaoCallback : success login");
         }
         catch(AuthException authException) {
             if(authException.getCode() == AuthErrorCode.NOT_EXIST_USER){
                 httpServletResponse.addHeader(LOGIN_FAIL_KAKAO_TOKEN_HEADER, kakao_access_token);
-                httpServletResponse.sendRedirect(LOGIN_FAIL_REDIRECT_URL);
+                setLoginRedirect(httpServletResponse, state, false);
+                log.info("kakaoCallback : fail login");
             }
         }
 
+    }
+
+    private void setLoginRedirect(HttpServletResponse httpServletResponse, String state, Boolean isLoginSuccess) throws IOException {
+        String redirectUrl = "";
+        if(isLoginSuccess){
+            if(state.equals(LOGIN_REDIRECT_STATE_RELEASE)){
+                redirectUrl=LOGIN_SUCCESS_REDIRECT_DOMAIN_URL;
+            }
+            else if(state.equals(LOGIN_REDIRECT_STATE_DEVELOP)){
+                redirectUrl=LOGIN_SUCCESS_REDIRECT_LOCAL_URL;
+            }
+        }
+        else {
+            if(state.equals(LOGIN_REDIRECT_STATE_RELEASE)){
+                redirectUrl=LOGIN_FAIL_REDIRECT_DOMAIN_URL;
+            }
+            else if(state.equals(LOGIN_REDIRECT_STATE_DEVELOP)){
+                redirectUrl=LOGIN_FAIL_REDIRECT_LOCAL_URL;
+            }
+        }
+        log.info("redirectUrl : {}", redirectUrl);
+        httpServletResponse.sendRedirect(redirectUrl);
     }
 
 
