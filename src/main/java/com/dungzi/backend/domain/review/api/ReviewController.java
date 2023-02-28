@@ -37,10 +37,11 @@ public class ReviewController {
             }
     )
     @PostMapping("/")
-    public CommonResponse createReview(ReviewRequestDto.CreateReview requestDto, List<MultipartFile> files){
+    public CommonResponse createReview(@RequestPart ReviewRequestDto.CreateReview body,
+                                       @RequestPart List<MultipartFile> files){
         User user = authService.getUserFromSecurity();
-        UUID buildingId = reviewService.saveReview(requestDto,files,user);
-        return CommonResponse.toResponse(CommonCode.OK, reviewService.saveReviewDetail(requestDto.toReviewDetailEntity(buildingId,user)));
+        UUID buildingId = reviewService.saveReview(body,files,user);
+        return CommonResponse.toResponse(CommonCode.OK, reviewService.saveReviewDetail(body.toReviewDetailEntity(buildingId,user)));
     }
 
     @Operation(summary = "후기 삭제 api", description = "후기 삭제를 위한 api")
