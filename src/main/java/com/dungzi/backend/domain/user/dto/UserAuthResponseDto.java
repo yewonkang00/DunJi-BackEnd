@@ -43,12 +43,12 @@ public class UserAuthResponseDto {
     @Data
     public static class CheckNicknameExist {
         private String nickname;
-        private Boolean isExsit;
+        private Boolean isUnique;
 
-        public static CheckNicknameExist toDto(String nickname, Boolean isExsit){
+        public static CheckNicknameExist toDto(String nickname, Boolean isUnique){
             return CheckNicknameExist.builder()
                     .nickname(nickname)
-                    .isExsit(isExsit)
+                    .isUnique(isUnique)
                     .build();
         }
     }

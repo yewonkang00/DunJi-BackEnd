@@ -132,9 +132,12 @@ public class AuthService {
         }
     }
 
-    public boolean isNicknameExist(String nickname) {
+    public void checkNicknameUnique(String nickname) {
         log.info("[SERVICE] isNicknameExist");
-        return userDao.findByNickname(nickname).isPresent();
+        userDao.findByNickname(nickname)
+                .ifPresent(n -> {
+                    throw new ValidException(ValidErrorCode.NICKNAME_ALREADY_EXIST);
+                });
     }
 
     public void updateNickname(String nickname) {

@@ -115,15 +115,16 @@ public class AuthController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "확인 성공"),
-                    @ApiResponse(responseCode = "400", description = "request body 값 관련 오류")
+                    @ApiResponse(responseCode = "400", description = "request body 값 관련 오류"),
+                    @ApiResponse(responseCode = "409", description = "이미 존재하는 nickname 임")
             }
     )
     @PostMapping("/nickname")
-    public CommonResponse checkNicknameExist(@RequestBody @Valid UserRequestDto.NicknameOnly requestDto) {
+    public CommonResponse checkNicknameUnique(@RequestBody @Valid UserRequestDto.NicknameOnly requestDto) {
         log.info("[API] auth/nickname");
-        boolean isExist = authService.isNicknameExist(requestDto.getNickname());
+        authService.checkNicknameUnique(requestDto.getNickname());
         return CommonResponse.toResponse(CommonCode.OK,
-                UserAuthResponseDto.CheckNicknameExist.toDto(requestDto.getNickname(), isExist));
+                UserAuthResponseDto.CheckNicknameExist.toDto(requestDto.getNickname(), true));
     }
 
 
