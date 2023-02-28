@@ -31,7 +31,9 @@ public class ReviewDetail extends BaseTimeEntity{
     @JoinColumn(name="user_id")
     private User user;
 
-    private UUID buildingId; //fk로?
+    @Column( nullable = false,length = 36)
+    @Type(type = "uuid-char")
+    private UUID buildingId;
 
     private String content;
 
