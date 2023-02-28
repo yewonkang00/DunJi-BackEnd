@@ -68,6 +68,12 @@ public class ReviewController {
         return CommonResponse.toResponse(CommonCode.OK,reviewList);
     }
 
+    @Operation(summary = "해당 건물의 후기 상세정보 리스트 api", description = "해당 건물의 후기 상세정보 리스트 조회를 위한 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "정상적으로 해당 건물의 후기리스트 조회 완료")
+            }
+    )
     @GetMapping("/")
     public CommonResponse getReview(@RequestParam("buildingId") String buildingId,Pageable pageable){
         List<ReviewDetailResponseDto> reviewList = reviewService.getReview(buildingId, pageable);
