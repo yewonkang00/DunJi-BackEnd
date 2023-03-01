@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -120,11 +121,11 @@ public class AuthController {
             }
     )
     @PostMapping("/nickname")
-    public CommonResponse checkNicknameUnique(@RequestBody @Valid UserRequestDto.NicknameOnly requestDto) {
+    public ResponseEntity<CommonResponse> checkNicknameUnique(@RequestBody @Valid UserRequestDto.NicknameOnly requestDto) {
         log.info("[API] auth/nickname");
         authService.checkNicknameUnique(requestDto.getNickname());
-        return CommonResponse.toResponse(CommonCode.OK,
-                UserAuthResponseDto.CheckNicknameExist.toDto(requestDto.getNickname(), true));
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK,
+                UserAuthResponseDto.CheckNicknameExist.toDto(requestDto.getNickname(), true)));
     }
 
 
