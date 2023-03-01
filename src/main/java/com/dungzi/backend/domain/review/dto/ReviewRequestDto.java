@@ -22,22 +22,22 @@ public class ReviewRequestDto {
         private String addressDetail;
 
         @NotBlank
-        private int totalRate;
+        private float totalRate;
 
         @NotBlank
-        private int cleanRate;
+        private float cleanRate;
 
         @NotBlank
-        private int noiseRate;
+        private float noiseRate;
 
         @NotBlank
-        private int accessRate;
+        private float accessRate;
 
         @NotBlank
-        private int hostRate;
+        private float hostRate;
 
         @NotBlank
-        private  int facilityRate;
+        private float facilityRate;
 
         private String period;
 

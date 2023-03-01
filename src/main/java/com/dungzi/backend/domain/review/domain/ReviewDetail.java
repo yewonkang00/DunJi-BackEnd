@@ -43,17 +43,17 @@ public class ReviewDetail extends BaseTimeEntity{
 
     private String addressDetail;
 
-    private int totalRate;
+    private float totalRate;
 
-    private int cleanRate;
+    private float cleanRate;
 
-    private int noiseRate;
+    private float noiseRate;
 
-    private int accessRate;
+    private float accessRate;
 
-    private int hostRate;
+    private float hostRate;
 
-    private  int facilityRate;
+    private float facilityRate;
 
     private String period;
 

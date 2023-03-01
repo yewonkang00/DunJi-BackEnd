@@ -8,7 +8,7 @@ import lombok.Data;
 public class ReviewResponseDto {
     private String address;
 
-    private int totalRate;
+    private float totalRate;
 
     private String image;
 

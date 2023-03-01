@@ -31,17 +31,17 @@ public class Review {
 
     private String address;
 
-    private int totalRate;
+    private float totalRate;
 
-    private int cleanRate;
+    private float cleanRate;
 
-    private int noiseRate;
+    private float noiseRate;
 
-    private int accessRate;
+    private float accessRate;
 
-    private int hostRate;
+    private float hostRate;
 
-    private  int facilityRate;
+    private  float facilityRate;
 
     public void updateReview(ReviewRequestDto.CreateReview requestDto,int curCount) {
         this.totalRate = (this.totalRate*(curCount+1)+requestDto.getTotalRate())/(curCount+2);
