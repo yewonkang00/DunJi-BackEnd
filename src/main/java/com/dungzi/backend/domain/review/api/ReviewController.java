@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,11 +38,11 @@ public class ReviewController {
             }
     )
     @PostMapping("/")
-    public CommonResponse createReview(@RequestPart ReviewRequestDto.CreateReview body,
+    public ResponseEntity<CommonResponse> createReview(@RequestPart ReviewRequestDto.CreateReview body,
                                        @RequestPart List<MultipartFile> files){
         User user = authService.getUserFromSecurity();
         UUID buildingId = reviewService.saveReview(body,files,user);
-        return CommonResponse.toResponse(CommonCode.OK, reviewService.saveReviewDetail(body.toReviewDetailEntity(buildingId,user)));
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, reviewService.saveReviewDetail(body.toReviewDetailEntity(buildingId,user))));
     }
 
     @Operation(summary = "후기 삭제 api", description = "후기 삭제를 위한 api")
@@ -51,10 +52,10 @@ public class ReviewController {
             }
     )
     @DeleteMapping("/{reviewId}")
-    public CommonResponse deleteReview(@PathVariable String reviewId){
+    public ResponseEntity<CommonResponse> deleteReview(@PathVariable String reviewId){
         System.out.println(reviewId);
         reviewService.deleteReview(reviewId);
-        return CommonResponse.toResponse(CommonCode.OK);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK));
     }
 
     @Operation(summary = "후기 리스트 최신순 조회 api", description = "후기 상세정보 리스트 조회를 위한 api")
@@ -64,10 +65,10 @@ public class ReviewController {
             }
     )
     @GetMapping("/list")
-    public CommonResponse getReviewList(Pageable pageable){
+    public ResponseEntity<CommonResponse> getReviewList(Pageable pageable){
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("regDate").descending());
         List<ReviewDetailResponseDto> reviewList = reviewService.getReviewList(pageRequest);
-        return CommonResponse.toResponse(CommonCode.OK,reviewList);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK,reviewList));
     }
 
     @Operation(summary = "해당 건물의 후기 상세정보 리스트 api", description = "해당 건물의 후기 상세정보 리스트 조회를 위한 api")
@@ -77,9 +78,9 @@ public class ReviewController {
             }
     )
     @GetMapping("/")
-    public CommonResponse getReview(@RequestParam("buildingId") String buildingId,Pageable pageable){
+    public ResponseEntity<CommonResponse> getReview(@RequestParam("buildingId") String buildingId,Pageable pageable){
         List<ReviewDetailResponseDto> reviewDetailList = reviewService.getReview(buildingId, pageable);
-        return CommonResponse.toResponse(CommonCode.OK,reviewDetailList);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK,reviewDetailList));
     }
 
     @Operation(summary = "주소로 건물 검색 api", description = "해당 주소의 건물 리스트 조회를 위한 api")
@@ -89,9 +90,9 @@ public class ReviewController {
             }
     )
     @GetMapping("/search")
-    public CommonResponse findReview(@RequestParam("address") String address,Pageable pageable){
+    public ResponseEntity<CommonResponse> findReview(@RequestParam("address") String address,Pageable pageable){
         List<ReviewResponseDto> reviewList = reviewService.findReview(address, pageable);
-        return CommonResponse.toResponse(CommonCode.OK,reviewList);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK,reviewList));
     }
 
 
