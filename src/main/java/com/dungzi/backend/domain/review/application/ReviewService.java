@@ -97,6 +97,7 @@ public class ReviewService {
                         .address(reviewDetail.getAddress())
                         .addressDetail(reviewDetail.getAddressDetail())
                         .period(reviewDetail.getPeriod())
+                        .totalRate(reviewDetail.getTotalRate())
                         .regDate(ReviewDetailResponseDto.zonedDateTimeToDateTime(reviewDetail.getRegDate()))
                         .build())
                 .collect(Collectors.toList()));

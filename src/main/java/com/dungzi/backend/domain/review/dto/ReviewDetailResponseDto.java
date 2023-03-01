@@ -27,6 +27,8 @@ public class ReviewDetailResponseDto {
 
     private List<String> image;
 
+    private float totalRate;
+
     static public String zonedDateTimeToDateTime(final ZonedDateTime zdt) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy.M.dd. a hh:mm");
         return zdt.format(formatter);
