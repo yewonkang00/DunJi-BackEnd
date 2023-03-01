@@ -60,8 +60,13 @@ public class ReviewService {
         return reviewDetailDao.save(reviewDetail);
     }
 
-    public void deleteReview(String reviewId){
-        reviewDetailDao.deleteById(UUID.fromString(reviewId));
+    public void deleteReview(String reviewDetailId){
+        ReviewDetail reviewDetail = reviewDetailDao.findById(UUID.fromString(reviewDetailId)).get();
+        Review review = reviewDao.findById(reviewDetail.getBuildingId()).get();
+        int curCount = reviewDetailDao.countByBuildingId(reviewDetail.getBuildingId());
+
+        review.deleteReview(reviewDetail,curCount);
+        reviewDetailDao.deleteById(UUID.fromString(reviewDetailId));
     }
 
     public List<ReviewDetailResponseDto> getReviewList(Pageable pageable){
