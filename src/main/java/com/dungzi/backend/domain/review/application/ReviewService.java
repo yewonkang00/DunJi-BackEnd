@@ -2,6 +2,7 @@ package com.dungzi.backend.domain.review.application;
 
 import com.dungzi.backend.domain.review.dao.ReviewDao;
 import com.dungzi.backend.domain.review.dao.ReviewDetailDao;
+import com.dungzi.backend.domain.review.dao.ReviewReportDao;
 import com.dungzi.backend.domain.review.domain.Review;
 import com.dungzi.backend.domain.review.domain.ReviewDetail;
 import com.dungzi.backend.domain.review.dto.ReviewDetailResponseDto;
@@ -29,6 +30,8 @@ public class ReviewService {
 
     private final ReviewDetailDao reviewDetailDao;
     private final ReviewDao reviewDao;
+
+    private final ReviewReportDao reviewReportDao;
     private final FileUploadService fileUploadService;
 
 
@@ -80,6 +83,11 @@ public class ReviewService {
     public List<ReviewResponseDto> findReview(String address,Pageable pageable){
         return changeToReviewResponseDto(reviewDao.findByAddress(address,pageable));
     }
+
+    public void reportReview(ReviewRequestDto.ReportReview requestDto,User user){
+        reviewReportDao.save(requestDto.toReportEntity(requestDto.getReviewId(),requestDto.getReportType(),user.getUserId()));
+    }
+
     private List<ReviewResponseDto> changeToReviewResponseDto(Page<Review> reviewList) {
         List<ReviewResponseDto> response = new ArrayList<>();
         long count = reviewList.stream().count();

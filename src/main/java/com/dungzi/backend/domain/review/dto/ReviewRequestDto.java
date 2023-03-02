@@ -1,7 +1,9 @@
 package com.dungzi.backend.domain.review.dto;
 
+import com.dungzi.backend.domain.review.domain.ReportType;
 import com.dungzi.backend.domain.review.domain.Review;
 import com.dungzi.backend.domain.review.domain.ReviewDetail;
+import com.dungzi.backend.domain.review.domain.ReviewReport;
 import com.dungzi.backend.domain.user.domain.User;
 import lombok.Data;
 
@@ -72,4 +74,21 @@ public class ReviewRequestDto {
 
         }
     }
+
+    @Data
+    public static class ReportReview{
+        private UUID reviewId;
+
+        private ReportType reportType;
+
+        public ReviewReport toReportEntity(UUID reviewId, ReportType reportType,UUID userId){
+            return ReviewReport.builder()
+                    .userId(userId)
+                    .reviewId(reviewId)
+                    .reportType(reportType)
+                    .build();
+        }
+
+    }
+
 }

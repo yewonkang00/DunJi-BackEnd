@@ -95,5 +95,22 @@ public class ReviewController {
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK,reviewList));
     }
 
+    @Operation(summary = "후기 신고 api", description = "reportType : ENUM 타입\n\n"+
+            "    SPAM : 스팸\n\n" +
+            "    VIOLENT : 폭력적인 언어/욕설\n\n" +
+            "    ADVERTISEMENT : 광고\n\n" +
+            "    FALSE_INFO : 허위정보")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "정상적으로 해당 리뷰 신고 완료")
+            }
+    )
+    @PostMapping("/report")
+    public ResponseEntity<CommonResponse> reportReview(@RequestBody ReviewRequestDto.ReportReview body){
+        User user = authService.getUserFromSecurity();
+        reviewService.reportReview(body,user);
+        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK));
+    }
+
 
 }
