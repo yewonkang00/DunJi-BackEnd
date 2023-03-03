@@ -53,7 +53,6 @@ public class ReviewController {
     )
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<CommonResponse> deleteReview(@PathVariable String reviewId){
-        System.out.println(reviewId);
         reviewService.deleteReview(reviewId);
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK));
     }
