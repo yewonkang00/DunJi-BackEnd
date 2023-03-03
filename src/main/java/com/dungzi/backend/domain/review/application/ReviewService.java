@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -71,42 +70,19 @@ public class ReviewService {
     }
 
     public List<ReviewDetailResponseDto> getReviewList(Pageable pageable){
-        return changeToReviewDetailResponseDto(reviewDetailDao.findAll(pageable).toList());
+        return ReviewDetailResponseDto.changeToReviewDetailResponseDto(reviewDetailDao.findAll(pageable).toList());
     }
 
     public List<ReviewDetailResponseDto> getReview(String buildingId,Pageable pageable){
-        return changeToReviewDetailResponseDto(reviewDetailDao.findByBuildingId(UUID.fromString(buildingId),pageable));
+        return ReviewDetailResponseDto.changeToReviewDetailResponseDto(reviewDetailDao.findByBuildingId(UUID.fromString(buildingId),pageable));
     }
 
     public List<ReviewResponseDto> findReview(String address,Pageable pageable){
         int curCount = reviewDetailDao.countByAddress(address);
-        return changeToReviewResponseDto(reviewDao.findByAddress(address,pageable),curCount);
+        return ReviewResponseDto.changeToReviewResponseDto(reviewDao.findByAddress(address,pageable),curCount);
     }
 
     public void reportReview(ReviewRequestDto.ReportReview requestDto,User user){
         reviewReportDao.save(requestDto.toReportEntity(requestDto.getReviewId(),requestDto.getReportType(),user.getUserId()));
     }
-
-    private List<ReviewResponseDto> changeToReviewResponseDto(List<Review> reviewList,int curCount) {
-        return reviewList.stream()
-                .map(review -> ReviewResponseDto.builder()
-                        .address(review.getAddress())
-                        .totalRate(review.getTotalRate())
-                        .count(curCount)
-                        .build()).collect(Collectors.toList());
-    }
-
-    private List<ReviewDetailResponseDto> changeToReviewDetailResponseDto(List<ReviewDetail> reviewList) {
-        return reviewList.stream()
-                .map(reviewDetail -> ReviewDetailResponseDto.builder()
-                        .userNickname(reviewDetail.getUser().getNickname())
-                        .content(reviewDetail.getContent())
-                        .address(reviewDetail.getAddress())
-                        .addressDetail(reviewDetail.getAddressDetail())
-                        .period(reviewDetail.getPeriod())
-                        .totalRate(reviewDetail.getTotalRate())
-                        .regDate(ReviewDetailResponseDto.zonedDateTimeToDateTime(reviewDetail.getRegDate()))
-                        .build()).collect(Collectors.toList());
-    }
-
 }

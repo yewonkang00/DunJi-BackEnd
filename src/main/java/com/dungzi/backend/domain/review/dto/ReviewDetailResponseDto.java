@@ -1,5 +1,6 @@
 package com.dungzi.backend.domain.review.dto;
 
+import com.dungzi.backend.domain.review.domain.ReviewDetail;
 import lombok.Builder;
 import lombok.Data;
 
@@ -7,6 +8,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -34,6 +36,17 @@ public class ReviewDetailResponseDto {
         return zdt.format(formatter);
     }
 
-
+    static public List<ReviewDetailResponseDto> changeToReviewDetailResponseDto(List<ReviewDetail> reviewList) {
+        return reviewList.stream()
+                .map(reviewDetail -> ReviewDetailResponseDto.builder()
+                        .userNickname(reviewDetail.getUser().getNickname())
+                        .content(reviewDetail.getContent())
+                        .address(reviewDetail.getAddress())
+                        .addressDetail(reviewDetail.getAddressDetail())
+                        .period(reviewDetail.getPeriod())
+                        .totalRate(reviewDetail.getTotalRate())
+                        .regDate(ReviewDetailResponseDto.zonedDateTimeToDateTime(reviewDetail.getRegDate()))
+                        .build()).collect(Collectors.toList());
+    }
 
 }
