@@ -43,21 +43,31 @@ public class Review {
 
     private  float facilityRate;
 
+
+
     public void updateReview(ReviewRequestDto.CreateReview requestDto,int curCount) {
-        this.totalRate = (this.totalRate*(curCount)+requestDto.getTotalRate())/(curCount+1);
-        this.cleanRate = (this.cleanRate*(curCount)+requestDto.getCleanRate())/(curCount+1);
-        this.noiseRate = (this.noiseRate*(curCount)+requestDto.getNoiseRate())/(curCount+1);
-        this.accessRate = (this.accessRate*(curCount)+requestDto.getAccessRate())/(curCount+1);
-        this.hostRate = (this.hostRate*(curCount)+requestDto.getHostRate())/(curCount+1);
-        this.facilityRate = (this.facilityRate*(curCount)+requestDto.getFacilityRate())/(curCount+1);
+        this.totalRate = calculateUpdateRate(this.totalRate, requestDto.getTotalRate(),curCount);
+        this.cleanRate = calculateUpdateRate(this.cleanRate, requestDto.getCleanRate(),curCount);
+        this.noiseRate = calculateUpdateRate(this.noiseRate, requestDto.getNoiseRate(),curCount);
+        this.accessRate = calculateUpdateRate(this.accessRate, requestDto.getAccessRate(),curCount);
+        this.hostRate = calculateUpdateRate(this.hostRate, requestDto.getHostRate(),curCount);
+        this.facilityRate = calculateUpdateRate(this.facilityRate, requestDto.getFacilityRate(),curCount);
     }
 
     public void deleteReview(ReviewDetail review,int curCount) {
-        this.totalRate = (this.totalRate*(curCount)-review.getTotalRate())/(curCount-1);
-        this.cleanRate = (this.cleanRate*(curCount)-review.getCleanRate())/(curCount-1);
-        this.noiseRate = (this.noiseRate*(curCount)-review.getNoiseRate())/(curCount-1);
-        this.accessRate = (this.accessRate*(curCount)-review.getAccessRate())/(curCount-1);
-        this.hostRate = (this.hostRate*(curCount)-review.getHostRate())/(curCount-1);
-        this.facilityRate = (this.facilityRate*(curCount)-review.getFacilityRate())/(curCount-1);
+        this.totalRate = calculateDeleteRate(this.totalRate, review.getTotalRate(),curCount);
+        this.cleanRate = calculateDeleteRate(this.cleanRate, review.getCleanRate(),curCount);
+        this.noiseRate = calculateDeleteRate(this.noiseRate, review.getNoiseRate(),curCount);
+        this.accessRate = calculateDeleteRate(this.accessRate, review.getAccessRate(),curCount);
+        this.hostRate = calculateDeleteRate(this.hostRate, review.getHostRate(),curCount);
+        this.facilityRate = calculateDeleteRate(this.facilityRate, review.getFacilityRate(),curCount);
+    }
+
+    private float calculateUpdateRate(float total, float data, int curCount) {
+        return (total * curCount + data) / (curCount + 1);
+    }
+
+    private float calculateDeleteRate(float total, float data, int curCount) {
+        return (total * curCount - data) / (curCount - 1);
     }
 }
