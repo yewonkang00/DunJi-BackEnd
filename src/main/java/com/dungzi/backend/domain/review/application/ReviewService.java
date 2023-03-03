@@ -12,12 +12,10 @@ import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.global.s3.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -73,7 +71,7 @@ public class ReviewService {
     }
 
     public List<ReviewDetailResponseDto> getReviewList(Pageable pageable){
-        return changeToReviewDetailResponseDto(reviewDetailDao.findAll(pageable));
+        return changeToReviewDetailResponseDto(reviewDetailDao.findAll(pageable).toList());
     }
 
     public List<ReviewDetailResponseDto> getReview(String buildingId,Pageable pageable){
@@ -81,29 +79,25 @@ public class ReviewService {
     }
 
     public List<ReviewResponseDto> findReview(String address,Pageable pageable){
-        return changeToReviewResponseDto(reviewDao.findByAddress(address,pageable));
+        int curCount = reviewDetailDao.countByAddress(address);
+        return changeToReviewResponseDto(reviewDao.findByAddress(address,pageable),curCount);
     }
 
     public void reportReview(ReviewRequestDto.ReportReview requestDto,User user){
         reviewReportDao.save(requestDto.toReportEntity(requestDto.getReviewId(),requestDto.getReportType(),user.getUserId()));
     }
 
-    private List<ReviewResponseDto> changeToReviewResponseDto(Page<Review> reviewList) {
-        List<ReviewResponseDto> response = new ArrayList<>();
-        long count = reviewList.stream().count();
-        response.addAll(reviewList.stream()
+    private List<ReviewResponseDto> changeToReviewResponseDto(List<Review> reviewList,int curCount) {
+        return reviewList.stream()
                 .map(review -> ReviewResponseDto.builder()
                         .address(review.getAddress())
                         .totalRate(review.getTotalRate())
-                        .count(count)
-                        .build())
-                .collect(Collectors.toList()));
-        return response;
+                        .count(curCount)
+                        .build()).collect(Collectors.toList());
     }
 
-    private List<ReviewDetailResponseDto> changeToReviewDetailResponseDto(Page<ReviewDetail> reviewList) {
-        List<ReviewDetailResponseDto> response = new ArrayList<>();
-        response.addAll(reviewList.stream()
+    private List<ReviewDetailResponseDto> changeToReviewDetailResponseDto(List<ReviewDetail> reviewList) {
+        return reviewList.stream()
                 .map(reviewDetail -> ReviewDetailResponseDto.builder()
                         .userNickname(reviewDetail.getUser().getNickname())
                         .content(reviewDetail.getContent())
@@ -112,9 +106,7 @@ public class ReviewService {
                         .period(reviewDetail.getPeriod())
                         .totalRate(reviewDetail.getTotalRate())
                         .regDate(ReviewDetailResponseDto.zonedDateTimeToDateTime(reviewDetail.getRegDate()))
-                        .build())
-                .collect(Collectors.toList()));
-        return response;
+                        .build()).collect(Collectors.toList());
     }
 
 }
