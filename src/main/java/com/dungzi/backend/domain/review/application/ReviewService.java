@@ -37,10 +37,10 @@ public class ReviewService {
 
     public UUID saveReview(ReviewRequestDto.CreateReview requestDto, List<MultipartFile> files,User user){
 
-        Optional<Review> find_review = reviewDao.findByAddress(requestDto.getAddress());
+        Optional<Review> findReview = reviewDao.findByAddress(requestDto.getAddress());
 
 
-        if (find_review.isEmpty()) { //해당주소의 객체가 없다면
+        if (findReview.isEmpty()) { //해당주소의 객체가 없다면
             UUID reviewId = reviewDao.save(requestDto.toReviewEntity(user)).getReviewId();
             fileUploadService.uploadReviewFile(reviewId.toString(), files);
 
@@ -49,7 +49,7 @@ public class ReviewService {
             //새로운 객체 만들기
         }
         else{ //이미 해당주소의 객체가 있다면
-            Review review = find_review.get();
+            Review review = findReview.get();
             int curCount = reviewDetailDao.countByBuildingId(review.getReviewId());
             review.updateReview(requestDto,curCount);
 
