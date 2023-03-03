@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,7 +35,7 @@ public class ReviewController {
     @Operation(summary = "후기 생성 api", description = "후기 생성을 위한 api")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "정상적으로 후기 등록 완료")
+                    @ApiResponse(responseCode = "201", description = "정상적으로 후기 등록 완료")
             }
     )
     @PostMapping("/")
@@ -42,7 +43,7 @@ public class ReviewController {
                                        @RequestPart List<MultipartFile> files){
         User user = authService.getUserFromSecurity();
         UUID buildingId = reviewService.saveReview(body,files,user);
-        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK, reviewService.saveReviewDetail(body.toReviewDetailEntity(buildingId,user))));
+        return new ResponseEntity<>(CommonResponse.toResponse(CommonCode.OK, reviewService.saveReviewDetail(body.toReviewDetailEntity(buildingId,user))), HttpStatus.CREATED);
     }
 
     @Operation(summary = "후기 삭제 api", description = "후기 삭제를 위한 api")
@@ -101,14 +102,14 @@ public class ReviewController {
             "    FALSE_INFO : 허위정보")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "200", description = "정상적으로 해당 리뷰 신고 완료")
+                    @ApiResponse(responseCode = "201", description = "정상적으로 해당 리뷰 신고 완료")
             }
     )
     @PostMapping("/report")
     public ResponseEntity<CommonResponse> reportReview(@RequestBody ReviewRequestDto.ReportReview body){
         User user = authService.getUserFromSecurity();
         reviewService.reportReview(body,user);
-        return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK));
+        return new ResponseEntity<>(CommonResponse.toResponse(CommonCode.CREATED), HttpStatus.CREATED);
     }
 
 
