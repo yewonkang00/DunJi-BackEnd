@@ -1,10 +1,10 @@
 package com.dungzi.backend.domain.user.application;
 
 import com.dungzi.backend.domain.user.domain.User;
-import com.dungzi.backend.domain.user.dto.UserRequestDto;
-import com.dungzi.backend.global.common.CommonCode;
 import com.dungzi.backend.global.common.error.AuthException;
 import com.dungzi.backend.global.common.error.AuthErrorCode;
+import com.dungzi.backend.global.common.error.ValidErrorCode;
+import com.dungzi.backend.global.common.error.ValidException;
 import com.dungzi.backend.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +25,10 @@ import java.util.*;
 public class AuthService {
     private final UserDao userDao;
     private final JwtTokenProvider jwtTokenProvider;
-    
+
     private final String ROLE_USER = "ROLE_USER"; //TODO : 추후 다른 권한 이름들 정리해서 추가 (공인중개사 계정 등)
+    private final String NICKNAME_RULE_REGEX = "^[0-9A-Za-zㄱ-ㅎㅏ-ㅣ가-힣][0-9A-Za-zㄱ-ㅎㅏ-ㅣ가-힣\\.\\/\\_\\[\\]]*[0-9A-Za-zㄱ-ㅎㅏ-ㅣ가-힣]$";
+
 
     public User getUserFromSecurity() {
         log.info("[SERVICE] getUserFromSecurity");
@@ -69,7 +71,7 @@ public class AuthService {
         cookieMap.forEach( (key, cookie) -> {
             cookie.setHttpOnly(true);
             cookie.setPath("/");
-            //cookie.setSecure(true); //https 상에서만 동작
+            cookie.setSecure(true); //https 상에서만 동작
         });
 
         return cookieMap;
@@ -82,6 +84,20 @@ public class AuthService {
             httpServletResponse.addCookie(cookie);
         });
         return cookieMap;
+    }
+
+    public void removeCookieToken(HttpServletResponse servletResponse) {
+        log.info("[SERVICE] removeCookieToken");
+
+        List<Cookie> cookieList = new ArrayList<>();
+        cookieList.add(new Cookie(jwtTokenProvider.ACCESS_TOKEN_HEADER_NAME, null));
+        cookieList.add(new Cookie(jwtTokenProvider.REFRESH_TOKEN_HEADER_NAME, null));
+
+        for(Cookie cookie : cookieList) {
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+            servletResponse.addCookie(cookie);
+        }
     }
 
 
@@ -103,18 +119,52 @@ public class AuthService {
     }
 
 
-    public User signUpByKakao(User kakaoUser, Optional<String> nicknameOp) {
+    public User signUpByKakao(User kakaoUser, String nickname) {
         log.info("[SERVICE] signUpByKakao");
         Optional<User> userOptional = isExistUser(kakaoUser);
 
         if(userOptional.isPresent()){
             throw new AuthException(AuthErrorCode.ALREADY_EXIST_USER);
         }else{
-            kakaoUser.updateSignUpInfo(nicknameOp);
+            kakaoUser.updateNickname(nickname);
             kakaoUser.updateRoles(Collections.singletonList(ROLE_USER));
             return userDao.save(kakaoUser);
         }
     }
+
+    public void checkNicknameUnique(String nickname) {
+        log.info("[SERVICE] isNicknameExist");
+        userDao.findByNickname(nickname)
+                .ifPresent(n -> {
+                    throw new ValidException(ValidErrorCode.NICKNAME_ALREADY_EXIST);
+                });
+    }
+
+    public void updateNickname(String nickname) {
+        log.info("[SERVICE] updateNickname");
+        User user = getUserFromSecurity();
+        user.updateNickname(nickname);
+        userDao.save(user);
+    }
+
+    public void validateNickname(String nickname) {
+        if(nickname.length() < 2 || nickname.length() > 12){
+            log.info("validateNickname : too long or too short");
+            throw new ValidException(ValidErrorCode.NICKNAME_FORBIDDEN);
+        }
+
+        if(! nickname.matches(NICKNAME_RULE_REGEX)) {
+            log.info("validateNickname : do not fit with nickname rule");
+            throw new ValidException(ValidErrorCode.NICKNAME_FORBIDDEN);
+        }
+
+        //TODO : isNicknameExist() 메서드를 재사용 하고 싶었으나 그러면 내부 호출된 함수라 @Transactional 적용이 안된다고 함..
+        if(userDao.findByNickname(nickname).isPresent()) {
+            log.info("validateNickname : NICKNAME_ALREADY_EXIST");
+            throw new ValidException(ValidErrorCode.NICKNAME_ALREADY_EXIST);
+        }
+    }
+
 
     //TODO  추후 제거
     @Transactional

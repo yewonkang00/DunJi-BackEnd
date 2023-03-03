@@ -27,7 +27,7 @@ public class User extends BaseTimeEntity implements UserDetails {
     @Type(type = "uuid-char")
     private UUID userId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nickname; //kakao 필수 동의 항목
 
     @Column(nullable = false)
@@ -55,10 +55,9 @@ public class User extends BaseTimeEntity implements UserDetails {
         this.roles = roles;
     }
 
-    public void updateSignUpInfo(Optional<String> nicknameOp) {
-        //이메일 변경
-//        Optional<String> nicknameOp = Optional.ofNullable(requestDto.getNickname());
-        nicknameOp.ifPresent(nickname -> this.nickname = nickname);
+    public void updateNickname(String nickname) {
+//        nicknameOp.ifPresent(nickname -> this.nickname = nickname);
+        this.nickname = nickname;
     }
 
     //////////-- set user roles(Authentication) : implements UserDetails --//////////
