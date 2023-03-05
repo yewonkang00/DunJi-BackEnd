@@ -40,7 +40,7 @@ public class ReviewController {
     public ResponseEntity<CommonResponse> createReview(@RequestPart ReviewRequestDto.CreateReview body,
                                        @RequestPart List<MultipartFile> files){
         User user = authService.getUserFromSecurity();
-        UUID buildingId = reviewService.saveReview(body,files,user);
+        UUID buildingId = reviewService.saveReview(body,files);
         return new ResponseEntity<>(CommonResponse.toResponse(CommonCode.OK, reviewService.saveReviewDetail(body.toReviewDetailEntity(buildingId,user))), HttpStatus.CREATED);
     }
 

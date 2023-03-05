@@ -60,9 +60,8 @@ public class ReviewRequestDto {
                     .build();
 
         }
-        public Review toReviewEntity(User user){
+        public Review toReviewEntity(){
             return Review.builder()
-                    .user(user)
                     .address(this.address)
                     .totalRate(this.totalRate)
                     .cleanRate(this.cleanRate)

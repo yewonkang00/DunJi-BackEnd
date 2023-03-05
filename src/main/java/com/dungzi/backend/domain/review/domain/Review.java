@@ -1,7 +1,6 @@
 package com.dungzi.backend.domain.review.domain;
 
 import com.dungzi.backend.domain.review.dto.ReviewRequestDto;
-import com.dungzi.backend.domain.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,10 +23,6 @@ public class Review {
     @Column(nullable = false,length = 36)
     @Type(type = "uuid-char")
     private UUID reviewId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
-    private User user;
 
     private String address;
 
