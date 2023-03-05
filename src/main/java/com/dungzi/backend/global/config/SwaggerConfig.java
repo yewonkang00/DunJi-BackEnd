@@ -35,6 +35,13 @@ public class SwaggerConfig {
                 .build();
     }
     @Bean
+    public GroupedOpenApi review() {
+        return GroupedOpenApi.builder()
+                .group("review")
+                .pathsToMatch(BASIC_API_PATH+"/review/**")
+                .build();
+    }
+    @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info().title(TITLE)
