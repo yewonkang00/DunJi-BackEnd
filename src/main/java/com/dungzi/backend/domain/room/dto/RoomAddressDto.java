@@ -18,16 +18,29 @@ public class RoomAddressDto {
     private String sigungu;
     private String dong;
 
-    public RoomAddress toEntity(UUID roomId) {
+//    public RoomAddress toEntity(UUID roomId) {
+//
+//        return RoomAddress.builder()
+//                //.roomId(roomId)
+//                .longitude(longitude)
+//                .latitude(latitude)
+//                .address(address)
+//                .address(addressDetail)
+//                .sigungu(sigungu)
+//                .dong(dong)
+//                .build();
+//    }
 
-        return RoomAddress.builder()
-                //.roomId(roomId)
-                .longitude(longitude)
-                .latitude(latitude)
-                .address(address)
-                .address(addressDetail)
-                .sigungu(sigungu)
-                .dong(dong)
+
+    public static RoomAddressDto toDto(RoomAddress room) {
+
+        return RoomAddressDto.builder()
+                .longitude(room.getLongitude())
+                .latitude(room.getLatitude())
+                .address(room.getAddress())
+                .address(room.getAddressDetail())
+                .sigungu(room.getSigungu())
+                .dong(room.getDong())
                 .build();
     }
 }

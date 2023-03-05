@@ -1,6 +1,7 @@
 package com.dungzi.backend.domain.room.dto;
 
 import com.dungzi.backend.domain.room.domain.Room;
+import com.dungzi.backend.domain.room.domain.RoomInfo;
 import com.dungzi.backend.domain.room.domain.RoomOption;
 import lombok.Builder;
 import lombok.Data;
@@ -17,30 +18,18 @@ public class RoomOptionDto {
     // 옵션 추가
     private String options;
     private String utility;
-    private String advantage;
+//    private String advantage;
     private String startedAt;
     private String finishedAt;
     private boolean tenancyAgreement;
 
-    public RoomOption toEntity(RoomOptionDto optionDto) {
+    public static RoomOptionDto toDto(RoomOption room) {
 
-        return RoomOption.builder()
-              //  .roomId(roomId)
-                .options(options)
-                .utility(utility)
-                //.advantage(advantage)
-                .tenancyAgreement(tenancyAgreement)
-                .startedAt(startedAt)
-                .finishedAt(finishedAt)
+        return RoomOptionDto.builder()
+                .utility(room.getUtility())
+                .startedAt(room.getStartedAt())
+                .finishedAt(room.getFinishedAt())
+                .tenancyAgreement(room.isTenancyAgreement())
                 .build();
     }
-
-//    public RoomOption toEnumDto(UUID roomId, EnumSet<Options> option, EnumSet<Utility> utility, EnumSet<Advantage> advantage) {
-//        return RoomOption.builder()
-//                .roomId(roomId)
-//                .options(option)
-//                .utility(utility)
-//                .advantage(advantage)
-//                .build();
-//    }
 }
