@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class ReviewService {
     private final ReviewReportDao reviewReportDao;
     private final FileUploadService fileUploadService;
 
-
+    @Transactional
     public UUID saveReview(ReviewRequestDto.CreateReview requestDto, List<MultipartFile> files,User user){
         Optional<Review> findReview = reviewDao.findByAddress(requestDto.getAddress());
         UUID reviewId;
