@@ -35,28 +35,19 @@ public class ReviewService {
 
 
     public UUID saveReview(ReviewRequestDto.CreateReview requestDto, List<MultipartFile> files,User user){
-
         Optional<Review> findReview = reviewDao.findByAddress(requestDto.getAddress());
-
-
+        UUID reviewId;
         if (findReview.isEmpty()) { //해당주소의 객체가 없다면
-            UUID reviewId = reviewDao.save(requestDto.toReviewEntity(user)).getReviewId();
-            fileUploadService.uploadReviewFile(reviewId.toString(), files);
-
-            return reviewId;
-
-            //새로운 객체 만들기
+            reviewId = reviewDao.save(requestDto.toReviewEntity(user)).getReviewId();//새로운 객체 만들기
         }
         else{ //이미 해당주소의 객체가 있다면
             Review review = findReview.get();
             int curCount = reviewDetailDao.countByBuildingId(review.getReviewId());
             review.updateReview(requestDto,curCount);
-
-            UUID reviewId = review.getReviewId();
-            fileUploadService.uploadReviewFile(reviewId.toString(), files);
-
-            return reviewId;
+            reviewId = review.getReviewId();
         }
+        fileUploadService.uploadReviewFile(reviewId.toString(), files);
+        return reviewId;
     }
     public ReviewDetail saveReviewDetail(ReviewDetail reviewDetail){
         return reviewDetailDao.save(reviewDetail);
