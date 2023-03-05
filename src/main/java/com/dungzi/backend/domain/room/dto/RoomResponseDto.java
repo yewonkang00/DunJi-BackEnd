@@ -1,9 +1,12 @@
 package com.dungzi.backend.domain.room.dto;
 
+import com.dungzi.backend.domain.room.domain.Room;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class RoomResponseDto {
@@ -14,6 +17,7 @@ public class RoomResponseDto {
         private UUID roomId;
     }
 
+    /*
     @Builder
     @Data
     public static class RoomDetail {
@@ -59,6 +63,30 @@ public class RoomResponseDto {
         private boolean womenOnly;
         private boolean loan;
         private String utility;
+
+    }
+    */
+
+    @Builder
+    @Data
+    public static class RoomDetail {
+        private String roomId;
+//        private String userId;
+        private String userName;
+        private String regDate;
+
+        private String title;
+
+        private String content;
+        private int heartNum;
+        private RoomInfoDto roomInfo;
+        private RoomAddressDto roomAddress;
+        private List<String> option;
+        private String utility;
+        private String startedAt;
+        private String finishedAt;
+        private boolean tenancyAgreement;
+        private List<String> roomImage;
 
     }
 
