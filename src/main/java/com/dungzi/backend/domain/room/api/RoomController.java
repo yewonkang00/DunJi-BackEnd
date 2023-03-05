@@ -3,6 +3,7 @@ package com.dungzi.backend.domain.room.api;
 import com.dungzi.backend.domain.room.application.RoomService;
 import com.dungzi.backend.domain.room.dao.RoomDao;
 import com.dungzi.backend.domain.room.domain.Room;
+import com.dungzi.backend.domain.room.domain.RoomAddress;
 import com.dungzi.backend.domain.room.dto.*;
 import com.dungzi.backend.domain.room.dto.RoomResponseDto;
 import com.dungzi.backend.domain.user.application.AuthService;
@@ -13,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +30,13 @@ public class RoomController {
     private final AuthService authService;
     private final RoomService roomService;
 
+    // 매물 등록
+    @Operation(summary = "매물 등록 api", description = "매물 등록을 위한 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "새로운 매물 등록")
+            }
+    )
     @PostMapping
     public CommonResponse registerRoom(RoomRequestDto.RegisterDto body, List<MultipartFile> files) throws Exception {
 
@@ -41,15 +52,23 @@ public class RoomController {
 
     }
 
+    // 매물 상세 정보
     @GetMapping
     public CommonResponse roomDetail(@RequestParam("roomId") String roomId) {
 
         log.info("[API] Room Detail");
         log.info("매물 ID:{}", roomId);
+//        Room room = roomService.findRoomDetail(UUID.fromString(roomId));
+//        String response = roomService.findRoomDetail(UUID.fromString(roomId)).toString();
+        RoomResponseDto.RoomDetail response = roomService.findRoomDetail(UUID.fromString(roomId));
+
+        log.info("Room : {}", response.getRoomAddress().getAddressDetail());
+//        log.info("Room userId : {}", response.getUserId());
         //RoomResponseDto.RoomDetail response = roomService.findRooms();
-        return CommonResponse.toResponse(CommonCode.OK, "response");
+        return CommonResponse.toResponse(CommonCode.OK, response);
     }
 
+    // 매물 삭제
     @PatchMapping
     public CommonResponse roomDelete(@RequestParam("roomId") String id) {
         log.info("[API] Room Delete");
@@ -59,5 +78,15 @@ public class RoomController {
 
         return roomService.deleteRoom(userId, roomId);
     }
+
+    // 매물 신고 접수
+
+
+    // 매물 신고 처리
+//    @PatchMapping
+//    public CommonResponse roomReport(@RequestParam("roomId") String id) {
+//        log.info("[API] Room Report");
+//        return roomService.reportRoom(UUID.fromString(id));
+//    }
 
 }

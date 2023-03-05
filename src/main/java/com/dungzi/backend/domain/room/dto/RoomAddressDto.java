@@ -38,7 +38,7 @@ public class RoomAddressDto {
                 .longitude(room.getLongitude())
                 .latitude(room.getLatitude())
                 .address(room.getAddress())
-                .address(room.getAddressDetail())
+                .addressDetail(room.getAddressDetail())
                 .sigungu(room.getSigungu())
                 .dong(room.getDong())
                 .build();

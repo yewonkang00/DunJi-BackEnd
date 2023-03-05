@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import com.dungzi.backend.domain.room.dto.enumType.type;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -60,7 +62,7 @@ public class RoomService {
         // 공통으로 저장되어야 할 roomId
         UUID roomId = savedRoom.getRoomId();
         log.info("roomID: {}",roomId);
-//        requestDto.setRoomId(roomId.toString());
+        requestDto.setRoomId(roomId);
 
 //        String roomType = type.roomType.valueOf(requestDto.getRoomType()).getValue();
 //        String dealType = type.dealType.valueOf(requestDto.getDealType()).getValue();
@@ -75,6 +77,8 @@ public class RoomService {
         roomAddressDao.save(requestDto.toAddressEntity()); // RoomAddress 데이터 저장
         log.info("[SERVICE] RoomAddress Save");
 
+        log.info("roomId : {}", requestDto.getRoomId());
+        log.info("room : {}", requestDto.getRoom());
         roomOptionSave(requestDto); // RoomOption 데이터 저장
         log.info("[SERVICE] RoomOption Save");
 
@@ -173,6 +177,57 @@ public class RoomService {
                 .orElse(null);
     }
 
+    public RoomResponseDto.RoomDetail findRoomDetail(UUID roomId) throws RuntimeException{
+        log.info("[SERVICE] getRoomByUuid");
+        Room room = roomDao.findRoomDetailByRoomId(roomId);
+
+        RoomInfoDto roomInfoDto = RoomInfoDto.toDto(room.getRoomInfo());
+        RoomAddressDto roomAddressDto = RoomAddressDto.toDto(room.getRoomAddress());
+        RoomOptionDto roomOptionDto = RoomOptionDto.toDto(room.getRoomOption());
+
+        List<String> option = Arrays.asList(room.getRoomOption().getOptions().split(","));
+        log.info("option : {}", option);
+
+        List<String> roomImage = new ArrayList<>();
+        for(int i = 0; i < room.getImage(); i++) {
+            String url = "https://dungzi-files.s3.ap-northeast-2.amazonaws.com/dungzi-files/room/" + room.getRoomId() + "/";
+            if(i == 0) {
+                roomImage.add(url+"main");
+            }
+            else {
+                roomImage.add(url+i);
+            }
+        }
+
+        log.info("image : {}", roomImage);
+        log.info("regDate : {}", room.getRegDate());
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String regDate = dtf.format(room.getRegDate());
+
+        log.info("regDate : {}", regDate);
+
+        RoomResponseDto.RoomDetail roomDetail = RoomResponseDto.RoomDetail.builder()
+                .roomId(room.getRoomId().toString())
+//                .userId(room.getUser().getUserId().toString())
+                .userName(room.getUser().getNickname())
+                .regDate(regDate)
+                .title(room.getTitle())
+                .content(room.getContent())
+                .heartNum(room.getHeartNum())
+                .roomInfo(roomInfoDto)
+                .roomAddress(roomAddressDto)
+                .option(option)
+                .utility(room.getRoomOption().getUtility())
+                .startedAt(room.getRoomOption().getStartedAt())
+                .finishedAt(room.getRoomOption().getFinishedAt())
+                .tenancyAgreement(room.getRoomOption().isTenancyAgreement())
+                .roomImage(roomImage)
+                .build();
+
+        return roomDetail;
+    }
+
     @Transactional
     public CommonResponse deleteRoom(UUID user, UUID roomId) {
         log.info("[SERCICE] Delete Room : {}", roomId);
@@ -189,10 +244,25 @@ public class RoomService {
             // User가 매물을 등록한 user와 일치하는 경우만 삭제 가능
             if(room.getUser().getUserId().equals(user)) {
 
-                roomAddressDao.deleteRoom(roomStatus.deleted.toString(), roomId);
+                roomAddressDao.updateStatus(roomStatus.deleted.toString(), roomId);
                 return CommonResponse.toResponse(CommonCode.OK);
             }
             return CommonResponse.toResponse(CommonCode.UNAUTHORIZED, "삭제 권한이 없습니다.");
+        }
+        return CommonResponse.toResponse(CommonCode.NOT_FOUND, "해당 매물이 존재하지 않습니다.");
+    }
+
+    @Transactional
+    public CommonResponse reportRoom(UUID roomId) {
+        log.info("[SERCICE] Report Room : {}", roomId);
+
+        Optional<Room> searchRoom = roomDao.findByRoomId(roomId);
+        log.info("search Room : {}", searchRoom.get().getRoomId());
+
+        // ID에 해당하는 매물이 존재하는지 확인
+        if(searchRoom.isPresent()) {
+            Room room = searchRoom.get();
+            roomAddressDao.updateStatus(roomStatus.reported.toString(), roomId);
         }
         return CommonResponse.toResponse(CommonCode.NOT_FOUND, "해당 매물이 존재하지 않습니다.");
     }

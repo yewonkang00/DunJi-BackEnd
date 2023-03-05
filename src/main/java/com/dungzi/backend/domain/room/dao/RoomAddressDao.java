@@ -18,5 +18,5 @@ public interface RoomAddressDao extends JpaRepository<RoomAddress, UUID> {
 
     @Modifying
     @Query("UPDATE RoomAddress a SET a.status = :status WHERE a.roomId = :roomId")
-    void deleteRoom(@Param("status") String status, @Param("roomId") UUID roomId);
+    void updateStatus(@Param("status") String status, @Param("roomId") UUID roomId);
 }
