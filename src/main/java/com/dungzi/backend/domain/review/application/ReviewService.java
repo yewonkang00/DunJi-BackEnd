@@ -12,7 +12,9 @@ import com.dungzi.backend.domain.user.domain.User;
 import com.dungzi.backend.global.s3.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -70,7 +72,8 @@ public class ReviewService {
     }
 
     public List<ReviewDetailResponseDto> getReviewList(Pageable pageable){
-        return ReviewDetailResponseDto.changeToReviewDetailResponseDto(reviewDetailDao.findAll(pageable).toList());
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("regDate").descending());
+        return ReviewDetailResponseDto.changeToReviewDetailResponseDto(reviewDetailDao.findAll(pageRequest).toList());
     }
 
     public List<ReviewDetailResponseDto> getReview(String buildingId,Pageable pageable){

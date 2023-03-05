@@ -13,9 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,8 +64,7 @@ public class ReviewController {
     )
     @GetMapping("/list")
     public ResponseEntity<CommonResponse> getReviewList(Pageable pageable){
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("regDate").descending());
-        List<ReviewDetailResponseDto> reviewList = reviewService.getReviewList(pageRequest);
+        List<ReviewDetailResponseDto> reviewList = reviewService.getReviewList(pageable);
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK,reviewList));
     }
 
