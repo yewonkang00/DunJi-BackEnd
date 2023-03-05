@@ -1,5 +1,6 @@
 package com.dungzi.backend.domain.review.api;
 
+import com.dungzi.backend.domain.review.application.ReviewDetailService;
 import com.dungzi.backend.domain.review.application.ReviewService;
 import com.dungzi.backend.domain.review.dto.ReviewDetailResponseDto;
 import com.dungzi.backend.domain.review.dto.ReviewRequestDto;
@@ -29,6 +30,8 @@ import java.util.UUID;
 public class ReviewController {
 
     private final ReviewService reviewService;
+
+    private final ReviewDetailService reviewDetailService;
     private final AuthService authService;
     @Operation(summary = "후기 생성 api", description = "후기 생성을 위한 api")
     @ApiResponses(
@@ -41,7 +44,7 @@ public class ReviewController {
                                        @RequestPart List<MultipartFile> files){
         User user = authService.getUserFromSecurity();
         UUID buildingId = reviewService.saveReview(body,files);
-        return new ResponseEntity<>(CommonResponse.toResponse(CommonCode.OK, reviewService.saveReviewDetail(body.toReviewDetailEntity(buildingId,user))), HttpStatus.CREATED);
+        return new ResponseEntity<>(CommonResponse.toResponse(CommonCode.OK, reviewDetailService.saveReviewDetail(body.toReviewDetailEntity(buildingId,user))), HttpStatus.CREATED);
     }
 
     @Operation(summary = "후기 삭제 api", description = "후기 삭제를 위한 api")
@@ -52,7 +55,7 @@ public class ReviewController {
     )
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<CommonResponse> deleteReview(@PathVariable String reviewId){
-        reviewService.deleteReview(reviewId);
+        reviewDetailService.deleteReviewDetail(reviewId);
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK));
     }
 
@@ -64,7 +67,7 @@ public class ReviewController {
     )
     @GetMapping("/list")
     public ResponseEntity<CommonResponse> getReviewList(Pageable pageable){
-        List<ReviewDetailResponseDto> reviewList = reviewService.getReviewList(pageable);
+        List<ReviewDetailResponseDto> reviewList = reviewDetailService.getReviewDetailList(pageable);
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK,reviewList));
     }
 
@@ -76,7 +79,7 @@ public class ReviewController {
     )
     @GetMapping("/")
     public ResponseEntity<CommonResponse> getReview(@RequestParam("buildingId") String buildingId,Pageable pageable){
-        List<ReviewDetailResponseDto> reviewDetailList = reviewService.getReview(buildingId, pageable);
+        List<ReviewDetailResponseDto> reviewDetailList = reviewDetailService.getReviewDetail(buildingId, pageable);
         return ResponseEntity.ok(CommonResponse.toResponse(CommonCode.OK,reviewDetailList));
     }
 
@@ -105,7 +108,7 @@ public class ReviewController {
     @PostMapping("/report")
     public ResponseEntity<CommonResponse> reportReview(@RequestBody ReviewRequestDto.ReportReview body){
         User user = authService.getUserFromSecurity();
-        reviewService.reportReview(body,user);
+        reviewDetailService.reportReviewDetail(body,user);
         return new ResponseEntity<>(CommonResponse.toResponse(CommonCode.CREATED), HttpStatus.CREATED);
     }
 
