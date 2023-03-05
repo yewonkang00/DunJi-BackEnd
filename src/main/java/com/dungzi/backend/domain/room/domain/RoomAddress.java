@@ -17,14 +17,22 @@ import java.util.UUID;
 @Builder
 @Entity
 public class RoomAddress extends BaseTimeEntity {
+//    @Id
+//    @Column(name = "room_id", nullable = false,length = 36)
+//    @Type(type = "uuid-char")
+//    private UUID roomId;
+
     @Id
     @Column(name = "room_id", nullable = false,length = 36)
     @Type(type = "uuid-char")
     private UUID roomId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "room_id")
+//    @OneToOne(fetch = FetchType.LAZY)
+//    //@MapsId
+//    @JoinColumn(name = "roomId")
+//    private Room room;
+
+    @OneToOne(mappedBy = "roomAddress")
     private Room room;
 
 //    @OneToOne
@@ -38,17 +46,4 @@ public class RoomAddress extends BaseTimeEntity {
     private String sigungu;
     private String dong;
     private String status;
-
-//    public RoomAddressDto toRoomAddressDto() {
-//
-//        return RoomAddressDto.builder()
-//                .roomId(this.getRoomId())
-//                .longitude(this.getLongitude())
-//                .latitude(this.getLatitude())
-//                .address(this.getAddress())
-//                .address(this.getAddressDetail())
-//                .sigungu(this.getSigungu())
-//                .dong(this.getDong())
-//                .build();
-//    }
 }

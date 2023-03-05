@@ -29,9 +29,25 @@ public class Room extends BaseTimeEntity {
     @Type(type = "uuid-char")
     private UUID roomId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+//    @OneToOne(mappedBy = "room")
+//    private RoomAddress roomAddress;
+
+    @OneToOne
+    @JoinColumn(name = "roomId")
+    private RoomAddress roomAddress;
+
+    @OneToOne
+    @JoinColumn(name = "roomId")
+    private RoomInfo roomInfo;
+
+    @OneToOne
+    @JoinColumn(name = "roomId")
+    private RoomOption roomOption;
+
 
 //    @ManyToOne
 //    @JoinColumn(name = "univId")
