@@ -1,8 +1,8 @@
-package com.dungzi.backend.global.common.error;
+package com.dungzi.backend.global.common.response.exception;
 
-import com.dungzi.backend.global.common.Code;
-import com.dungzi.backend.global.common.CommonCode;
-import com.dungzi.backend.global.common.CommonResponse;
+import com.dungzi.backend.global.common.response.code.Code;
+import com.dungzi.backend.global.common.response.code.CommonCode;
+import com.dungzi.backend.global.common.response.CommonResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

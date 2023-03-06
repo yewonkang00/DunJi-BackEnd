@@ -2,9 +2,9 @@ package com.dungzi.backend.global.config.security.jwt;
 
 import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.domain.User;
-import com.dungzi.backend.global.common.Code;
-import com.dungzi.backend.global.common.error.AuthException;
-import com.dungzi.backend.global.common.error.AuthErrorCode;
+import com.dungzi.backend.global.common.response.code.Code;
+import com.dungzi.backend.global.common.response.exception.AuthException;
+import com.dungzi.backend.global.common.response.code.AuthErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;

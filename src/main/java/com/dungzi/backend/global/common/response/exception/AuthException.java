@@ -1,6 +1,6 @@
-package com.dungzi.backend.global.common.error;
+package com.dungzi.backend.global.common.response.exception;
 
-import com.dungzi.backend.global.common.Code;
+import com.dungzi.backend.global.common.response.code.Code;
 
 
 public class AuthException extends DefaultException {

@@ -4,8 +4,6 @@ import com.dungzi.backend.domain.univ.dao.UnivAuthDao;
 import com.dungzi.backend.domain.univ.domain.Univ;
 import com.dungzi.backend.domain.univ.domain.UnivAuth;
 import com.dungzi.backend.domain.user.domain.User;
-import com.dungzi.backend.global.common.CommonCode;
-import com.dungzi.backend.global.common.error.AuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

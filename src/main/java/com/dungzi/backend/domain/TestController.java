@@ -2,13 +2,11 @@ package com.dungzi.backend.domain;
 
 import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.domain.User;
-import com.dungzi.backend.global.common.CommonCode;
-import com.dungzi.backend.global.common.CommonResponse;
+import com.dungzi.backend.global.common.response.code.CommonCode;
+import com.dungzi.backend.global.common.response.CommonResponse;
 import com.dungzi.backend.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collection;
 
 @Slf4j
 @RestController

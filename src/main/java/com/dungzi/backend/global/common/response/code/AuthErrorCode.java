@@ -1,6 +1,5 @@
-package com.dungzi.backend.global.common.error;
+package com.dungzi.backend.global.common.response.code;
 
-import com.dungzi.backend.global.common.Code;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 

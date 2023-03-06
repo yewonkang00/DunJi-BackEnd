@@ -1,8 +1,8 @@
 package com.dungzi.backend.global.config.security;
 
 import com.dungzi.backend.domain.user.dao.UserDao;
-import com.dungzi.backend.global.common.error.AuthException;
-import com.dungzi.backend.global.common.error.AuthErrorCode;
+import com.dungzi.backend.global.common.response.exception.AuthException;
+import com.dungzi.backend.global.common.response.code.AuthErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

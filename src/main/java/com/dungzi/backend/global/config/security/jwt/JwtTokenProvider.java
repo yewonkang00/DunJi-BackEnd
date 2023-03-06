@@ -1,7 +1,7 @@
 package com.dungzi.backend.global.config.security.jwt;
 
-import com.dungzi.backend.global.common.error.AuthException;
-import com.dungzi.backend.global.common.error.AuthErrorCode;
+import com.dungzi.backend.global.common.response.exception.AuthException;
+import com.dungzi.backend.global.common.response.code.AuthErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;

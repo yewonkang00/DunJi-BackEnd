@@ -1,15 +1,13 @@
 package com.dungzi.backend.domain.chat.api;
 
 import com.dungzi.backend.domain.chat.application.ChatMessageService;
-import com.dungzi.backend.domain.chat.dao.ChatMessageDao;
-import com.dungzi.backend.domain.chat.dao.ChatRoomDao;
 import com.dungzi.backend.domain.chat.domain.ChatRoom;
 import com.dungzi.backend.domain.chat.application.ChatRoomService;
 import com.dungzi.backend.domain.chat.domain.ChatRoomType;
 import com.dungzi.backend.domain.chat.dto.ChatRoomRequestDto;
 import com.dungzi.backend.domain.chat.dto.ChatRoomResponseDto;
-import com.dungzi.backend.global.common.CommonCode;
-import com.dungzi.backend.global.common.CommonResponse;
+import com.dungzi.backend.global.common.response.code.CommonCode;
+import com.dungzi.backend.global.common.response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

@@ -1,18 +1,14 @@
 package com.dungzi.backend.domain.univ.domain;
 
-import com.dungzi.backend.global.common.error.UnivErrorCode;
-import com.dungzi.backend.global.common.error.UnivException;
+import com.dungzi.backend.global.common.response.code.UnivErrorCode;
+import com.dungzi.backend.global.common.response.exception.UnivException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.GeneratorType;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Slf4j
 @Getter
