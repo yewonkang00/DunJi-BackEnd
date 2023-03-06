@@ -7,10 +7,9 @@ import com.dungzi.backend.domain.room.domain.RoomOption;
 import com.dungzi.backend.domain.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
-@Slf4j
+
 public class RoomRequestDto {
 
     @Data
@@ -19,6 +18,7 @@ public class RoomRequestDto {
        // private String roomId;
         private String userId;
         private Room room;
+        private UUID roomId;
         private String univId;
         private String title;
         private String content;
@@ -85,11 +85,10 @@ public class RoomRequestDto {
         }
 
         public RoomAddress toAddressEntity() {
-         //   log.info("[RoomAddress] roomId : {}", roomId);
-            log.info("[RoomAddress] room : {}", room.getRoomId());
+
             return RoomAddress.builder()
-           //         .roomId(roomId)
-                    .room(room)
+                    .roomId(roomId)
+//                    .room(room)
                     .longitude(longitude)
                     .latitude(latitude)
                     .address(address)
@@ -103,7 +102,7 @@ public class RoomRequestDto {
         public RoomInfo toInfoEntity() {
 
             return RoomInfo.builder()
-             //       .roomId(roomId)
+                    .roomId(roomId)
                     .room(room)
 //                    .startedAt(requestDto.getStartedAt())
 //                    .finishedAt(requestDto.getFinishedAt())
@@ -129,7 +128,7 @@ public class RoomRequestDto {
 
         public RoomOption toOptionEntity(String option, String utility) {
             return RoomOption.builder()
-              //      .roomId(roomId)
+                    .roomId(roomId)
                     .room(room)
                     .options(option)
                     .utility(utility)
@@ -141,28 +140,5 @@ public class RoomRequestDto {
         }
 
     }
-
-
-
-
-//    public Room toRoomEntity(RoomDto roomDto) {
-//
-//        UserDto userDto = null;
-//        userDto.setUserId(roomDto.getUserId().toString());
-//        User user = userDto.toEntity();
-//
-//        return Room.builder()
-//                .roomId(roomDto.getRoomId())
-//                .user(user)
-////                .univId(requestDto.getUnivId())
-//                .title(roomDto.getTitle())
-//                .content(roomDto.getContent())
-//                .image(roomDto.getImage())
-////                .regDate(requestDto.getRegDate)
-//                .delDate(roomDto.getDelDate())
-//                .dealDate(roomDto.getDealDate())
-//                .heartNum(roomDto.getHeartNum())
-//                .build();
-//    }
 
 }

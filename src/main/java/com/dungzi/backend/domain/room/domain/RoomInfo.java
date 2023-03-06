@@ -23,10 +23,12 @@ public class RoomInfo extends BaseTimeEntity {
     @Type(type = "uuid-char")
     private UUID roomId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "room_id")
+    @OneToOne(mappedBy = "roomAddress")
     private Room room;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @MapsId
+//    @JoinColumn(name = "room_id")
+//    private Room room;
 
 //    private status;
 
