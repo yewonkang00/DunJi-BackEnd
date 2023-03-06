@@ -29,7 +29,7 @@ public class Room extends BaseTimeEntity {
     @Type(type = "uuid-char")
     private UUID roomId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -62,5 +62,7 @@ public class Room extends BaseTimeEntity {
     private Date delDate;
     private Date dealDate;
     private int heartNum;
+
+
 
 }

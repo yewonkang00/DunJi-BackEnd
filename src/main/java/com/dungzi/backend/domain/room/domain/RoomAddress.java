@@ -35,6 +35,10 @@ public class RoomAddress extends BaseTimeEntity {
     @OneToOne(mappedBy = "roomAddress")
     private Room room;
 
+    @OneToOne
+    @JoinColumn(name = "roomId")
+    private RoomInfo roomInfo;
+
 //    @OneToOne
 //    @JoinColumn(name = "univId")
 //    private Univ univ;

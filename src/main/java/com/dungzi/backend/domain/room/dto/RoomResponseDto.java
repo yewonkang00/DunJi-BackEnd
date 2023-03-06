@@ -94,15 +94,36 @@ public class RoomResponseDto {
     @Data
     public static class RoomList {
         private String roomId;
-        private double longtitude;
+        private double longitude;
         private double latitude;
-        private String address;
-        private int price;
+        private String sigungu;
+        private String dong;
         private String priceUnit;
+        private int deposit;
+        private int price;
+        private String roomType;
         private int floor;
         private double roomSize;
-        private int deposit;
-        private String roomType;
         private String dealType;
+    }
+
+    public static RoomDetail toDto(Room room, String regDate, RoomInfoDto roomInfoDto, RoomAddressDto roomAddressDto,
+                                   List<String> option, List<String> roomImage) {
+        return RoomDetail.builder()
+                .roomId(room.getRoomId().toString())
+                .userName(room.getUser().getNickname())
+                .regDate(regDate)
+                .title(room.getTitle())
+                .content(room.getContent())
+                .heartNum(room.getHeartNum())
+                .roomInfo(roomInfoDto)
+                .roomAddress(roomAddressDto)
+                .option(option)
+                .utility(room.getRoomOption().getUtility())
+                .startedAt(room.getRoomOption().getStartedAt())
+                .finishedAt(room.getRoomOption().getFinishedAt())
+                .tenancyAgreement(room.getRoomOption().isTenancyAgreement())
+                .roomImage(roomImage)
+                .build();
     }
 }
