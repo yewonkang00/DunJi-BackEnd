@@ -106,29 +106,38 @@ public class RoomService {
         List<String> option = new ArrayList<>();
 
         if(requestDto.isAirConditioner()) {
-            option.add(OptionsEnum.airConditioner.getValue());
+            option.add(OptionsEnum.airConditioner.toString());
             option_count++;
         }
         if(requestDto.isRefrigerator()) {
-            option.add(OptionsEnum.refrigerator.getValue());
+            option.add(OptionsEnum.refrigerator.toString());
             option_count++;
         }
         if(requestDto.isWashingMachine()) {
-            option.add(OptionsEnum.washingMachine.getValue());
+            option.add(OptionsEnum.washingMachine.toString());
             option_count++;
         }
         if(requestDto.isGasStove()) {
-            option.add(OptionsEnum.gasStove.getValue());
+            option.add(OptionsEnum.gasStove.toString());
             option_count++;
         }
-        if(requestDto.isInduction()) option.add(OptionsEnum.induction.getValue());
-        if(requestDto.isMicrowave()) option.add(OptionsEnum.microwave.getValue());
-        if(requestDto.isDesk()) option.add(OptionsEnum.desk.getValue());
-        if(requestDto.isBookcase()) option.add(OptionsEnum.bookcase.getValue());
-        if(requestDto.isBed()) option.add(OptionsEnum.bed.getValue());
-        if(requestDto.isCloset()) option.add(OptionsEnum.closet.getValue());
-        if(requestDto.isSink()) option.add(OptionsEnum.sink.getValue());
-        if(requestDto.isShoeCabinet()) option.add(OptionsEnum.shoeCabinet.getValue());
+//        if(requestDto.isInduction()) option.add(OptionsEnum.induction.getValue());
+//        if(requestDto.isMicrowave()) option.add(OptionsEnum.microwave.getValue());
+//        if(requestDto.isDesk()) option.add(OptionsEnum.desk.getValue());
+//        if(requestDto.isBookcase()) option.add(OptionsEnum.bookcase.getValue());
+//        if(requestDto.isBed()) option.add(OptionsEnum.bed.getValue());
+//        if(requestDto.isCloset()) option.add(OptionsEnum.closet.getValue());
+//        if(requestDto.isSink()) option.add(OptionsEnum.sink.getValue());
+//        if(requestDto.isShoeCabinet()) option.add(OptionsEnum.shoeCabinet.getValue());
+
+        if(requestDto.isInduction()) option.add(OptionsEnum.induction.toString());
+        if(requestDto.isMicrowave()) option.add(OptionsEnum.microwave.toString());
+        if(requestDto.isDesk()) option.add(OptionsEnum.desk.toString());
+        if(requestDto.isBookcase()) option.add(OptionsEnum.bookcase.toString());
+        if(requestDto.isBed()) option.add(OptionsEnum.bed.toString());
+        if(requestDto.isCloset()) option.add(OptionsEnum.closet.toString());
+        if(requestDto.isSink()) option.add(OptionsEnum.sink.toString());
+        if(requestDto.isShoeCabinet()) option.add(OptionsEnum.shoeCabinet.toString());
 
         String request_option = String.join(",", option);
 
@@ -183,9 +192,9 @@ public class RoomService {
 
         RoomInfoDto roomInfoDto = RoomInfoDto.toDto(room.getRoomInfo());
         RoomAddressDto roomAddressDto = RoomAddressDto.toDto(room.getRoomAddress());
-        RoomOptionDto roomOptionDto = RoomOptionDto.toDto(room.getRoomOption());
 
         List<String> option = Arrays.asList(room.getRoomOption().getOptions().split(","));
+
         log.info("option : {}", option);
 
         List<String> roomImage = new ArrayList<>();
@@ -207,25 +216,54 @@ public class RoomService {
 
         log.info("regDate : {}", regDate);
 
-        RoomResponseDto.RoomDetail roomDetail = RoomResponseDto.RoomDetail.builder()
-                .roomId(room.getRoomId().toString())
-//                .userId(room.getUser().getUserId().toString())
-                .userName(room.getUser().getNickname())
-                .regDate(regDate)
-                .title(room.getTitle())
-                .content(room.getContent())
-                .heartNum(room.getHeartNum())
-                .roomInfo(roomInfoDto)
-                .roomAddress(roomAddressDto)
-                .option(option)
-                .utility(room.getRoomOption().getUtility())
-                .startedAt(room.getRoomOption().getStartedAt())
-                .finishedAt(room.getRoomOption().getFinishedAt())
-                .tenancyAgreement(room.getRoomOption().isTenancyAgreement())
-                .roomImage(roomImage)
-                .build();
+//        RoomResponseDto.RoomDetail roomDetail = RoomResponseDto.RoomDetail.builder()
+//                .roomId(room.getRoomId().toString())
+//                .userName(room.getUser().getNickname())
+//                .regDate(regDate)
+//                .title(room.getTitle())
+//                .content(room.getContent())
+//                .heartNum(room.getHeartNum())
+//                .roomInfo(roomInfoDto)
+//                .roomAddress(roomAddressDto)
+//                .option(option)
+//                .utility(room.getRoomOption().getUtility())
+//                .startedAt(room.getRoomOption().getStartedAt())
+//                .finishedAt(room.getRoomOption().getFinishedAt())
+//                .tenancyAgreement(room.getRoomOption().isTenancyAgreement())
+//                .roomImage(roomImage)
+//                .build();
+        RoomResponseDto.RoomDetail roomDetail = RoomResponseDto.toDto(room, regDate, roomInfoDto,
+                                                                    roomAddressDto, option, roomImage);
 
         return roomDetail;
+    }
+
+    public List<RoomResponseDto.RoomList> findRoomByAddress(Double startLongitude, Double startLatitude, Double endLongitude, Double endLatitude) throws RuntimeException{
+        log.info("[SERVICE] findRoomByAddress");
+
+        List<RoomAddress> list = roomDao.findRoomByAddress(startLongitude, startLatitude, endLongitude, endLatitude);
+        List<RoomResponseDto.RoomList> roomList = new ArrayList<RoomResponseDto.RoomList>();
+
+        for(int i = 0; i < list.size(); i++) {
+            RoomAddress room = list.get(i);
+            RoomResponseDto.RoomList newRoom = RoomResponseDto.RoomList.builder()
+                                                .roomId(room.getRoomId().toString())
+                                                .longitude(room.getLongitude())
+                                                .latitude(room.getLatitude())
+                                                .sigungu(room.getSigungu())
+                                                .dong(room.getDong())
+                                                .priceUnit(room.getRoomInfo().getPriceUnit())
+                                                .deposit(room.getRoomInfo().getDeposit())
+                                                .price(room.getRoomInfo().getPrice())
+                                                .roomType(room.getRoomInfo().getRoomType())
+                                                .floor(room.getRoomInfo().getFloor())
+                                                .roomSize(room.getRoomInfo().getRoomSize())
+                                                .dealType(room.getRoomInfo().getDealType())
+                                                .build();
+            roomList.add(newRoom);
+        }
+
+        return roomList;
     }
 
     @Transactional

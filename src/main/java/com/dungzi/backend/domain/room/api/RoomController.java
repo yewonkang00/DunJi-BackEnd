@@ -68,6 +68,23 @@ public class RoomController {
         return CommonResponse.toResponse(CommonCode.OK, response);
     }
 
+    // 매물 검색 - 좌표만 이용
+    @GetMapping("/map")
+    public CommonResponse findRoomByAddress(
+            @RequestParam("startLongitude") Double startLongitude,
+            @RequestParam("startLatitude") Double startLatitude,
+            @RequestParam("endLongitude") Double endLongitude,
+            @RequestParam("endLatitude") Double endLatitude) {
+
+        log.info("[API] findRoomByAddress");
+        List<RoomResponseDto.RoomList> response = roomService.findRoomByAddress(startLongitude, startLatitude, endLongitude, endLatitude);
+
+        log.info("Room : {}", response);
+//        log.info("Room userId : {}", response.getUserId());
+        //RoomResponseDto.RoomDetail response = roomService.findRooms();
+        return CommonResponse.toResponse(CommonCode.OK, response);
+    }
+
     // 매물 삭제
     @PatchMapping
     public CommonResponse roomDelete(@RequestParam("roomId") String id) {

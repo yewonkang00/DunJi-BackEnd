@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,10 +16,24 @@ import java.util.UUID;
 public interface RoomDao extends JpaRepository<Room, UUID> {
     Optional<Room> findByRoomId(UUID roomId);
 
-    @Query("SELECT r FROM Room r "+
-            "JOIN FETCH r.roomAddress "+
-            "JOIN FETCH r.roomOption "+
-            "JOIN FETCH r.roomInfo "+
+    @Query("SELECT r FROM Room r " +
+            "JOIN FETCH r.roomAddress " +
+            "JOIN FETCH r.roomOption " +
+            "JOIN FETCH r.roomInfo " +
             "WHERE r.roomId = :roomId")
     Room findRoomDetailByRoomId(UUID roomId);
+
+    @Query("SELECT a FROM RoomAddress a JOIN FETCH a.roomInfo " +
+            "WHERE a.longitude > :startLongitude and a.latitude > :startLatitude " +
+            "and a.longitude < :endLongitude and a.latitude < :endLatitude")
+    List<RoomAddress> findRoomByAddress(Double startLongitude, Double startLatitude, Double endLongitude, Double endLatitude);
+
+
+    @Query("SELECT r FROM Room r " +
+            "JOIN FETCH r.roomInfo " +
+            "JOIN FETCH r.roomAddress " +
+            ""
+    )
+    Room findRoomByFilter(UUID roomId);
+
 }
