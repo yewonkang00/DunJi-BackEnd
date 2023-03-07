@@ -23,12 +23,6 @@ public interface RoomDao extends JpaRepository<Room, UUID> {
             "WHERE r.roomId = :roomId")
     Room findRoomDetailByRoomId(UUID roomId);
 
-    @Query("SELECT a FROM RoomAddress a JOIN FETCH a.roomInfo " +
-            "WHERE a.longitude > :startLongitude and a.latitude > :startLatitude " +
-            "and a.longitude < :endLongitude and a.latitude < :endLatitude")
-    List<RoomAddress> findRoomByAddress(Double startLongitude, Double startLatitude, Double endLongitude, Double endLatitude);
-
-
     @Query("SELECT r FROM Room r " +
             "JOIN FETCH r.roomInfo " +
             "JOIN FETCH r.roomAddress " +
