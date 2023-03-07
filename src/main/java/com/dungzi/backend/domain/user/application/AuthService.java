@@ -1,10 +1,10 @@
 package com.dungzi.backend.domain.user.application;
 
 import com.dungzi.backend.domain.user.domain.User;
-import com.dungzi.backend.global.common.error.AuthException;
-import com.dungzi.backend.global.common.error.AuthErrorCode;
-import com.dungzi.backend.global.common.error.ValidErrorCode;
-import com.dungzi.backend.global.common.error.ValidException;
+import com.dungzi.backend.global.common.response.exception.AuthException;
+import com.dungzi.backend.global.common.response.code.AuthErrorCode;
+import com.dungzi.backend.global.common.response.code.ValidErrorCode;
+import com.dungzi.backend.global.common.response.exception.ValidException;
 import com.dungzi.backend.global.config.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

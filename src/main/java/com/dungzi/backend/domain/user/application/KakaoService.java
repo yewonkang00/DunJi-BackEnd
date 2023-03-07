@@ -1,9 +1,8 @@
 package com.dungzi.backend.domain.user.application;
 
-import com.dungzi.backend.domain.user.dao.UserDao;
 import com.dungzi.backend.domain.user.domain.User;
-import com.dungzi.backend.global.common.error.AuthErrorCode;
-import com.dungzi.backend.global.common.error.AuthException;
+import com.dungzi.backend.global.common.response.code.AuthErrorCode;
+import com.dungzi.backend.global.common.response.exception.AuthException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

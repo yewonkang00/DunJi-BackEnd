@@ -1,4 +1,4 @@
-package com.dungzi.backend.global.common;
+package com.dungzi.backend.global.common.response.code;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

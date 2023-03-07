@@ -1,7 +1,8 @@
-package com.dungzi.backend.global.common;
+package com.dungzi.backend.global.common.response;
 
 
-import com.dungzi.backend.global.common.error.AuthErrorCode;
+import com.dungzi.backend.global.common.response.code.Code;
+import com.dungzi.backend.global.common.response.code.CommonCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

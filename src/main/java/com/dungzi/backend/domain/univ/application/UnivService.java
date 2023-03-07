@@ -2,9 +2,9 @@ package com.dungzi.backend.domain.univ.application;
 
 import com.dungzi.backend.domain.univ.dao.UnivDao;
 import com.dungzi.backend.domain.univ.domain.Univ;
-import com.dungzi.backend.global.common.CommonCode;
-import com.dungzi.backend.global.common.error.UnivErrorCode;
-import com.dungzi.backend.global.common.error.UnivException;
+import com.dungzi.backend.global.common.response.code.CommonCode;
+import com.dungzi.backend.global.common.response.code.UnivErrorCode;
+import com.dungzi.backend.global.common.response.exception.UnivException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
