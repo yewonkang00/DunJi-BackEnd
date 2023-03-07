@@ -241,7 +241,7 @@ public class RoomService {
     public List<RoomResponseDto.RoomList> findRoomByAddress(Double startLongitude, Double startLatitude, Double endLongitude, Double endLatitude) throws RuntimeException{
         log.info("[SERVICE] findRoomByAddress");
 
-        List<RoomAddress> list = roomDao.findRoomByAddress(startLongitude, startLatitude, endLongitude, endLatitude);
+        List<RoomAddress> list = roomAddressDao.findRoomByAddress(startLongitude, startLatitude, endLongitude, endLatitude);
         List<RoomResponseDto.RoomList> roomList = new ArrayList<RoomResponseDto.RoomList>();
 
         for(int i = 0; i < list.size(); i++) {

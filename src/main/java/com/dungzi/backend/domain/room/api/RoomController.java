@@ -12,6 +12,8 @@ import com.dungzi.backend.global.common.CommonCode;
 import com.dungzi.backend.global.common.CommonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +40,7 @@ public class RoomController {
             }
     )
     @PostMapping
-    public CommonResponse registerRoom(RoomRequestDto.RegisterDto body, List<MultipartFile> files) throws Exception {
+    public ResponseEntity<CommonResponse> registerRoom(RoomRequestDto.RegisterDto body, List<MultipartFile> files) throws Exception {
 
         log.info("[API] Register Room");
 
@@ -48,13 +50,20 @@ public class RoomController {
 
         log.info("[API] Room ID:{}, Registrant:{}", response.getRoomId(), user.getUserId());
 
-        return CommonResponse.toResponse(CommonCode.OK, response);
-
+        CommonResponse commonResponse = CommonResponse.toResponse(CommonCode.OK, response);
+//        return CommonResponse.toResponse(CommonCode.OK, response);
+        return new ResponseEntity<>(commonResponse, HttpStatus.OK);
     }
 
     // 매물 상세 정보
+    @Operation(summary = "매물 상세 정보 api", description = "매물 ID에 해당하는 상세 정보 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "상세 정보")
+            }
+    )
     @GetMapping
-    public CommonResponse roomDetail(@RequestParam("roomId") String roomId) {
+    public ResponseEntity<CommonResponse> roomDetail(@RequestParam("roomId") String roomId) {
 
         log.info("[API] Room Detail");
         log.info("매물 ID:{}", roomId);
@@ -65,12 +74,21 @@ public class RoomController {
         log.info("Room : {}", response.getRoomAddress().getAddressDetail());
 //        log.info("Room userId : {}", response.getUserId());
         //RoomResponseDto.RoomDetail response = roomService.findRooms();
-        return CommonResponse.toResponse(CommonCode.OK, response);
+        CommonResponse commonResponse = CommonResponse.toResponse(CommonCode.OK, response);
+
+//        return CommonResponse.toResponse(CommonCode.OK, response);
+        return new ResponseEntity<>(commonResponse, HttpStatus.OK);
     }
 
     // 매물 검색 - 좌표만 이용
+    @Operation(summary = "좌표 검색 api", description = "좌표 범위 내에 해당하는 매물 리스트 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "좌표 검색")
+            }
+    )
     @GetMapping("/map")
-    public CommonResponse findRoomByAddress(
+    public ResponseEntity<CommonResponse> findRoomByAddress(
             @RequestParam("startLongitude") Double startLongitude,
             @RequestParam("startLatitude") Double startLatitude,
             @RequestParam("endLongitude") Double endLongitude,
@@ -82,18 +100,24 @@ public class RoomController {
         log.info("Room : {}", response);
 //        log.info("Room userId : {}", response.getUserId());
         //RoomResponseDto.RoomDetail response = roomService.findRooms();
-        return CommonResponse.toResponse(CommonCode.OK, response);
+//        return CommonResponse.toResponse(CommonCode.OK, response);
+        CommonResponse commonResponse = CommonResponse.toResponse(CommonCode.OK, response);
+        return new ResponseEntity<>(commonResponse, HttpStatus.OK);
     }
 
     // 매물 삭제
+    @Operation(summary = "매물 삭제 api", description = "매물 ID에 해당하는 매물 삭제 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "매물 삭제")
+            }
+    )
     @PatchMapping
-    public CommonResponse roomDelete(@RequestParam("roomId") String id) {
+    public ResponseEntity<CommonResponse> roomDelete(@RequestParam("roomId") String id) {
         log.info("[API] Room Delete");
-        User user = authService.getUserFromSecurity();
-        UUID userId = user.getUserId();
         UUID roomId = UUID.fromString(id);
 
-        return roomService.deleteRoom(userId, roomId);
+        return new ResponseEntity<>(roomService.deleteRoom(authService.getUserFromSecurity().getUserId(), roomId), HttpStatus.OK);
     }
 
     // 매물 신고 접수
