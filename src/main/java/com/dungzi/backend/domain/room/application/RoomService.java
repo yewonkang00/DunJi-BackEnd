@@ -9,17 +9,15 @@ import com.dungzi.backend.domain.room.dto.enumType.OptionsEnum;
 import com.dungzi.backend.domain.room.dto.enumType.UtilityEnum;
 import com.dungzi.backend.domain.room.dto.enumType.roomStatus;
 import com.dungzi.backend.domain.user.domain.User;
-import com.dungzi.backend.global.common.CommonCode;
-import com.dungzi.backend.global.common.CommonResponse;
+import com.dungzi.backend.global.common.response.CommonResponse;
+import com.dungzi.backend.global.common.response.code.CommonCode;
 import com.dungzi.backend.global.s3.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import com.dungzi.backend.domain.room.dto.enumType.type;
 
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 

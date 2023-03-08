@@ -7,8 +7,8 @@ import com.dungzi.backend.domain.review.dto.ReviewRequestDto;
 import com.dungzi.backend.domain.review.dto.ReviewResponseDto;
 import com.dungzi.backend.domain.user.application.AuthService;
 import com.dungzi.backend.domain.user.domain.User;
-import com.dungzi.backend.global.common.CommonCode;
-import com.dungzi.backend.global.common.CommonResponse;
+import com.dungzi.backend.global.common.response.CommonResponse;
+import com.dungzi.backend.global.common.response.code.CommonCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -41,10 +41,11 @@ public class ReviewController {
     )
     @PostMapping("/")
     public ResponseEntity<CommonResponse> createReview(@RequestPart ReviewRequestDto.CreateReview body,
-                                       @RequestPart List<MultipartFile> files){
+                                                       @RequestPart List<MultipartFile> files){
         User user = authService.getUserFromSecurity();
         UUID buildingId = reviewService.saveReview(body,files);
-        return new ResponseEntity<>(CommonResponse.toResponse(CommonCode.OK, reviewDetailService.saveReviewDetail(body.toReviewDetailEntity(buildingId,user))), HttpStatus.CREATED);
+        return new ResponseEntity<>(CommonResponse.toResponse(
+                CommonCode.OK, reviewDetailService.saveReviewDetail(body.toReviewDetailEntity(buildingId,user))), HttpStatus.CREATED);
     }
 
     @Operation(summary = "후기 삭제 api", description = "후기 삭제를 위한 api")
