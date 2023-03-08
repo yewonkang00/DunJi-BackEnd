@@ -33,6 +33,22 @@ public class Room extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+//    @OneToOne(mappedBy = "room")
+//    private RoomAddress roomAddress;
+
+    @OneToOne
+    @JoinColumn(name = "roomId")
+    private RoomAddress roomAddress;
+
+    @OneToOne
+    @JoinColumn(name = "roomId")
+    private RoomInfo roomInfo;
+
+    @OneToOne
+    @JoinColumn(name = "roomId")
+    private RoomOption roomOption;
+
+
 //    @ManyToOne
 //    @JoinColumn(name = "univId")
 //    private Univ univ;
@@ -46,5 +62,7 @@ public class Room extends BaseTimeEntity {
     private Date delDate;
     private Date dealDate;
     private int heartNum;
+
+
 
 }

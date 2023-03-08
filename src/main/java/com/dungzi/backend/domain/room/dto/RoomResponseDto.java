@@ -1,9 +1,12 @@
 package com.dungzi.backend.domain.room.dto;
 
+import com.dungzi.backend.domain.room.domain.Room;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class RoomResponseDto {
@@ -14,6 +17,7 @@ public class RoomResponseDto {
         private UUID roomId;
     }
 
+    /*
     @Builder
     @Data
     public static class RoomDetail {
@@ -61,20 +65,65 @@ public class RoomResponseDto {
         private String utility;
 
     }
+    */
+
+    @Builder
+    @Data
+    public static class RoomDetail {
+        private String roomId;
+//        private String userId;
+        private String userName;
+        private String regDate;
+
+        private String title;
+
+        private String content;
+        private int heartNum;
+        private RoomInfoDto roomInfo;
+        private RoomAddressDto roomAddress;
+        private List<String> option;
+        private String utility;
+        private String startedAt;
+        private String finishedAt;
+        private boolean tenancyAgreement;
+        private List<String> roomImage;
+
+    }
 
     @Builder
     @Data
     public static class RoomList {
         private String roomId;
-        private double longtitude;
+        private double longitude;
         private double latitude;
-        private String address;
-        private int price;
+        private String sigungu;
+        private String dong;
         private String priceUnit;
+        private int deposit;
+        private int price;
+        private String roomType;
         private int floor;
         private double roomSize;
-        private int deposit;
-        private String roomType;
         private String dealType;
+    }
+
+    public static RoomDetail toDto(Room room, String regDate, RoomInfoDto roomInfoDto, RoomAddressDto roomAddressDto,
+                                   List<String> option, List<String> roomImage) {
+        return RoomDetail.builder()
+                .roomId(room.getRoomId().toString())
+                .userName(room.getUser().getNickname())
+                .regDate(regDate)
+                .title(room.getTitle())
+                .content(room.getContent())
+                .heartNum(room.getHeartNum())
+                .roomInfo(roomInfoDto)
+                .roomAddress(roomAddressDto)
+                .option(option)
+                .utility(room.getRoomOption().getUtility())
+                .startedAt(room.getRoomOption().getStartedAt())
+                .finishedAt(room.getRoomOption().getFinishedAt())
+                .tenancyAgreement(room.getRoomOption().isTenancyAgreement())
+                .roomImage(roomImage)
+                .build();
     }
 }
