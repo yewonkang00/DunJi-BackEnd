@@ -1,6 +1,7 @@
 package com.dungzi.backend.domain.room.dto;
 
 import com.dungzi.backend.domain.room.domain.Room;
+import com.dungzi.backend.domain.room.domain.RoomAddress;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -124,6 +125,23 @@ public class RoomResponseDto {
                 .finishedAt(room.getRoomOption().getFinishedAt())
                 .tenancyAgreement(room.getRoomOption().isTenancyAgreement())
                 .roomImage(roomImage)
+                .build();
+    }
+
+    public static RoomList toDto(RoomAddress room) {
+        return RoomList.builder()
+                .roomId(room.getRoomId().toString())
+                .longitude(room.getLongitude())
+                .latitude(room.getLatitude())
+                .sigungu(room.getSigungu())
+                .dong(room.getDong())
+                .priceUnit(room.getRoomInfo().getPriceUnit())
+                .deposit(room.getRoomInfo().getDeposit())
+                .price(room.getRoomInfo().getPrice())
+                .roomType(room.getRoomInfo().getRoomType())
+                .floor(room.getRoomInfo().getFloor())
+                .roomSize(room.getRoomInfo().getRoomSize())
+                .dealType(room.getRoomInfo().getDealType())
                 .build();
     }
 }
