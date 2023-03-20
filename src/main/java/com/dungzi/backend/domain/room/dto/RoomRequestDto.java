@@ -7,6 +7,7 @@ import com.dungzi.backend.domain.room.domain.RoomOption;
 import com.dungzi.backend.domain.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
@@ -139,6 +140,44 @@ public class RoomRequestDto {
                     .build();
         }
 
+    }
+
+    @Data
+    @Builder
+    public static class FilterDto {
+      private double startLongitude;
+      private double startLatitude;
+      private double endLongitude;
+      private double endLatitude;
+      private String dealType;
+      private boolean oneRoom;
+      private boolean twoRoom;
+      private boolean threeRoom;
+      private boolean floorFive;
+      private boolean floorSixUp;
+      private boolean floorTenUp;
+      private boolean basement;
+      private boolean rooftop;
+      private boolean openType;
+      private boolean separateType;
+      private boolean twoFloorType;
+      private double sizeFrom;
+      private double sizeTo;
+      private String priceUnit;
+      private int depositFrom;
+      private int depositTo;
+      private int priceFrom;
+      private int priceTo;
+      private int manageFrom;
+      private int manageTo;
+      private boolean elevators;
+      private boolean parking;
+      private boolean pets;
+      private boolean womenOnly;
+      private boolean loan;
+      private boolean fullOption;
+        private boolean priceSort;
+        private boolean recommendSort;
     }
 
 }
