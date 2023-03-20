@@ -17,7 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import com.dungzi.backend.domain.room.dto.enumType.type;
 
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -30,6 +32,7 @@ public class RoomService {
     private final RoomAddressDao roomAddressDao;
     private final RoomInfoDao roomInfoDao;
     private final RoomOptionDao roomOptionDao;
+    private final FilterDao filterDao;
     private final FileUploadService fileUploadService;
     private RoomRequestDto roomRequestDto;
     private boolean fullOption = false;
@@ -42,7 +45,7 @@ public class RoomService {
         // Room 데이터 저장
 //        UUID roomId = null;
         requestDto.setImage(files.size());
-       // requestDto.setHeartNum(0);
+        // requestDto.setHeartNum(0);
 //        Room room = Room.builder()
 //                    .roomId(roomId)
 //                    .user(user)
@@ -71,7 +74,7 @@ public class RoomService {
 //        requestDto.setDealType(dealType);
 //        requestDto.setStructure(structType);
         requestDto.setStatus(status);
-   //     log.info("roomID2: {}",requestDto.getRoomId());
+        //     log.info("roomID2: {}",requestDto.getRoomId());
         roomAddressDao.save(requestDto.toAddressEntity()); // RoomAddress 데이터 저장
         log.info("[SERVICE] RoomAddress Save");
 
@@ -242,31 +245,45 @@ public class RoomService {
         List<RoomAddress> list = roomAddressDao.findRoomByAddress(startLongitude, startLatitude, endLongitude, endLatitude);
         List<RoomResponseDto.RoomList> roomList = new ArrayList<RoomResponseDto.RoomList>();
 
-        for(int i = 0; i < list.size(); i++) {
-            RoomAddress room = list.get(i);
-            RoomResponseDto.RoomList newRoom = RoomResponseDto.RoomList.builder()
-                                                .roomId(room.getRoomId().toString())
-                                                .longitude(room.getLongitude())
-                                                .latitude(room.getLatitude())
-                                                .sigungu(room.getSigungu())
-                                                .dong(room.getDong())
-                                                .priceUnit(room.getRoomInfo().getPriceUnit())
-                                                .deposit(room.getRoomInfo().getDeposit())
-                                                .price(room.getRoomInfo().getPrice())
-                                                .roomType(room.getRoomInfo().getRoomType())
-                                                .floor(room.getRoomInfo().getFloor())
-                                                .roomSize(room.getRoomInfo().getRoomSize())
-                                                .dealType(room.getRoomInfo().getDealType())
-                                                .build();
+        for(RoomAddress data : list) {
+            RoomAddress room = data;
+            RoomResponseDto.RoomList newRoom = RoomResponseDto.toDto(room);
             roomList.add(newRoom);
         }
+
+//        for(int i = 0; i < list.size(); i++) {
+//            RoomAddress room = list.get(i);
+//            RoomResponseDto.RoomList newRoom = RoomResponseDto.toDto(room);
+//            roomList.add(newRoom);
+//        }
+
+        return roomList;
+    }
+
+    public List<RoomResponseDto.RoomList> findRoomByFilter(RoomRequestDto.FilterDto request) {
+        log.info("[SERVICE] findRoomByFilter");
+
+        List<RoomAddress> list = filterDao.findRoomByFilter(request);
+        List<RoomResponseDto.RoomList> roomList = new ArrayList<>();
+
+        for(RoomAddress data : list) {
+            RoomAddress room = data;
+            RoomResponseDto.RoomList newRoom = RoomResponseDto.toDto(room);
+            roomList.add(newRoom);
+        }
+
+//        for(int i = 0; i < list.size(); i++) {
+//            RoomAddress room = list.get(i);
+//            RoomResponseDto.RoomList newRoom = RoomResponseDto.toDto(room);
+//            roomList.add(newRoom);
+//        }
 
         return roomList;
     }
 
     @Transactional
     public CommonResponse deleteRoom(UUID user, UUID roomId) {
-        log.info("[SERCICE] Delete Room : {}", roomId);
+        log.info("[SERVICE] Delete Room : {}", roomId);
 
         // TODO : 관리자 생성 시 관리자도 삭제 가능하도록 추가
         Optional<Room> searchRoom = roomDao.findByRoomId(roomId);

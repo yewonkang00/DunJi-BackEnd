@@ -89,13 +89,34 @@ public class RoomController {
     )
     @GetMapping("/map")
     public ResponseEntity<CommonResponse> findRoomByAddress(
-            @RequestParam("startLongitude") Double startLongitude,
-            @RequestParam("startLatitude") Double startLatitude,
-            @RequestParam("endLongitude") Double endLongitude,
-            @RequestParam("endLatitude") Double endLatitude) {
+            @RequestParam("startLongitude") double startLongitude,
+            @RequestParam("startLatitude") double startLatitude,
+            @RequestParam("endLongitude") double endLongitude,
+            @RequestParam("endLatitude") double endLatitude) {
 
         log.info("[API] findRoomByAddress");
         List<RoomResponseDto.RoomList> response = roomService.findRoomByAddress(startLongitude, startLatitude, endLongitude, endLatitude);
+
+        log.info("Room : {}", response);
+//        log.info("Room userId : {}", response.getUserId());
+        //RoomResponseDto.RoomDetail response = roomService.findRooms();
+//        return CommonResponse.toResponse(CommonCode.OK, response);
+        CommonResponse commonResponse = CommonResponse.toResponse(CommonCode.OK, response);
+        return new ResponseEntity<>(commonResponse, HttpStatus.OK);
+    }
+
+    // 매물 검색 - 필터 이용
+    @Operation(summary = "필터 검색 api", description = "필터에 해당하는 매물 리스트 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "필터 검색")
+            }
+    )
+    @PostMapping("/search")
+    public ResponseEntity<CommonResponse> findRoomByFilter(RoomRequestDto.FilterDto body) throws Exception {
+
+        log.info("[API] findRoomByFilter");
+        List<RoomResponseDto.RoomList> response = roomService.findRoomByFilter(body);
 
         log.info("Room : {}", response);
 //        log.info("Room userId : {}", response.getUserId());
@@ -124,10 +145,10 @@ public class RoomController {
 
 
     // 매물 신고 처리
-//    @PatchMapping
-//    public CommonResponse roomReport(@RequestParam("roomId") String id) {
-//        log.info("[API] Room Report");
-//        return roomService.reportRoom(UUID.fromString(id));
-//    }
+    @PatchMapping
+    public CommonResponse roomReport(@RequestParam("roomId") String id) {
+        log.info("[API] Room Report");
+        return roomService.reportRoom(UUID.fromString(id));
+    }
 
 }
