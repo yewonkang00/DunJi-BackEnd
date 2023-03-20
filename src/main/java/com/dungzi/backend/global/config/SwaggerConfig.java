@@ -36,6 +36,13 @@ public class SwaggerConfig {
                 .build();
     }
     @Bean
+    public GroupedOpenApi room() {
+        return GroupedOpenApi.builder()
+                .group("room")
+                .pathsToMatch(BASIC_API_PATH+"/rooms/**")
+                .build();
+    }
+    @Bean
     public GroupedOpenApi review() {
         return GroupedOpenApi.builder()
                 .group("review")
