@@ -17,9 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import com.dungzi.backend.domain.room.dto.enumType.type;
 
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -32,6 +30,7 @@ public class RoomService {
     private final RoomAddressDao roomAddressDao;
     private final RoomInfoDao roomInfoDao;
     private final RoomOptionDao roomOptionDao;
+    private final RoomReportDao roomReportDao;
     private final FilterDao filterDao;
     private final FileUploadService fileUploadService;
     private RoomRequestDto roomRequestDto;
@@ -43,18 +42,7 @@ public class RoomService {
         log.info("[SERVICE] Room SaveAction");
 
         // Room 데이터 저장
-//        UUID roomId = null;
         requestDto.setImage(files.size());
-        // requestDto.setHeartNum(0);
-//        Room room = Room.builder()
-//                    .roomId(roomId)
-//                    .user(user)
-//                    .title(requestDto.getTitle())
-//                    .content(requestDto.getContent())
-//                    .image(files.size())        //TODO : 날짜는 어떤 형식으로 입력할 지
-//                    .heartNum(0)
-//                    .build();
-
 
         Room savedRoom = roomDao.save(requestDto.toRoomEntity(user));
         requestDto.setRoom(savedRoom);
@@ -65,16 +53,9 @@ public class RoomService {
         log.info("roomID: {}",roomId);
         requestDto.setRoomId(roomId);
 
-//        String roomType = type.roomType.valueOf(requestDto.getRoomType()).getValue();
-//        String dealType = type.dealType.valueOf(requestDto.getDealType()).getValue();
-//        String structType = type.structureType.valueOf(requestDto.getStructure()).getValue();
         String status = roomStatus.active.toString();
 
-//        requestDto.setRoomType(roomType);
-//        requestDto.setDealType(dealType);
-//        requestDto.setStructure(structType);
         requestDto.setStatus(status);
-        //     log.info("roomID2: {}",requestDto.getRoomId());
         roomAddressDao.save(requestDto.toAddressEntity()); // RoomAddress 데이터 저장
         log.info("[SERVICE] RoomAddress Save");
 
@@ -103,7 +84,6 @@ public class RoomService {
         int option_count = 0;  // full option(세탁기,냉장고,에어컨,가스레인지)인지 확인하기 위한 count
 
         // Option
-        //EnumSet<Options> option = EnumSet.noneOf(Options.class);
         List<String> option = new ArrayList<>();
 
         if(requestDto.isAirConditioner()) {
@@ -122,14 +102,6 @@ public class RoomService {
             option.add(OptionsEnum.gasStove.toString());
             option_count++;
         }
-//        if(requestDto.isInduction()) option.add(OptionsEnum.induction.getValue());
-//        if(requestDto.isMicrowave()) option.add(OptionsEnum.microwave.getValue());
-//        if(requestDto.isDesk()) option.add(OptionsEnum.desk.getValue());
-//        if(requestDto.isBookcase()) option.add(OptionsEnum.bookcase.getValue());
-//        if(requestDto.isBed()) option.add(OptionsEnum.bed.getValue());
-//        if(requestDto.isCloset()) option.add(OptionsEnum.closet.getValue());
-//        if(requestDto.isSink()) option.add(OptionsEnum.sink.getValue());
-//        if(requestDto.isShoeCabinet()) option.add(OptionsEnum.shoeCabinet.getValue());
 
         if(requestDto.isInduction()) option.add(OptionsEnum.induction.toString());
         if(requestDto.isMicrowave()) option.add(OptionsEnum.microwave.toString());
@@ -217,28 +189,13 @@ public class RoomService {
 
         log.info("regDate : {}", regDate);
 
-//        RoomResponseDto.RoomDetail roomDetail = RoomResponseDto.RoomDetail.builder()
-//                .roomId(room.getRoomId().toString())
-//                .userName(room.getUser().getNickname())
-//                .regDate(regDate)
-//                .title(room.getTitle())
-//                .content(room.getContent())
-//                .heartNum(room.getHeartNum())
-//                .roomInfo(roomInfoDto)
-//                .roomAddress(roomAddressDto)
-//                .option(option)
-//                .utility(room.getRoomOption().getUtility())
-//                .startedAt(room.getRoomOption().getStartedAt())
-//                .finishedAt(room.getRoomOption().getFinishedAt())
-//                .tenancyAgreement(room.getRoomOption().isTenancyAgreement())
-//                .roomImage(roomImage)
-//                .build();
         RoomResponseDto.RoomDetail roomDetail = RoomResponseDto.toDto(room, regDate, roomInfoDto,
                                                                     roomAddressDto, option, roomImage);
 
         return roomDetail;
     }
 
+    // 필터 없이 좌표만을 이용한 매물 검색
     public List<RoomResponseDto.RoomList> findRoomByAddress(Double startLongitude, Double startLatitude, Double endLongitude, Double endLatitude) throws RuntimeException{
         log.info("[SERVICE] findRoomByAddress");
 
@@ -251,15 +208,10 @@ public class RoomService {
             roomList.add(newRoom);
         }
 
-//        for(int i = 0; i < list.size(); i++) {
-//            RoomAddress room = list.get(i);
-//            RoomResponseDto.RoomList newRoom = RoomResponseDto.toDto(room);
-//            roomList.add(newRoom);
-//        }
-
         return roomList;
     }
 
+    // 필터를 이용한 매물 검색
     public List<RoomResponseDto.RoomList> findRoomByFilter(RoomRequestDto.FilterDto request) {
         log.info("[SERVICE] findRoomByFilter");
 
@@ -271,13 +223,7 @@ public class RoomService {
             RoomResponseDto.RoomList newRoom = RoomResponseDto.toDto(room);
             roomList.add(newRoom);
         }
-
-//        for(int i = 0; i < list.size(); i++) {
-//            RoomAddress room = list.get(i);
-//            RoomResponseDto.RoomList newRoom = RoomResponseDto.toDto(room);
-//            roomList.add(newRoom);
-//        }
-
+        
         return roomList;
     }
 
@@ -294,6 +240,7 @@ public class RoomService {
             Room room = searchRoom.get();
             log.info("userID : {}", room.getUser().getUserId());
             log.info("userID2 : {}", user);
+
             // User가 매물을 등록한 user와 일치하는 경우만 삭제 가능
             if(room.getUser().getUserId().equals(user)) {
 
@@ -305,6 +252,39 @@ public class RoomService {
         return CommonResponse.toResponse(CommonCode.NOT_FOUND, "해당 매물이 존재하지 않습니다.");
     }
 
+    // 사용자로부터 매물 신고 접수
+    @Transactional
+    public CommonResponse reportReceived(String report, User user, String roomId) {
+        log.info("[SERCICE] Room Report Received : {}", roomId);
+
+        Optional<Room> roomData = roomDao.findByRoomId(UUID.fromString(roomId));
+        Room room = roomData.get();
+
+        log.info("search Room : {}", room.getRoomId());
+
+        RoomReportDto roomReportDto = RoomReportDto.builder()
+                                        .user(user)
+                                        .room(room)
+                                        .build();
+
+        // ID에 해당하는 매물이 존재하는지 확인
+        if(roomData.isPresent()) {
+            //Room room = searchRoom.get();
+            if(report.equals("표시된정보와다름")) {
+                roomReportDto.setReport(roomStatus.differentFromDisplayed.getType());
+            } else if(report.equals("매물이나갔음")) {
+                    roomReportDto.setReport(roomStatus.beingSold.getType());
+            }
+
+            roomReportDao.save(roomReportDto.toEntity(roomReportDto));
+
+            return CommonResponse.toResponse(CommonCode.OK);
+        }
+
+        return CommonResponse.toResponse(CommonCode.NOT_FOUND, "해당 매물이 존재하지 않습니다.");
+    }
+
+    // 관리자가 매물 신고 처리
     @Transactional
     public CommonResponse reportRoom(UUID roomId) {
         log.info("[SERCICE] Report Room : {}", roomId);
@@ -314,8 +294,10 @@ public class RoomService {
 
         // ID에 해당하는 매물이 존재하는지 확인
         if(searchRoom.isPresent()) {
-            Room room = searchRoom.get();
+            //Room room = searchRoom.get();
             roomAddressDao.updateStatus(roomStatus.reported.toString(), roomId);
+
+            return CommonResponse.toResponse(CommonCode.OK);
         }
         return CommonResponse.toResponse(CommonCode.NOT_FOUND, "해당 매물이 존재하지 않습니다.");
     }

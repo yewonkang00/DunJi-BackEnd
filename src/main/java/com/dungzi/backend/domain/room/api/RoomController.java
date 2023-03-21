@@ -1,9 +1,6 @@
 package com.dungzi.backend.domain.room.api;
 
 import com.dungzi.backend.domain.room.application.RoomService;
-import com.dungzi.backend.domain.room.dao.RoomDao;
-import com.dungzi.backend.domain.room.domain.Room;
-import com.dungzi.backend.domain.room.domain.RoomAddress;
 import com.dungzi.backend.domain.room.dto.*;
 import com.dungzi.backend.domain.room.dto.RoomResponseDto;
 import com.dungzi.backend.domain.user.application.AuthService;
@@ -21,7 +18,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -119,9 +115,7 @@ public class RoomController {
         List<RoomResponseDto.RoomList> response = roomService.findRoomByFilter(body);
 
         log.info("Room : {}", response);
-//        log.info("Room userId : {}", response.getUserId());
-        //RoomResponseDto.RoomDetail response = roomService.findRooms();
-//        return CommonResponse.toResponse(CommonCode.OK, response);
+
         CommonResponse commonResponse = CommonResponse.toResponse(CommonCode.OK, response);
         return new ResponseEntity<>(commonResponse, HttpStatus.OK);
     }
@@ -141,14 +135,31 @@ public class RoomController {
         return new ResponseEntity<>(roomService.deleteRoom(authService.getUserFromSecurity().getUserId(), roomId), HttpStatus.OK);
     }
 
-    // 매물 신고 접수
-
-
-    // 매물 신고 처리
-    @PatchMapping
-    public CommonResponse roomReport(@RequestParam("roomId") String id) {
+    // 사용자로부터 매물 신고 접수
+    @Operation(summary = "매물 신고 api", description = "사용자가 매물을 신고하는 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "매물 신고")
+            }
+    )
+    @PostMapping("/report")
+    public CommonResponse roomReportReceived(String report, String roomId) {
         log.info("[API] Room Report");
-        return roomService.reportRoom(UUID.fromString(id));
+        User user = authService.getUserFromSecurity();
+        return roomService.reportReceived(report, user, roomId);
+    }
+
+    // 관리자가 매물 신고 처리
+    @Operation(summary = "매물 신고 처리 api", description = "관리자가 매물 신고 처리하는 api")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "매물 신고 처리")
+            }
+    )
+    @PatchMapping("/manager/report")
+    public CommonResponse roomReport(@RequestParam("roomId") String roomId) {
+        log.info("[API] Manager Room Report");
+        return roomService.reportRoom(UUID.fromString(roomId));
     }
 
 }
