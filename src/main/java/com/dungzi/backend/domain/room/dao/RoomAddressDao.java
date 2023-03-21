@@ -15,7 +15,6 @@ import java.util.UUID;
 
 public interface RoomAddressDao extends JpaRepository<RoomAddress, UUID> {
     Optional<RoomAddress> findByRoomId(UUID roomId);
-//    RoomAddress findByRoomId(String roomId);
 
     @Modifying
     @Query("UPDATE RoomAddress a SET a.status = :status WHERE a.roomId = :roomId")
